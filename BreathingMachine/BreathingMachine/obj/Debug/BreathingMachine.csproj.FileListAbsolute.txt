@@ -1,0 +1,10 @@
+D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Debug\BreathingMachine.Form1.resources
+D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Debug\BreathingMachine.Form_engineer.resources
+D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Debug\BreathingMachine.Properties.Resources.resources
+D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Debug\BreathingMachine.csproj.GenerateResource.Cache
+D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Debug\BreathingMachine.exe.config
+D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Debug\BreathingMachine.exe
+D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Debug\BreathingMachine.pdb
+D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Debug\BreathingMachine.exe
+D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Debug\BreathingMachine.pdb
+D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Debug\BreathingMachine.csprojResolveAssemblyReference.cache
