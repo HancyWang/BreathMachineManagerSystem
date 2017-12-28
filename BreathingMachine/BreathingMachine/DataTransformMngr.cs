@@ -11,6 +11,10 @@ namespace BreathingMachine
 {
     class DataMngr
     {
+        public static bool m_bPatientInfo_Geted;
+        public static bool m_bDateTimePicker_ValueChanged;
+        public static bool m_advanceMode;
+        public static int m_machineType;
         private DateTime m_tmBegin;
         private DateTime m_tmEnd;
         public static List<DateTime> m_usageTable_xAxis_list;
@@ -18,6 +22,24 @@ namespace BreathingMachine
         public static List<DateTime> m_usageTable_endTime_list;
         //public DataTable m_usageTable;
         
+        public static void GetMachineTpye()
+        {
+            byte[] head = FileMngr.GetData(FileMngr.m_lastWorkHead);
+            var machineType = DataMngr.GetMachineType(head, 1);
+            if(machineType=="VNU001")
+            {
+                m_machineType = 1;
+            }
+            else if (machineType=="VNU002")
+            {
+                m_machineType = 2;
+            }
+            else
+            {
+                //do nothing
+            }
+        }
+
         public static void GetUsageInfo()
         {
             //提取信息到DataMngr中的List<DateTime>链表中
