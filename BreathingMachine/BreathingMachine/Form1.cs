@@ -15,7 +15,6 @@ using System.Windows.Forms.DataVisualization.Charting;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 
-
 namespace BreathingMachine
 {
     //将工作信息列表中的一行数据，封装成一个结构体
@@ -195,11 +194,72 @@ namespace BreathingMachine
             #endregion
         }
 
-        public void PaintPatientTmp(DateTime tmEnd,  double duration)
+       
+        
+        public void ShowDetailCharts(DateTime tmEnd,double duration)
         {
-            DateTime tmFirstDay = DateTime.FromOADate(0); //获取系统默认的第一天，1899/12/30
+            //一共4张图；病人温度，出气口温度，流量，氧浓度
+            //先规定每张图的大小
+            
+            ShowChartByType(tmEnd, duration,CHARTTYPE.PATIENT_TMP);
+            ShowChartByType(tmEnd, duration, CHARTTYPE.AIR_OUTLET_TMP);
+            ShowChartByType(tmEnd, duration, CHARTTYPE.FLOW);
+            ShowChartByType(tmEnd, duration, CHARTTYPE.OXY_CONCENTRATION);
+        }
 
-            //DateTime tm_begin = new DateTime(tmBegin.Year, tmBegin.Month, tmBegin.Day, 0, 0, 0);
+
+        public void ShowChartByType(DateTime tmEnd, double duration, CHARTTYPE chartType)
+        {
+            //生成需要信息的链表
+            #region
+            DateTime tmEndOfDay= new DateTime(tmEnd.Year, tmEnd.Month, tmEnd.Day, 23, 59, 59);
+            DateTime tmBeginOfDay = tmEndOfDay.AddDays(0 - duration);
+
+            if (DataMngr.m_listInfo != null || DataMngr.m_listInfo.Count == 0)
+            {
+                DataMngr.m_listInfo.Clear();
+            }
+            //DataMngr.m_listInfo = new List<DETAIL_CHART_INFO>();
+            foreach (KeyValuePair<WORK_INFO_HEAD, List<WORK_INFO_MESSAGE>> kv in FileMngr.m_workHead_Msg_Map)
+            {
+                //先判断,减少不必要的foreach (var workDataMsg in list)
+                var list = kv.Value;
+                WORK_INFO_MESSAGE msg=list[0];
+                DateTime msgTm = new DateTime(100 * Convert.ToInt32(msg.YEAR1) + Convert.ToInt32(msg.YEAR2), 
+                                                Convert.ToInt32(msg.MONTH), Convert.ToInt32(msg.DAY),23,59,59);
+                if ((tmEndOfDay-msgTm).TotalDays>duration)
+                {
+                    continue;
+                }
+
+                foreach (var workDataMsg in list)
+                {
+                    DateTime tmFromMsg = new DateTime(100 * Convert.ToInt32(workDataMsg.YEAR1) + Convert.ToInt32(workDataMsg.YEAR2),
+                                                        Convert.ToInt32(workDataMsg.MONTH),
+                                                        Convert.ToInt32(workDataMsg.DAY),
+                                                        Convert.ToInt32(workDataMsg.HOUR),
+                                                        Convert.ToInt32(workDataMsg.MINUTE),
+                                                        Convert.ToInt32(workDataMsg.SECOND));
+                    if (tmFromMsg >= tmBeginOfDay && tmFromMsg <= tmEndOfDay)
+                    {
+
+                        DETAIL_CHART_INFO info = new DETAIL_CHART_INFO(); 
+                        
+                        info.tm = tmFromMsg;
+                        info.patient_tmp = Convert.ToInt32(workDataMsg.DATA_PATIENT_TEMP);
+                        info.air_outlet_tmp = Convert.ToInt32(workDataMsg.DATA_AIR_OUTLET_TEMP);
+                        info.flow = Convert.ToInt32(workDataMsg.DATA_FLOW);
+                        info.oxy_concentration = Convert.ToInt32(workDataMsg.DATA_OXYGEN_CONCENTRATION);
+
+                        DataMngr.m_listInfo.Add(info);
+                    }
+                }
+            }
+            //MessageBox.Show(DataMngr.m_listInfo.Count.ToString());
+            #endregion
+            
+            DateTime tmFirstDay = DateTime.FromOADate(0); //获取系统默认的第一天，1899/12/30
+            //用来生成x轴坐标
             DateTime tm_end = new DateTime(tmEnd.Year, tmEnd.Month, tmEnd.Day, 0, 0, 0);
             DateTime tm_begin = tm_end.AddDays(0 - duration);
 
@@ -207,87 +267,260 @@ namespace BreathingMachine
             #region
             DataTable table1 = new DataTable();
             table1.Columns.Add("时间", typeof(DateTime));
-            table1.Columns.Add("患者端温度", typeof(int));
+            table1.Columns.Add("数据", typeof(int));
             //获取最后一天的时间
             //MessageBox.Show(WorkDataList.m_WorkData_List.Count.ToString());
-            DateTime tmp = Convert.ToDateTime(WorkDataList.m_WorkData_List[WorkDataList.m_WorkData_List.Count - 1].tm);
+            
+            DateTime tmp = Convert.ToDateTime(DataMngr.m_listInfo[DataMngr.m_listInfo.Count - 1].tm);
             DateTime tm_endOfDay = new DateTime(tmp.Year, tmp.Month, tmp.Day, 23, 59, 59);
 
-            foreach(var workdata in WorkDataList.m_WorkData_List)
+            //将数据插入DataTable
+            #region
+            
+            DateTime tm_start = tm_endOfDay.AddDays(0 - duration);
+
+            #region
+            
+            #endregion
+            DateTime tm_prev = tm_start;
+
+            for (int i = 0; i < DataMngr.m_listInfo.Count; i++)
+            //for(int i=ndex;i<WorkDataList.m_WorkData_List.Count;i++)
             {
-                DateTime dateTm = Convert.ToDateTime(workdata.tm); 
-                if ((tm_endOfDay - dateTm).TotalSeconds <= (tm_endOfDay - tm_endOfDay.AddDays(0-duration)).TotalSeconds) 
+                //int temperature = Convert.ToInt32(DataMngr.m_listInfo[i].patient_tmp);
+                while ((Convert.ToDateTime(DataMngr.m_listInfo[i].tm) - tm_prev).TotalMinutes >= 2)
                 {
-                    int temperature = Convert.ToInt32(workdata.data_patient_tmp);
-                    table1.Rows.Add(dateTm, temperature);
+                    table1.Rows.Add(tm_prev, 0);
+                    tm_prev = tm_prev.AddMinutes(1);
+                }
+
+                switch (chartType)
+                {
+                    case CHARTTYPE.PATIENT_TMP:
+                        table1.Rows.Add(Convert.ToDateTime(tm_prev), Convert.ToInt32(DataMngr.m_listInfo[i].patient_tmp));
+                        break;
+                    case CHARTTYPE.AIR_OUTLET_TMP:
+                        table1.Rows.Add(Convert.ToDateTime(tm_prev), Convert.ToInt32(DataMngr.m_listInfo[i].air_outlet_tmp));
+                        break;
+                    case CHARTTYPE.FLOW:
+                        table1.Rows.Add(Convert.ToDateTime(tm_prev), Convert.ToInt32(DataMngr.m_listInfo[i].flow));
+                        break;
+                    case CHARTTYPE.OXY_CONCENTRATION:
+                        table1.Rows.Add(Convert.ToDateTime(tm_prev), Convert.ToInt32(DataMngr.m_listInfo[i].oxy_concentration));
+                        break;
+                    default:
+                        //MessageBox.Show("Unkonw chart type in common_series!");
+                        break;
                 }
                 
+
+                tm_prev = Convert.ToDateTime(DataMngr.m_listInfo[i].tm);
+
+                if(i==DataMngr.m_listInfo.Count-1)
+                {
+                    table1.Rows.Add(tm_prev, 0);
+                }
             }
-            //table1.Rows.Add(new object[] { tm, rd, rd });
             #endregion
 
+            //table1.Rows.Add(new object[] { tm, rd, rd });
+            #endregion
             //double day_min = (tm_begin - tmFirstDay).TotalDays - 1; //x轴上的最小值 ,-1表示多放前一天，为了图表显示好看
             double day_max = (tm_end - tmFirstDay).TotalDays + 1;   //y轴上的最大值,+1表示日期在后推一天
             double day_min = (day_max - duration) - 0;
 
             //画图
-            this.chart_patientTmp.Series.Clear();
-            this.chart_patientTmp.ChartAreas.Clear();
-            this.chart_patientTmp.Width = 800;
-            this.chart_patientTmp.Height = 300;
-            this.chart_patientTmp.BorderlineColor = Color.Black;
-            this.chart_patientTmp.BorderlineWidth = 1;
-            this.chart_patientTmp.BorderlineDashStyle = ChartDashStyle.Solid;
+            #region
 
-            Series patientTmp = new Series("patientTmp");
-            ChartArea chartArea_patientTmp = new ChartArea("chartArea_patientTmp");
+            //实例化serie和chartarea
+            Series series_common = new Series("series_common");
+            ChartArea chartArea_common = new ChartArea("chartArea_common");
 
-            patientTmp.ChartArea = "chartArea_patientTmp";//绑定
+            //这句话很重要，不加的话会认为（0，0）是可视的坐标原点，而不是真是控件的坐标原点
+            //http://bbs.csdn.net/topics/390179469
+            this.panel_detailCharts.VerticalScroll.Value = this.panel_detailCharts.VerticalScroll.Minimum;
 
-            chartArea_patientTmp.AxisY.Title = "Patient Temperature";
-            chartArea_patientTmp.AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
-            chartArea_patientTmp.AxisY.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
+            switch(chartType)
+            {
+                case CHARTTYPE.PATIENT_TMP:
+                    this.chart_patientTmp.Series.Clear();
+                    this.chart_patientTmp.ChartAreas.Clear();
+                    this.chart_patientTmp.Titles.Clear();
 
-            patientTmp.XValueType = ChartValueType.DateTime;  //设置X,Y轴的坐标类型
-            patientTmp.YValueType = ChartValueType.Int32;
+                    this.chart_patientTmp.Location = new Point(0,0);
+                    this.chart_patientTmp.Titles.Add("Patient Temperature");
 
-            patientTmp.ChartType = SeriesChartType.Point;    //设置图标类型
-            patientTmp.MarkerSize = 1;
+                    this.chart_patientTmp.Width = Convert.ToInt32(duration) * DataMngr.m_chartSize.Width;    //按照显示天数的比例来调整图表的宽度
+                    this.chart_patientTmp.Height = DataMngr.m_chartSize.Height;
+                    this.chart_patientTmp.BorderlineColor = Color.Gray;
+                    this.chart_patientTmp.BorderlineWidth = 1;
+                    this.chart_patientTmp.BorderlineDashStyle = ChartDashStyle.Solid;
+
+
+                    series_common = new Series("patientTmp");
+                    chartArea_common = new ChartArea("chartArea_patientTmp");
+                    series_common.ChartArea = "chartArea_patientTmp";
+                    break;
+                case CHARTTYPE.AIR_OUTLET_TMP:
+                    this.chart_air_outlet_tmp.Series.Clear();
+                    this.chart_air_outlet_tmp.ChartAreas.Clear();
+                    this.chart_air_outlet_tmp.Titles.Clear();
+
+
+                    this.chart_air_outlet_tmp.Location = new Point(0, DataMngr.m_chartSize.Height);
+                    this.chart_air_outlet_tmp.Titles.Add("Air Outlet Temperature");
+
+                    this.chart_air_outlet_tmp.Width = Convert.ToInt32(duration) * DataMngr.m_chartSize.Width;    //按照显示天数的比例来调整图表的宽度
+                    this.chart_air_outlet_tmp.Height = DataMngr.m_chartSize.Height;
+                    this.chart_air_outlet_tmp.BorderlineColor = Color.Gray;
+                    this.chart_air_outlet_tmp.BorderlineWidth = 1;
+                    this.chart_air_outlet_tmp.BorderlineDashStyle = ChartDashStyle.Solid;
+
+
+                    series_common = new Series("airOutLetTmp");
+                    chartArea_common = new ChartArea("chartArea_airOutLetTmp");
+                    series_common.ChartArea = "chartArea_airOutLetTmp";
+                    break;
+                case CHARTTYPE.FLOW:
+                    this.chart_flow.Series.Clear();
+                    this.chart_flow.ChartAreas.Clear();
+                    this.chart_flow.Titles.Clear();
+
+                    this.chart_flow.Location = new Point(0, DataMngr.m_chartSize.Height * 2);
+                    this.chart_flow.Titles.Add("Flow");
+
+                    this.chart_flow.Width = Convert.ToInt32(duration) * DataMngr.m_chartSize.Width;    //按照显示天数的比例来调整图表的宽度
+                    this.chart_flow.Height = DataMngr.m_chartSize.Height;
+                    this.chart_flow.BorderlineColor = Color.Gray;
+                    this.chart_flow.BorderlineWidth = 1;
+                    this.chart_flow.BorderlineDashStyle = ChartDashStyle.Solid;
+
+
+                    series_common = new Series("flow");
+                    chartArea_common = new ChartArea("chartArea_flow");
+                    series_common.ChartArea = "chartArea_flow";
+                    break;
+                case CHARTTYPE.OXY_CONCENTRATION:
+                    this.chart_oxy_concentration.Series.Clear();
+                    this.chart_oxy_concentration.ChartAreas.Clear();
+                    this.chart_oxy_concentration.Titles.Clear();
+
+                    this.chart_oxy_concentration.Location = new Point(0, DataMngr.m_chartSize.Height * 3);
+                    this.chart_oxy_concentration.Titles.Add("Oxygen Concentration");
+
+                    this.chart_oxy_concentration.Width = Convert.ToInt32(duration) * DataMngr.m_chartSize.Width;    //按照显示天数的比例来调整图表的宽度
+                    this.chart_oxy_concentration.Height = DataMngr.m_chartSize.Height;
+                    this.chart_oxy_concentration.BorderlineColor = Color.Gray;
+                    this.chart_oxy_concentration.BorderlineWidth = 1;
+                    this.chart_oxy_concentration.BorderlineDashStyle = ChartDashStyle.Solid;
+
+
+                    series_common = new Series("oxyConcentration");
+                    chartArea_common = new ChartArea("chartArea_oxyConcentration");
+                    series_common.ChartArea = "chartArea_oxyConcentration";
+                    break;
+                default:
+                    MessageBox.Show("Unkonw chart type in common_series!");
+                    break;
+            }
+            #region
+            ////设置chart的长宽,外边框颜色和宽度
+            //this.chart_patientTmp.Width = Convert.ToInt32(duration) * DataMngr.m_chartSize.Width;    //按照显示天数的比例来调整图表的宽度
+            //this.chart_patientTmp.Height = DataMngr.m_chartSize.Height;
+            //this.chart_patientTmp.BorderlineColor = Color.Black;
+            //this.chart_patientTmp.BorderlineWidth = 1;
+            //this.chart_patientTmp.BorderlineDashStyle = ChartDashStyle.Solid;
+
+            ////实例化serie和chartarea
+            //Series patientTmp = new Series("patientTmp");
+            //ChartArea chartArea_patientTmp = new ChartArea("chartArea_patientTmp");
+
+            //serie绑定chartarea
+            //patientTmp.ChartArea = "chartArea_patientTmp";
+
+            ////chartArea_patientTmp.AxisY.Title = "Patient Temperature";
+            //this.chart_patientTmp.Titles.Add("Patient Temperature");
+            #endregion
+            //chartarea中设置是否显示虚线
+            chartArea_common.AxisX.MajorGrid.LineDashStyle = ChartDashStyle.NotSet;
+            chartArea_common.AxisY.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
+
+            #region
+            // font=new System.Drawing.Font("Microsoft Sans Serif",3);
+            ////var font = new System.Drawing.Font("Microsoft Sans Serif",5,FontStyle.Regular,System.Drawing.GraphicsUnit.Document,1,true);
+            ////chartArea_patientTmp.AxisX.LabelStyle.Font = font;
+            #endregion
+            //series中设置x,y轴坐标类型
+            series_common.XValueType = ChartValueType.DateTime;  //设置X,Y轴的坐标类型
+            series_common.YValueType = ChartValueType.Int32;
+
+            //设置图标类型，折线图
+            series_common.ChartType = SeriesChartType.Line;
+            series_common.MarkerSize = 1;
+            #region
             //patientTmp.EmptyPointStyle.BorderWidth = 0;
             //patientTmp.EmptyPointStyle.CustomProperties = "EmptyPointValue = Zero";
             //patientTmp.EmptyPointStyle.BorderColor = Color.White;
             //patientTmp.EmptyPointStyle.MarkerColor = Color.White;
             //Chart1.Series["Series3"].EmptyPointStyle.CustomProperties = "EmptyPointValue = Zero";
+            #endregion
 
-            
-            chartArea_patientTmp.AxisX.LabelStyle.Format = "HH:mm\nMM-dd";
+            //chartarea中设置X轴显示格式，以及范围，步长
+            chartArea_common.AxisX.LabelStyle.Format = "HH:mm\nMM-dd";
             //chartArea_patientTmp.AxisY.IsReversed = true;
-            chartArea_patientTmp.AxisX.Minimum = day_min;
-            chartArea_patientTmp.AxisX.Maximum = day_max;
-            chartArea_patientTmp.AxisX.Interval = 0.125 / 3 * duration;
-            //if(duration==1)
-            //{
-            //    chartArea_patientTmp.AxisX.Interval = 0.125/3;
-            //}
-            //if(duration==3)
-            //{
-            //    chartArea_patientTmp.AxisX.Interval = 0.125/3*duration;
-            //}
+            chartArea_common.AxisX.Minimum = day_min;
+            chartArea_common.AxisX.Maximum = day_max;
+            chartArea_common.AxisX.Interval = 0.125 / 3 * duration; //调整x轴坐标，特别注意这个！
 
+            //chartarea中设置y轴显示范围，以及步长
+            chartArea_common.AxisY.Minimum = 0;
+            if(chartType==CHARTTYPE.FLOW)
+            {
+                chartArea_common.AxisY.Maximum = 100;
+                chartArea_common.AxisY.Interval = 10;
+            }
+            else
+            {
+                chartArea_common.AxisY.Maximum = 50;
+                chartArea_common.AxisY.Interval = 5;
+            }
+            
+            
 
-            chartArea_patientTmp.AxisY.Minimum = 0;
-            chartArea_patientTmp.AxisY.Maximum = 50;
-            chartArea_patientTmp.AxisY.Interval = 5;
-
-            this.chart_patientTmp.Legends.Clear(); //清除chart_workData的legend
-            this.chart_patientTmp.ChartAreas.Add(chartArea_patientTmp);
-            this.chart_patientTmp.Series.Add(patientTmp);
-
-            //this.chart1.Series["item1"].Points.DataBind(table1.AsEnumerable(), "时间", "数据", "");
-            this.chart_patientTmp.Series["patientTmp"].Points.DataBind(table1.AsEnumerable(), "时间", "患者端温度","");
+            switch (chartType)
+            {
+                case CHARTTYPE.PATIENT_TMP:
+                    this.chart_patientTmp.Legends.Clear(); //清除chart_workData的legend
+                    this.chart_patientTmp.ChartAreas.Add(chartArea_common);
+                    this.chart_patientTmp.Series.Add(series_common);
+                    this.chart_patientTmp.Series["patientTmp"].Points.DataBind(table1.AsEnumerable(), "时间", "数据", "");
+                    break;
+                case CHARTTYPE.AIR_OUTLET_TMP:
+                    this.chart_air_outlet_tmp.Legends.Clear(); //清除chart_workData的legend
+                    this.chart_air_outlet_tmp.ChartAreas.Add(chartArea_common);
+                    this.chart_air_outlet_tmp.Series.Add(series_common);
+                    this.chart_air_outlet_tmp.Series["airOutLetTmp"].Points.DataBind(table1.AsEnumerable(), "时间", "数据", "");
+                    break;
+                case CHARTTYPE.FLOW:
+                    this.chart_flow.Legends.Clear(); //清除chart_workData的legend
+                    this.chart_flow.ChartAreas.Add(chartArea_common);
+                    this.chart_flow.Series.Add(series_common);
+                    this.chart_flow.Series["flow"].Points.DataBind(table1.AsEnumerable(), "时间", "数据", "");
+                    break;
+                case CHARTTYPE.OXY_CONCENTRATION:
+                    this.chart_oxy_concentration.Legends.Clear(); //清除chart_workData的legend
+                    this.chart_oxy_concentration.ChartAreas.Add(chartArea_common);
+                    this.chart_oxy_concentration.Series.Add(series_common);
+                    this.chart_oxy_concentration.Series["oxyConcentration"].Points.DataBind(table1.AsEnumerable(), "时间", "数据", "");
+                    break;
+                default:
+                    MessageBox.Show("Unkonw chart type in common_series!");
+                    break;
+            }
+            #endregion
         }
 
-        public void ShowAllCharts(DateTime tmBegin,DateTime tmEnd)
+        public void ShowUsageChart(DateTime tmBegin,DateTime tmEnd)
         {
             //从FileMngr的Dictionary中得到信息放入DataMngr的链表中
             DataMngr.GetUsageInfo();
@@ -298,11 +531,8 @@ namespace BreathingMachine
             //画其他的图
             //明天的任务，把  患者端温度，出气口温度，流量，氧浓度，一共4个图画出来
             //先画个3天的试一下
-            PaintPatientTmp(tmEnd,1);
+            //ShowPatientTmpChart(tmEnd,1);
             
-
-
-
         }
 
         public void ShowBasicInfo()
@@ -690,6 +920,73 @@ namespace BreathingMachine
             this.label_SN_Value.Text = DataMngr.GetSN(head, 2);
             this.label_softwarVer_Value.Text = DataMngr.GetSoftwareVer(head, 3);
         }
+        private void ClearChartInfo()
+        {
+            //病人温度
+            if (this.chart_patientTmp.Titles != null)
+            {
+                this.chart_patientTmp.Titles.Clear();
+            }
+            if (this.chart_patientTmp.Series != null)
+            {
+                this.chart_patientTmp.Series.Clear();
+            }
+            if (this.chart_patientTmp.ChartAreas != null)
+            {
+                this.chart_patientTmp.ChartAreas.Clear();
+            }
+            this.chart_patientTmp.BorderlineColor = Color.White;
+
+            //出气口温度
+            if (this.chart_air_outlet_tmp.Titles != null)
+            {
+                this.chart_air_outlet_tmp.Titles.Clear();
+            }
+            if (this.chart_air_outlet_tmp.Series != null)
+            {
+                this.chart_air_outlet_tmp.Series.Clear();
+            }
+            if (this.chart_air_outlet_tmp.ChartAreas != null)
+            {
+                this.chart_air_outlet_tmp.ChartAreas.Clear();
+            }
+            this.chart_air_outlet_tmp.BorderlineColor = Color.White;
+
+            //流量
+            if (this.chart_flow.Titles != null)
+            {
+                this.chart_flow.Titles.Clear();
+            }
+            if (this.chart_flow.Series != null)
+            {
+                this.chart_flow.Series.Clear();
+            }
+            if (this.chart_flow.ChartAreas != null)
+            {
+                this.chart_flow.ChartAreas.Clear();
+            }
+            this.chart_flow.BorderlineColor = Color.White;
+
+            //氧浓度
+            if (this.chart_oxy_concentration.Titles != null)
+            {
+                this.chart_oxy_concentration.Titles.Clear();
+            }
+            if (this.chart_oxy_concentration.Series != null)
+            {
+                this.chart_oxy_concentration.Series.Clear();
+            }
+            if (this.chart_oxy_concentration.ChartAreas != null)
+            {
+                this.chart_oxy_concentration.ChartAreas.Clear();
+            }
+            this.chart_oxy_concentration.BorderlineColor = Color.White;
+
+            //this.chart_patientTmp.Location = new Point(0, 0);
+            //this.chart_air_outlet_tmp.Location = new Point(0, DataMngr.m_chartSize.Height);
+            //this.chart_flow.Location=new Point(0, DataMngr.m_chartSize.Height*2);
+            //this.chart_oxy_concentration.Location = new Point(0, DataMngr.m_chartSize.Height * 3);
+        }
 
         private void 导入数据ToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -703,11 +1000,17 @@ namespace BreathingMachine
                 DataMngr.m_bDateTimePicker_ValueChanged = false;
                 this.tabControl1.SelectedIndex = 0;
 
+                this.label_dateFrom_Value.Text = "NA";
+                this.label_dateTo_Value.Text = "NA";
                 //如果重复点击按钮，要先清除之前Msg链表的资源
                 #region
                 if (FileMngr.m_workFileNameList != null)
                 {
                     FileMngr.m_workFileNameList.Clear();
+                }
+                if(FileMngr.m_workFileName_CanBeOpened_List!=null)
+                {
+                    FileMngr.m_workFileName_CanBeOpened_List.Clear();
                 }
                 if (FileMngr.m_alarmMsgList != null)
                 {
@@ -733,6 +1036,9 @@ namespace BreathingMachine
                 {
                     myCache.Clear();
                 }
+                //清除图表信息
+                ClearChartInfo();
+                
                 #endregion
                 string strPath = folderBrowserDialog_selectFolder.SelectedPath;//获取打开的文件路径名
                 //判断打开的文件夹是否有效
@@ -766,6 +1072,9 @@ namespace BreathingMachine
                 ////4.初始化workdata链表，使其有数据
                 //WorkDataList.InitWorkDataList();
                 //MessageBox.Show("WorkDataList.m_WorkData_List："+WorkDataList.m_WorkData_List.Count.ToString());
+
+                //初始化tree控件
+                InitTree();
 
                 
                 //5.显示app面板上基本信息的各个数据,显示最新的数据
@@ -1060,6 +1369,86 @@ namespace BreathingMachine
             this.listView_alarmInfo.Columns.Add("报警数据2", 120, HorizontalAlignment.Left);
            
         }
+
+        
+        private void InitTree()
+        {
+            #region
+            ////测试用例
+            //List<string> list_test = new List<string>();
+            //list_test.Add("DATA20171101");
+            //list_test.Add("DATA20171102");
+            //list_test.Add("DATA20171102");
+            //list_test.Add("DATA20161204");
+            //list_test.Add("DATA20171205");
+            //list_test.Add("DATA20181006");
+            //list_test.Add("DATA20181007");
+            //list_test.Add("DATA20181207");
+            //list_test.Add("DATA20181209");
+            #endregion
+            #region
+            if (this.treeView_detailChart != null)
+            {
+                this.treeView_detailChart.Nodes.Clear();
+            }
+
+            List<TreeNode> nodeList_year = new List<TreeNode>();
+            List<TreeNode> nodeList_month = new List<TreeNode>();
+
+            int i = 0;
+            int j = 0;
+            TreeNode node_year = new TreeNode();
+            TreeNode node_month = new TreeNode();
+            string prev_Year = "";
+            string prev_Month = "";
+            foreach(var fileName in FileMngr.m_workFileName_CanBeOpened_List)
+            //foreach (var fileName in list_test)
+            {
+                //文件名举例：DATA20171210
+                string strYear = fileName.Substring(4, 4);
+                string strMonth = fileName.Substring(8, 2);
+                string strDay = fileName.Substring(10, 2);
+
+                
+                TreeNode node_day = new TreeNode();
+
+                node_year.Text = strYear;
+                node_month.Text = strMonth;
+                node_day.Text = strDay;
+
+                if (prev_Year != strYear)
+                {
+                    i++;
+                    TreeNode tmp = new TreeNode();
+                    tmp.Text = strYear;
+                    nodeList_year.Add(tmp);
+                    this.treeView_detailChart.Nodes.Add(nodeList_year[i-1]);
+                    if (prev_Month == strMonth)
+                    {
+                        j++;
+                        TreeNode tmp1 = new TreeNode();
+                        tmp1.Text = strMonth;
+                        nodeList_month.Add(tmp1);
+                        nodeList_year[i - 1].Nodes.Add(nodeList_month[j - 1]);
+                    }
+                }
+                if (prev_Month != strMonth)
+                {
+                    j++;
+                    TreeNode tmp1 = new TreeNode();
+                    tmp1.Text = strMonth;
+                    nodeList_month.Add(tmp1);
+                    nodeList_year[i - 1].Nodes.Add(nodeList_month[j - 1]);
+                }
+
+                nodeList_month[j - 1].Nodes.Add(node_day);
+
+                prev_Year = strYear;
+                prev_Month = strMonth;
+            }
+            #endregion
+        }
+
         private void InitListViewColumnHead_workData()
         {
             //获取机型号
@@ -1168,6 +1557,12 @@ namespace BreathingMachine
             }
             #endregion
         }
+        private void InitDetailChartsSize()
+        {
+            DataMngr.m_chartSize = new CHART_SIZE();
+            DataMngr.m_chartSize.Width = 1100;
+            DataMngr.m_chartSize.Height = 200;
+        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -1209,10 +1604,16 @@ namespace BreathingMachine
             this.label_setAdaultChild_Value.Text = "";
             #endregion
 
+            //初始化详细图表的大小
+            InitDetailChartsSize();
+
             //初始化FileMngr中的链表
             FileMngr.m_workFileNameList = new List<string>();
+            FileMngr.m_workFileName_CanBeOpened_List = new List<string>();
             FileMngr.m_alarmMsgList = new List<ALARM_INFO_MESSAGE>();
             FileMngr.m_workHead_Msg_Map = new Dictionary<WORK_INFO_HEAD, List<WORK_INFO_MESSAGE>>();
+
+            DataMngr.m_listInfo = new List<DETAIL_CHART_INFO>();
 
             //listview虚列表初始化
             this.listView_alarmInfo.View = View.Details;
@@ -1587,6 +1988,7 @@ namespace BreathingMachine
                 ShowAlarmList(TmLow, TmHight);
 
                 //将工作列表存入m_WorkData_List中，不会显示，需要点首页来触发
+                //为了实现分页功能
                 if (WorkDataList.m_WorkData_List == null)
                 {
                     WorkDataList.InitWorkDataList(TmLow, TmHight);
@@ -1597,7 +1999,7 @@ namespace BreathingMachine
                     WorkDataList.InitWorkDataList(TmLow, TmHight);
                 }
             }
-            ShowAllCharts(this.dateTimePicker_Begin.Value, this.dateTimePicker_End.Value);
+            ShowUsageChart(this.dateTimePicker_Begin.Value, this.dateTimePicker_End.Value);
 
             //将工作信息的内容填充，相当于点了一下首页
             if (WorkDataList.m_WorkData_List == null || WorkDataList.m_WorkData_List.Count == 0)
@@ -1710,7 +2112,7 @@ namespace BreathingMachine
             //if (g_bEngineerMode)
             {
                 ShowAlarmList(TmLow, TmHight);
-                
+
                 //将工作列表存入m_WorkData_List中，不会显示，需要点首页来触发
                 if (WorkDataList.m_WorkData_List == null)
                 {
@@ -1722,7 +2124,7 @@ namespace BreathingMachine
                     WorkDataList.InitWorkDataList(TmLow, TmHight);
                 }
             }
-            ShowAllCharts(this.dateTimePicker_Begin.Value, this.dateTimePicker_End.Value);
+            ShowUsageChart(this.dateTimePicker_Begin.Value, this.dateTimePicker_End.Value);
 
             //将工作信息的内容填充，相当于点了一下首页
             if (WorkDataList.m_WorkData_List == null || WorkDataList.m_WorkData_List.Count == 0)
@@ -1732,8 +2134,6 @@ namespace BreathingMachine
             WorkDataList.m_nCurrentPage = 1;
             ShowWorkdataListPage(WorkDataList.m_WorkData_List, WorkDataList.m_nCurrentPage);
         }
-
-        
 
         private void button_add_patientInfo_Click(object sender, EventArgs e)
         {
@@ -1964,6 +2364,29 @@ namespace BreathingMachine
             
         }
 
+        private void treeView_detailChart_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if(e.Node.Parent==null)
+            {
+                //MessageBox.Show("没有父节点");
+                return;
+            }
+            else
+            {
+                if(e.Node.Parent.Parent!=null)
+                {
+                    //找到了最终的子节点
+                    string strDate = e.Node.Parent.Parent.Text +"/"+ e.Node.Parent.Text +"/"+ e.Node.Text + " 23:59:59";
+                    this.ShowDetailCharts(Convert.ToDateTime(strDate), 1);
+                }
+                //else
+                //{
+                //    MessageBox.Show("月");
+                //}
+            }
+        }
+
+       
     }
     public class FileMngr
     {
@@ -1980,6 +2403,7 @@ namespace BreathingMachine
         public static string m_dirPath;                         //打开文件夹时的路径
         public static string m_alarmFileName;                   //报警文件名
         public static List<string> m_workFileNameList;              //工作文件路径的链表(工作文件有很多，每天一个)
+        public static List<string> m_workFileName_CanBeOpened_List; //能被打开的工作文件链表
 
         public static ALARM_INFO_HEAD m_alarmHead;              //alarm的消息头
         public static List<ALARM_INFO_MESSAGE> m_alarmMsgList;  //alarm消息体链表
@@ -2169,6 +2593,7 @@ namespace BreathingMachine
                 //if (VerifyField(buffer))   //暂时屏蔽
                 if (true)
                 {
+                    m_workFileName_CanBeOpened_List.Add(workFile);
                     br.Read(buffer, 0, len_head);
                     alarmHead = GetObject<WORK_INFO_HEAD>(buffer, len_head);
                     m_lastWorkHead = alarmHead;         //保留最后一个工作信息头，作为最新的信息头，刷新到app基本信息中

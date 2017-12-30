@@ -11,6 +11,8 @@ namespace BreathingMachine
 {
     class DataMngr
     {
+        public static List<DETAIL_CHART_INFO> m_listInfo;
+        public static CHART_SIZE m_chartSize;
         public static bool m_bPatientInfo_Geted;
         public static bool m_bDateTimePicker_ValueChanged;
         public static bool m_advanceMode;

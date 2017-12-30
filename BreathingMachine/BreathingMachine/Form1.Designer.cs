@@ -28,12 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea10 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend10 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend7 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend8 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea9 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend9 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.语言设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,7 +106,13 @@
             this.panel_for_charts = new System.Windows.Forms.Panel();
             this.chart_workData = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.tabPage_detailChart = new System.Windows.Forms.TabPage();
+            this.panel_detailCharts = new System.Windows.Forms.Panel();
+            this.chart_oxy_concentration = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.chart_flow = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.chart_air_outlet_tmp = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chart_patientTmp = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.treeView_detailChart = new System.Windows.Forms.TreeView();
             this.tabPage_alarmList = new System.Windows.Forms.TabPage();
             this.listView_alarmInfo = new System.Windows.Forms.ListView();
             this.tabPage_workdatalist = new System.Windows.Forms.TabPage();
@@ -144,7 +155,12 @@
             this.panel_for_charts.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart_workData)).BeginInit();
             this.tabPage_detailChart.SuspendLayout();
+            this.panel_detailCharts.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart_oxy_concentration)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart_flow)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart_air_outlet_tmp)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart_patientTmp)).BeginInit();
+            this.panel4.SuspendLayout();
             this.tabPage_alarmList.SuspendLayout();
             this.tabPage_workdatalist.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -808,23 +824,23 @@
             // chart_workData
             // 
             this.chart_workData.BorderlineColor = System.Drawing.Color.Black;
-            chartArea1.AxisY.IsReversed = true;
-            chartArea1.AxisY.MaximumAutoSize = 100F;
-            chartArea1.Name = "ChartArea1";
-            this.chart_workData.ChartAreas.Add(chartArea1);
+            chartArea10.AxisY.IsReversed = true;
+            chartArea10.AxisY.MaximumAutoSize = 100F;
+            chartArea10.Name = "ChartArea1";
+            this.chart_workData.ChartAreas.Add(chartArea10);
             this.chart_workData.Dock = System.Windows.Forms.DockStyle.Top;
-            legend1.Name = "Legend1";
-            this.chart_workData.Legends.Add(legend1);
+            legend10.Name = "Legend1";
+            this.chart_workData.Legends.Add(legend10);
             this.chart_workData.Location = new System.Drawing.Point(0, 0);
             this.chart_workData.Name = "chart_workData";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.RangeColumn;
-            series1.Legend = "Legend1";
-            series1.Name = "usage";
-            series1.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
-            series1.YValuesPerPoint = 2;
-            series1.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Time;
-            this.chart_workData.Series.Add(series1);
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.RangeColumn;
+            series2.Legend = "Legend1";
+            series2.Name = "usage";
+            series2.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
+            series2.YValuesPerPoint = 2;
+            series2.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Time;
+            this.chart_workData.Series.Add(series2);
             this.chart_workData.Size = new System.Drawing.Size(804, 203);
             this.chart_workData.TabIndex = 0;
             this.chart_workData.Text = "chart_usage";
@@ -832,7 +848,8 @@
             // tabPage_detailChart
             // 
             this.tabPage_detailChart.AutoScroll = true;
-            this.tabPage_detailChart.Controls.Add(this.chart_patientTmp);
+            this.tabPage_detailChart.Controls.Add(this.panel_detailCharts);
+            this.tabPage_detailChart.Controls.Add(this.panel4);
             this.tabPage_detailChart.Location = new System.Drawing.Point(4, 22);
             this.tabPage_detailChart.Name = "tabPage_detailChart";
             this.tabPage_detailChart.Padding = new System.Windows.Forms.Padding(3);
@@ -841,30 +858,97 @@
             this.tabPage_detailChart.Text = "详细图表";
             this.tabPage_detailChart.UseVisualStyleBackColor = true;
             // 
+            // panel_detailCharts
+            // 
+            this.panel_detailCharts.AutoScroll = true;
+            this.panel_detailCharts.Controls.Add(this.chart_oxy_concentration);
+            this.panel_detailCharts.Controls.Add(this.chart_flow);
+            this.panel_detailCharts.Controls.Add(this.chart_air_outlet_tmp);
+            this.panel_detailCharts.Controls.Add(this.chart_patientTmp);
+            this.panel_detailCharts.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel_detailCharts.Location = new System.Drawing.Point(132, 3);
+            this.panel_detailCharts.Name = "panel_detailCharts";
+            this.panel_detailCharts.Size = new System.Drawing.Size(675, 383);
+            this.panel_detailCharts.TabIndex = 2;
+            // 
+            // chart_oxy_concentration
+            // 
+            this.chart_oxy_concentration.BorderlineColor = System.Drawing.Color.Black;
+            chartArea6.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea6.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            chartArea6.Name = "ChartArea1";
+            this.chart_oxy_concentration.ChartAreas.Add(chartArea6);
+            legend6.Name = "Legend1";
+            this.chart_oxy_concentration.Legends.Add(legend6);
+            this.chart_oxy_concentration.Location = new System.Drawing.Point(6, 305);
+            this.chart_oxy_concentration.Name = "chart_oxy_concentration";
+            this.chart_oxy_concentration.Size = new System.Drawing.Size(439, 107);
+            this.chart_oxy_concentration.TabIndex = 3;
+            this.chart_oxy_concentration.Text = "chart3";
+            // 
+            // chart_flow
+            // 
+            this.chart_flow.BorderlineColor = System.Drawing.Color.Black;
+            chartArea7.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea7.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            chartArea7.Name = "ChartArea1";
+            this.chart_flow.ChartAreas.Add(chartArea7);
+            legend7.Name = "Legend1";
+            this.chart_flow.Legends.Add(legend7);
+            this.chart_flow.Location = new System.Drawing.Point(32, 192);
+            this.chart_flow.Name = "chart_flow";
+            this.chart_flow.Size = new System.Drawing.Size(439, 107);
+            this.chart_flow.TabIndex = 2;
+            this.chart_flow.Text = "chart2";
+            // 
+            // chart_air_outlet_tmp
+            // 
+            this.chart_air_outlet_tmp.BorderlineColor = System.Drawing.Color.Black;
+            chartArea8.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea8.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            chartArea8.Name = "ChartArea1";
+            this.chart_air_outlet_tmp.ChartAreas.Add(chartArea8);
+            legend8.Name = "Legend1";
+            this.chart_air_outlet_tmp.Legends.Add(legend8);
+            this.chart_air_outlet_tmp.Location = new System.Drawing.Point(4, 115);
+            this.chart_air_outlet_tmp.Name = "chart_air_outlet_tmp";
+            this.chart_air_outlet_tmp.Size = new System.Drawing.Size(439, 107);
+            this.chart_air_outlet_tmp.TabIndex = 1;
+            this.chart_air_outlet_tmp.Text = "chart1";
+            // 
             // chart_patientTmp
             // 
             this.chart_patientTmp.BorderlineColor = System.Drawing.Color.Black;
-            chartArea2.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            chartArea2.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            chartArea2.Name = "ChartArea1";
-            this.chart_patientTmp.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chart_patientTmp.Legends.Add(legend2);
-            this.chart_patientTmp.Location = new System.Drawing.Point(6, 3);
+            chartArea9.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea9.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            chartArea9.Name = "ChartArea1";
+            this.chart_patientTmp.ChartAreas.Add(chartArea9);
+            legend9.Name = "Legend1";
+            this.chart_patientTmp.Legends.Add(legend9);
+            this.chart_patientTmp.Location = new System.Drawing.Point(2, 2);
             this.chart_patientTmp.Name = "chart_patientTmp";
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series2.EmptyPointStyle.BackImageWrapMode = System.Windows.Forms.DataVisualization.Charting.ChartImageWrapMode.Unscaled;
-            series2.EmptyPointStyle.Color = System.Drawing.Color.Black;
-            series2.EmptyPointStyle.CustomProperties = "LabelStyle=Bottom";
-            series2.EmptyPointStyle.IsValueShownAsLabel = true;
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            series2.YValuesPerPoint = 4;
-            this.chart_patientTmp.Series.Add(series2);
-            this.chart_patientTmp.Size = new System.Drawing.Size(746, 223);
+            this.chart_patientTmp.Size = new System.Drawing.Size(439, 107);
             this.chart_patientTmp.TabIndex = 0;
             this.chart_patientTmp.Text = "chart1";
+            // 
+            // panel4
+            // 
+            this.panel4.AutoScroll = true;
+            this.panel4.Controls.Add(this.treeView_detailChart);
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel4.Location = new System.Drawing.Point(3, 3);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(129, 383);
+            this.panel4.TabIndex = 1;
+            // 
+            // treeView_detailChart
+            // 
+            this.treeView_detailChart.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView_detailChart.Location = new System.Drawing.Point(0, 0);
+            this.treeView_detailChart.Name = "treeView_detailChart";
+            this.treeView_detailChart.Size = new System.Drawing.Size(129, 383);
+            this.treeView_detailChart.TabIndex = 0;
+            this.treeView_detailChart.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView_detailChart_NodeMouseDoubleClick);
             // 
             // tabPage_alarmList
             // 
@@ -1179,7 +1263,12 @@
             this.panel_for_charts.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.chart_workData)).EndInit();
             this.tabPage_detailChart.ResumeLayout(false);
+            this.panel_detailCharts.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.chart_oxy_concentration)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart_flow)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart_air_outlet_tmp)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart_patientTmp)).EndInit();
+            this.panel4.ResumeLayout(false);
             this.tabPage_alarmList.ResumeLayout(false);
             this.tabPage_workdatalist.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
@@ -1296,6 +1385,12 @@
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Button button_add_patientInfo;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog_save2PDF;
+        private System.Windows.Forms.Panel panel_detailCharts;
+        private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.TreeView treeView_detailChart;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart_air_outlet_tmp;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart_oxy_concentration;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart_flow;
 
 
     }

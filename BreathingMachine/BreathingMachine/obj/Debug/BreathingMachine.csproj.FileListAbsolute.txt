@@ -7,4 +7,6 @@ D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Debug\BreathingMachine.exe
 D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Debug\BreathingMachine.pdb
 D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Debug\BreathingMachine.exe
 D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Debug\BreathingMachine.pdb
+D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Debug\itextsharp.dll
+D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Debug\BreathingMachine.Form_PatientInfo.resources
 D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Debug\BreathingMachine.csprojResolveAssemblyReference.cache

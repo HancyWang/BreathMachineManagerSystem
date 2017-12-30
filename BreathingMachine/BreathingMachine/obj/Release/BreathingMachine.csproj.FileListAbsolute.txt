@@ -8,5 +8,3 @@ D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.Pr
 D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.csproj.GenerateResource.Cache
 D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.exe
 D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.pdb
-D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Release\BreathingMachine.pdb
-D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.csprojResolveAssemblyReference.cache

@@ -17,8 +17,11 @@ namespace BreathingMachine
         public static List<WorkData> m_WorkData_List;
         
 
-        public static void InitWorkDataList(DateTime tmBegin,DateTime tmEnd)
+        public static void InitWorkDataList(DateTime tmLow,DateTime tmHigh)
         {
+            DateTime tmBegin = new DateTime(tmLow.Year, tmLow.Month, tmLow.Day, 0, 0, 0);
+            DateTime tmEnd = new DateTime(tmHigh.Year, tmHigh.Month, tmHigh.Day, 23, 59, 59);
+
             m_WorkData_List = new List<WorkData>();
             #region
             int i = 1;

@@ -6,13 +6,36 @@ using System.Threading.Tasks;
 
 namespace BreathingMachine
 {
+    public struct DETAIL_CHART_INFO
+    {
+        public DateTime tm;
+        public int patient_tmp;
+        public int air_outlet_tmp;
+        public int flow;
+        public int oxy_concentration;
+    }
+
+    public struct CHART_SIZE
+    {
+        public int Height;
+        public int Width;
+    }
+
+    public enum CHARTTYPE
+    {
+        PATIENT_TMP,
+        AIR_OUTLET_TMP,
+        FLOW,
+        OXY_CONCENTRATION
+    }
+
     public class BasicInfo
     {
 
     }
 
 
-
+    //以下是从C++头文件通过软件转换过来的
 
     public partial class NativeConstants
     {
