@@ -111,10 +111,11 @@ namespace BreathingMachine
 
             double day_min = (tm_begin - tmFirstDay).TotalDays - 1; //x轴上的最小值 ,-1表示多放前一天，为了图表显示好看
             double day_max = (tm_end - tmFirstDay).TotalDays + 1;   //y轴上的最大值,+1表示日期在后推一天
-
+            //var duration = (tmEnd - tmBegin).TotalDays;
             //画图
             this.chart_workData.Series.Clear();//清除所有图
             this.chart_workData.ChartAreas.Clear();
+            this.chart_workData.Titles.Clear();
 
             Series usage = new Series("usage");
             ChartArea chartArea_usage = new ChartArea("chartArea_usage");
@@ -162,14 +163,16 @@ namespace BreathingMachine
             //chartArea_usage.Position.Height = 100;
             //chartArea_usage.Position.Width = 100;
             #endregion
-            this.chart_workData.ChartAreas["chartArea_usage"].AxisY.Title = "usage";
-            this.chart_workData.ChartAreas["chartArea_usage"].Position.Auto = false;
-            this.chart_workData.ChartAreas["chartArea_usage"].Position.X = 30;
-            this.chart_workData.ChartAreas["chartArea_usage"].Position.Y = 30;
-            this.chart_workData.ChartAreas["chartArea_usage"].Position.Height = 100;
-            this.chart_workData.ChartAreas["chartArea_usage"].Position.Width = 100;
-
             this.chart_workData.Legends.Clear(); //清除chart_workData的legend
+
+            this.chart_workData.Location = new Point(0, 0);
+            this.chart_workData.Titles.Add("usage");
+            //这里要调整
+            this.chart_workData.Width = DataMngr.m_chartSize.Width;    //按照显示天数的比例来调整图表的宽度
+            this.chart_workData.Height = DataMngr.m_chartSize.Height;
+            this.chart_workData.BorderlineColor = Color.Gray;
+            this.chart_workData.BorderlineWidth = 1;
+            this.chart_workData.BorderlineDashStyle = ChartDashStyle.Solid;
 
             #region
             //debug
@@ -395,7 +398,6 @@ namespace BreathingMachine
                     this.chart_flow.BorderlineWidth = 1;
                     this.chart_flow.BorderlineDashStyle = ChartDashStyle.Solid;
 
-
                     series_common = new Series("flow");
                     chartArea_common = new ChartArea("chartArea_flow");
                     series_common.ChartArea = "chartArea_flow";
@@ -518,6 +520,7 @@ namespace BreathingMachine
                     break;
             }
             #endregion
+            table1 = null;
         }
 
         public void ShowUsageChart(DateTime tmBegin,DateTime tmEnd)
@@ -527,12 +530,6 @@ namespace BreathingMachine
 
             //画usage图
             PaintUsageChart(tmBegin, tmEnd);
-            
-            //画其他的图
-            //明天的任务，把  患者端温度，出气口温度，流量，氧浓度，一共4个图画出来
-            //先画个3天的试一下
-            //ShowPatientTmpChart(tmEnd,1);
-            
         }
 
         public void ShowBasicInfo()
@@ -990,6 +987,8 @@ namespace BreathingMachine
 
         private void 导入数据ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            
+
             //加载文件内容到内存中，存放在FileMngr的链表中
             #region
             if (this.folderBrowserDialog_selectFolder.ShowDialog() == DialogResult.OK)
@@ -999,7 +998,7 @@ namespace BreathingMachine
                 //规避方法：先导入文件，触发时间控件后，才能操作tabpage
                 DataMngr.m_bDateTimePicker_ValueChanged = false;
                 this.tabControl1.SelectedIndex = 0;
-
+                
                 this.label_dateFrom_Value.Text = "NA";
                 this.label_dateTo_Value.Text = "NA";
                 //如果重复点击按钮，要先清除之前Msg链表的资源
@@ -1076,7 +1075,9 @@ namespace BreathingMachine
                 //初始化tree控件
                 InitTree();
 
-                
+                //多次导入文件夹时,将高级模式里的子项全部设为uncheck状态
+                显示所有数据ToolStripMenuItem.CheckState = CheckState.Unchecked;
+
                 //5.显示app面板上基本信息的各个数据,显示最新的数据
                 ShowBasicInfo();
                 #region
@@ -1116,6 +1117,17 @@ namespace BreathingMachine
                 MessageBox.Show(LanguageMngr.no_data());
                 return;
             }
+
+            if (DataMngr.m_bDateTimePicker_ValueChanged == false)
+            {
+                MessageBox.Show("请选择时间！");
+                return;
+            }
+            DateTime tm_begin = this.dateTimePicker_Begin.Value;
+            DateTime tm_end = this.dateTimePicker_End.Value;
+            DateTime tmBegin = new DateTime(tm_begin.Year, tm_begin.Month, tm_begin.Day, 0, 0, 0);
+            DateTime tmEnd = new DateTime(tm_end.Year, tm_end.Month, tm_end.Day, 23, 59, 59);
+
             //MessageBox.Show("请选择要保存文件的文件夹");
             //先将数据到到本地
             string strPath = "";
@@ -1134,96 +1146,309 @@ namespace BreathingMachine
             //写数据到两个文件中,先做个.csv格式的
             //先写alarm.csv
             #region
+            sw_alarm.WriteLine("设备型号：" + "," + this.label_equipType_Value.Text);
+            sw_alarm.WriteLine("SN：" + "," + this.label_SN_Value.Text);
+            sw_alarm.WriteLine("软件版本：" + "," + this.label_softwarVer_Value.Text);
+            if (DataMngr.m_machineType == 2)
+            {
+                sw_alarm.WriteLine("No." + "," + "日期" + "," + "运行模式" + "," + "报警码" + "," + "报警信息" + "," + "报警数据值1" + "," + "报警数据值2");
+            }
+            else if (DataMngr.m_machineType == 1)
+            {
+                sw_alarm.WriteLine("No." + "," + "日期" + "," + "报警码" + "," + "报警信息" + "," + "报警数据值1" + "," + "报警数据值2");
+            }
+            else
+            {
+                //do nothing
+            }
             int i = 1;
-            sw_alarm.WriteLine("No." + "," + "日期" + "," + "运行模式" + "," + "报警码" + "," + "报警信息" + "," + "报警数据值1" + "," + "报警数据值2");
             foreach (var alarmMsg in FileMngr.m_alarmMsgList)
             {
+                #region
                 string line = "";
-                //if(FileMngr.VerifyAlarmMsg(FileMngr.GetData(alarmMsg))) //校验
+                DateTime tmFromMsg = new DateTime(100 * Convert.ToInt32(alarmMsg.YEAR1) + Convert.ToInt32(alarmMsg.YEAR2),
+                                                        Convert.ToInt32(alarmMsg.MONTH),
+                                                        Convert.ToInt32(alarmMsg.DAY),
+                                                        Convert.ToInt32(alarmMsg.HOUR),
+                                                        Convert.ToInt32(alarmMsg.MINUTE),
+                                                        Convert.ToInt32(alarmMsg.SECOND));
+                //先屏蔽，先修改测试文件，改完在开
+                //if(tmFromMsg>=tmBegin&&tmFromMsg<=tmEnd)
                 {
-                    DateTime tmFromMsg = new DateTime(100 * Convert.ToInt32(alarmMsg.YEAR1) + Convert.ToInt32(alarmMsg.YEAR2),
-                                                         Convert.ToInt32(alarmMsg.MONTH),
-                                                         Convert.ToInt32(alarmMsg.DAY),
-                                                         Convert.ToInt32(alarmMsg.HOUR),
-                                                         Convert.ToInt32(alarmMsg.MINUTE),
-                                                         Convert.ToInt32(alarmMsg.SECOND));
-                    line = i.ToString() + ","
+                    #region
+                    if (DataMngr.m_machineType == 2)
+                    {
+                        line = i.ToString() + ","
                         + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
                         + Convert.ToString(Convert.ToBoolean(alarmMsg.RUNNIN_MODE) ? "雾化" : "湿化") + ","
                         + Convert.ToString(Convert.ToString(alarmMsg.ALARM_CODE)) + ","
                         + Convert.ToString(FileMngr.AlarmCode2Str(alarmMsg.ALARM_CODE)) + ","
                         + Convert.ToString(alarmMsg.ALARM_DATA_L) + ","
                         + Convert.ToString(alarmMsg.ALARM_DATA_H);
+                    }
+                    else if (DataMngr.m_machineType == 1)
+                    {
+                        line = i.ToString() + ","
+                        + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
+                        + Convert.ToString(Convert.ToString(alarmMsg.ALARM_CODE)) + ","
+                        + Convert.ToString(FileMngr.AlarmCode2Str(alarmMsg.ALARM_CODE)) + ","
+                        + Convert.ToString(alarmMsg.ALARM_DATA_L) + ","
+                        + Convert.ToString(alarmMsg.ALARM_DATA_H);
+                    }
+                    else
+                    {
+                        //do nothing
+                    }
                     sw_alarm.WriteLine(line);
                     i++;
+                    #endregion
                 }
+                #endregion
             }
             #endregion
 
             //在写workdata.csv
             //备注说明:excel2007最多能存1048576行
             #region
+            sw_workData.WriteLine("设备型号：" + "," + this.label_equipType_Value.Text);
+            sw_workData.WriteLine("SN：" + "," + this.label_SN_Value.Text);
+            sw_workData.WriteLine("软件版本：" + "," + this.label_softwarVer_Value.Text);
             i = 1;
             //写列头
             #region
-            sw_workData.WriteLine("No." + ","
-                                + "日期" + ","
-                                + "运行模式" + ","
-                                + "设定温度" + ","
-                                + "设定流量" + ","
-                                + "设定高氧浓度报警" + ","
-                                + "设定低氧浓度报警" + ","
-                                + "设定雾化量档位" + ","
-                                + "设定雾化时间" + ","
-                                + "设定成人儿童模式" + ","
-                                + "患者端温度" + ","
-                                + "出气口温度" + ","
-                                + "加热盘温度" + ","
-                                + "环境温度" + ","
-                                + "驱动板温度" + ","
-                                + "流量" + ","
-                                + "氧浓度" + ","
-                                + "气道压力" + ","
-                                + "回路类型" + ","
-                                + "故障1" + ","
-                                + "故障2" + ","
-                                + "故障3" + ","
-                                + "故障4" + ","
-                                + "故障5" + ","
-                                + "故障6" + ","
-                                + "故障7" + ","
-                                + "故障8" + ","
-                                + "故障9" + ","
-                                + "故障10" + ","
-                                + "故障11" + ","
-                                + "故障12" + ","
-                                + "雾化DAC数值L" + ","
-                                + "雾化DAC数值H" + ","
-                                + "雾化ADC数值L" + ","
-                                + "雾化ADC数值H" + ","
-                                + "回路加热PWM数值L" + ","
-                                + "回路加热PWM数值H" + ","
-                                + "回路加热ADC数值L" + ","
-                                + "回路加热ADC数值H" + ","
-                                + "加热盘加热PWM数值L" + ","
-                                + "加热盘加热PWM数值H" + ","
-                                + "加热盘加热ADC数值L" + ","
-                                + "加热盘加热ADC数值H" + ","
-                                + "主马达驱动数值L" + ","
-                                + "主马达驱动数值H" + ","
-                                + "主马达转速数值L" + ","
-                                + "主马达转速数值H" + ","
-                                + "压力传感器ADC值L" + ","
-                                + "压力传感器ADC值H" + ","
-                                + "水位传感器HADC值L" + ","
-                                + "水位传感器HADC值H" + ","
-                                + "水位传感器LADC值L" + ","
-                                + "水位传感器LADC值H" + ","
-                                + "散热风扇驱动数值L" + ","
-                                + "散热风扇驱动数值H" + ","
-                                + "散热风扇转速数值L" + ","
-                                + "散热风扇转速数值H" + ","
-                                );
+            if(DataMngr.m_advanceMode==false)
+            {
+                //没有高级模式
+                #region
+                if (DataMngr.m_machineType == 2)
+                {
+                    //VNU002,有运行模式
+                    sw_workData.WriteLine("No." + ","+ "日期" + ","+ "运行模式" + ","
+                                    + "设定成人儿童模式" + ","+ "患者端温度" + ","
+                                    + "出气口温度" + ","+ "流量" + ","+ "氧浓度");
+                }
+                else
+                {
+                    //VNU001,没有运行模式
+                    sw_workData.WriteLine("No." + ","+ "日期" + ","
+                                    + "设定成人儿童模式" + ","+ "患者端温度" + ","
+                                    + "出气口温度" + ","+ "流量" + ","+ "氧浓度");
+                }
+                #endregion
+            }
+            else
+            {
+                #region
+                //高级模式-所有数据
+                if (显示所有数据ToolStripMenuItem.CheckState == CheckState.Checked)
+                {
+                    if(DataMngr.m_machineType==2)
+                    {
+                        //有运行模式
+                        #region
+                        sw_workData.WriteLine("No." + ","
+                                        + "日期" + ","
+                                        + "运行模式" + ","
+                                        + "设定温度" + ","
+                                        + "设定流量" + ","
+                                        + "设定高氧浓度报警" + ","
+                                        + "设定低氧浓度报警" + ","
+                                        + "设定雾化量档位" + ","
+                                        + "设定雾化时间" + ","
+                                        + "设定成人儿童模式" + ","
+                                        + "患者端温度" + ","
+                                        + "出气口温度" + ","
+                                        + "加热盘温度" + ","
+                                        + "环境温度" + ","
+                                        + "驱动板温度" + ","
+                                        + "流量" + ","
+                                        + "氧浓度" + ","
+                                        + "气道压力" + ","
+                                        + "回路类型" + ","
+                                        + "故障1" + ","
+                                        + "故障2" + ","
+                                        + "故障3" + ","
+                                        + "故障4" + ","
+                                        + "故障5" + ","
+                                        + "故障6" + ","
+                                        + "故障7" + ","
+                                        + "故障8" + ","
+                                        + "故障9" + ","
+                                        + "故障10" + ","
+                                        + "故障11" + ","
+                                        + "故障12" + ","
+                                        + "雾化DAC数值L" + ","
+                                        + "雾化DAC数值H" + ","
+                                        + "雾化ADC数值L" + ","
+                                        + "雾化ADC数值H" + ","
+                                        + "回路加热PWM数值L" + ","
+                                        + "回路加热PWM数值H" + ","
+                                        + "回路加热ADC数值L" + ","
+                                        + "回路加热ADC数值H" + ","
+                                        + "加热盘加热PWM数值L" + ","
+                                        + "加热盘加热PWM数值H" + ","
+                                        + "加热盘加热ADC数值L" + ","
+                                        + "加热盘加热ADC数值H" + ","
+                                        + "主马达驱动数值L" + ","
+                                        + "主马达驱动数值H" + ","
+                                        + "主马达转速数值L" + ","
+                                        + "主马达转速数值H" + ","
+                                        + "压力传感器ADC值L" + ","
+                                        + "压力传感器ADC值H" + ","
+                                        + "水位传感器HADC值L" + ","
+                                        + "水位传感器HADC值H" + ","
+                                        + "水位传感器LADC值L" + ","
+                                        + "水位传感器LADC值H" + ","
+                                        + "散热风扇驱动数值L" + ","
+                                        + "散热风扇驱动数值H" + ","
+                                        + "散热风扇转速数值L" + ","
+                                        + "散热风扇转速数值H");
+                        #endregion
+                    }
+                    else
+                    {
+                        //没有运行模式
+                        #region
+                        sw_workData.WriteLine("No." + ","
+                                        + "日期" + ","
+                                        //+ "运行模式" + ","
+                                        + "设定温度" + ","
+                                        + "设定流量" + ","
+                                        + "设定高氧浓度报警" + ","
+                                        + "设定低氧浓度报警" + ","
+                                        + "设定雾化量档位" + ","
+                                        + "设定雾化时间" + ","
+                                        + "设定成人儿童模式" + ","
+                                        + "患者端温度" + ","
+                                        + "出气口温度" + ","
+                                        + "加热盘温度" + ","
+                                        + "环境温度" + ","
+                                        + "驱动板温度" + ","
+                                        + "流量" + ","
+                                        + "氧浓度" + ","
+                                        + "气道压力" + ","
+                                        + "回路类型" + ","
+                                        + "故障1" + ","
+                                        + "故障2" + ","
+                                        + "故障3" + ","
+                                        + "故障4" + ","
+                                        + "故障5" + ","
+                                        + "故障6" + ","
+                                        + "故障7" + ","
+                                        + "故障8" + ","
+                                        + "故障9" + ","
+                                        + "故障10" + ","
+                                        + "故障11" + ","
+                                        + "故障12" + ","
+                                        + "雾化DAC数值L" + ","
+                                        + "雾化DAC数值H" + ","
+                                        + "雾化ADC数值L" + ","
+                                        + "雾化ADC数值H" + ","
+                                        + "回路加热PWM数值L" + ","
+                                        + "回路加热PWM数值H" + ","
+                                        + "回路加热ADC数值L" + ","
+                                        + "回路加热ADC数值H" + ","
+                                        + "加热盘加热PWM数值L" + ","
+                                        + "加热盘加热PWM数值H" + ","
+                                        + "加热盘加热ADC数值L" + ","
+                                        + "加热盘加热ADC数值H" + ","
+                                        + "主马达驱动数值L" + ","
+                                        + "主马达驱动数值H" + ","
+                                        + "主马达转速数值L" + ","
+                                        + "主马达转速数值H" + ","
+                                        + "压力传感器ADC值L" + ","
+                                        + "压力传感器ADC值H" + ","
+                                        + "水位传感器HADC值L" + ","
+                                        + "水位传感器HADC值H" + ","
+                                        + "水位传感器LADC值L" + ","
+                                        + "水位传感器LADC值H" + ","
+                                        + "散热风扇驱动数值L" + ","
+                                        + "散热风扇驱动数值H" + ","
+                                        + "散热风扇转速数值L" + ","
+                                        + "散热风扇转速数值H");
+                        #endregion
+                    }
+                    
+                }
+                else
+                {
+                    //高级模式-部分数据
+                    if (DataMngr.m_machineType == 2)
+                    {
+                        #region
+                        sw_workData.WriteLine("No." + ","
+                                        + "日期" + ","
+                                        + "运行模式" + ","
+                                        + "设定温度" + ","
+                                        + "设定流量" + ","
+                                        + "设定高氧浓度报警" + ","
+                                        + "设定低氧浓度报警" + ","
+                                        + "设定雾化量档位" + ","
+                                        + "设定雾化时间" + ","
+                                        + "设定成人儿童模式" + ","
+                                        + "患者端温度" + ","
+                                        + "出气口温度" + ","
+                                        + "加热盘温度" + ","
+                                        + "环境温度" + ","
+                                        + "驱动板温度" + ","
+                                        + "流量" + ","
+                                        + "氧浓度" + ","
+                                        + "气道压力" + ","
+                                        + "回路类型" + ","
+                                        + "故障1" + ","
+                                        + "故障2" + ","
+                                        + "故障3" + ","
+                                        + "故障4" + ","
+                                        + "故障5" + ","
+                                        + "故障6" + ","
+                                        + "故障7" + ","
+                                        + "故障8" + ","
+                                        + "故障9" + ","
+                                        + "故障10" + ","
+                                        + "故障11" + ","
+                                        + "故障12");
+                        #endregion
+                    }
+                    else
+                    {
+                        #region
+                        sw_workData.WriteLine("No." + ","
+                                        + "日期" + ","
+                                        //+ "运行模式" + ","
+                                        + "设定温度" + ","
+                                        + "设定流量" + ","
+                                        + "设定高氧浓度报警" + ","
+                                        + "设定低氧浓度报警" + ","
+                                        + "设定雾化量档位" + ","
+                                        + "设定雾化时间" + ","
+                                        + "设定成人儿童模式" + ","
+                                        + "患者端温度" + ","
+                                        + "出气口温度" + ","
+                                        + "加热盘温度" + ","
+                                        + "环境温度" + ","
+                                        + "驱动板温度" + ","
+                                        + "流量" + ","
+                                        + "氧浓度" + ","
+                                        + "气道压力" + ","
+                                        + "回路类型" + ","
+                                        + "故障1" + ","
+                                        + "故障2" + ","
+                                        + "故障3" + ","
+                                        + "故障4" + ","
+                                        + "故障5" + ","
+                                        + "故障6" + ","
+                                        + "故障7" + ","
+                                        + "故障8" + ","
+                                        + "故障9" + ","
+                                        + "故障10" + ","
+                                        + "故障11" + ","
+                                        + "故障12");
+                        #endregion
+                    }
+                }
+                #endregion
+            }
+
             #endregion
             foreach (KeyValuePair<WORK_INFO_HEAD, List<WORK_INFO_MESSAGE>> kv in FileMngr.m_workHead_Msg_Map)
             {
@@ -1231,37 +1456,6 @@ namespace BreathingMachine
                 foreach (var workDataMsg in list)
                 {
                     int[] faultStates = new int[12];
-                    //解析故障状态位
-                    #region
-                    byte bt1 = workDataMsg.DATA_FAULT_STATUS_1;
-                    byte bt2 = workDataMsg.DATA_FAULT_STATUS_2;
-
-                    for (int j = 0; j < 8; j++)
-                    {
-                        if (Convert.ToInt32(bt1) % 2 == 1)
-                        {
-                            faultStates[j] = 1;
-                        }
-                        else
-                        {
-                            faultStates[j] = 0;
-                        }
-                        bt1 = (byte)(bt1 >> 1);
-                    }
-
-                    for (int j = 0; j < 3; j++)
-                    {
-                        if (Convert.ToInt32(bt2) % 2 == 1)
-                        {
-                            faultStates[j + 8] = 1;
-                        }
-                        else
-                        {
-                            faultStates[j + 8] = 0;
-                        }
-                        bt1 = (byte)(bt2 >> 1);
-                    }
-                    #endregion
 
                     //将数据写入
                     #region
@@ -1272,71 +1466,288 @@ namespace BreathingMachine
                                                          Convert.ToInt32(workDataMsg.HOUR),
                                                          Convert.ToInt32(workDataMsg.MINUTE),
                                                          Convert.ToInt32(workDataMsg.SECOND));
-                    line = i.ToString() + ","
-                        + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
-                        + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_MODE) ? "雾化" : "湿化") + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.SET_TEMP)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.SET_FLOW)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.SET_HIGH_OXYGEN_ALARM)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.SET_LOW_OXYGEN_ALARM)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_LEVEL)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_TIME)) + ","
-                        + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? "成人" : "儿童") + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_PATIENT_TEMP)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_TMP)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_ENVIRONMENT_TMP)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_DRIVERBOARD_TMP)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_FLOW)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_TYPE)) + ","
-                        + (Convert.ToBoolean(faultStates[0]) ? "yes" : "no") + ","
-                        + (Convert.ToBoolean(faultStates[1]) ? "yes" : "no") + ","
-                        + (Convert.ToBoolean(faultStates[2]) ? "yes" : "no") + ","
-                        + (Convert.ToBoolean(faultStates[3]) ? "yes" : "no") + ","
-                        + (Convert.ToBoolean(faultStates[4]) ? "yes" : "no") + ","
-                        + (Convert.ToBoolean(faultStates[5]) ? "yes" : "no") + ","
-                        + (Convert.ToBoolean(faultStates[6]) ? "yes" : "no") + ","
-                        + (Convert.ToBoolean(faultStates[7]) ? "yes" : "no") + ","
-                        + (Convert.ToBoolean(faultStates[8]) ? "yes" : "no") + ","
-                        + (Convert.ToBoolean(faultStates[9]) ? "yes" : "no") + ","
-                        + (Convert.ToBoolean(faultStates[10]) ? "yes" : "no") + ","
-                        + (Convert.ToBoolean(faultStates[11]) ? "yes" : "no") + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_DACVALUE_L)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_DACVALUE_H)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_ADCVALUE_L)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_ADCVALUE_H)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_PWM_L)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_PWM_H)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_ADC_L)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_ADC_H)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_PWM_L)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_PWM_H)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_L)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_H)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_DRIVER_L)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_DRIVER_H)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_SPEED_L)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_SPEED_H)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_PRESS_SENSOR_ADC_L)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_PRESS_SENSOR_ADC_H)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_HADC_L)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_HADC_H)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_LADC_L)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_LADC_H)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_DRIVER_L)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_DRIVER_H)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_SPEED_L)) + ","
-                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_SPEED_H)) + ",";
-                    #endregion
+                    if (tmFromMsg >= tmBegin && tmFromMsg <= tmEnd)
+                    {
+                        //解析故障状态位
+                        #region
+                        byte bt1 = workDataMsg.DATA_FAULT_STATUS_1;
+                        byte bt2 = workDataMsg.DATA_FAULT_STATUS_2;
 
-                    sw_workData.WriteLine(line);
-                    i++;
+                        for (int j = 0; j < 8; j++)
+                        {
+                            if (Convert.ToInt32(bt1) % 2 == 1)
+                            {
+                                faultStates[j] = 1;
+                            }
+                            else
+                            {
+                                faultStates[j] = 0;
+                            }
+                            bt1 = (byte)(bt1 >> 1);
+                        }
+
+                        for (int j = 0; j < 3; j++)
+                        {
+                            if (Convert.ToInt32(bt2) % 2 == 1)
+                            {
+                                faultStates[j + 8] = 1;
+                            }
+                            else
+                            {
+                                faultStates[j + 8] = 0;
+                            }
+                            bt1 = (byte)(bt2 >> 1);
+                        }
+                        #endregion
+
+                        //填充数据
+                        #region
+                        if (DataMngr.m_advanceMode==false)
+                        {
+                            //只有基础数据
+                            if (DataMngr.m_machineType == 2)
+                            {
+                                #region
+                                line = i.ToString() + ","
+                                        + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
+                                        + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_MODE) ? "雾化" : "湿化") + ","
+                                        + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? "成人" : "儿童") + ","
+                                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_PATIENT_TEMP)) + ","
+                                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
+                                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_FLOW)) + ","
+                                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION));     
+                                #endregion
+                            }
+                            else
+                            {
+                                #region
+                                line = i.ToString() + ","
+                                        + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
+                                        //+ Convert.ToString(Convert.ToBoolean(workDataMsg.SET_MODE) ? "雾化" : "湿化") + ","
+                                        + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? "成人" : "儿童") + ","
+                                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_PATIENT_TEMP)) + ","
+                                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
+                                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_FLOW)) + ","
+                                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION));
+                                #endregion
+                            }
+                        }
+                        else
+                        {
+                             if (显示所有数据ToolStripMenuItem.CheckState == CheckState.Checked)
+                             {
+                                 //显示所有
+                                 if (DataMngr.m_machineType == 2)
+                                 {
+                                     #region
+                                     line = i.ToString() + ","
+                                             + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
+                                             + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_MODE) ? "雾化" : "湿化") + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_TEMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_FLOW)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_HIGH_OXYGEN_ALARM)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_LOW_OXYGEN_ALARM)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_LEVEL)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_TIME)) + ","
+                                             + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? "成人" : "儿童") + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_PATIENT_TEMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_TMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_ENVIRONMENT_TMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_DRIVERBOARD_TMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_FLOW)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_TYPE)) + ","
+                                             + (Convert.ToBoolean(faultStates[0]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[1]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[2]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[3]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[4]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[5]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[6]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[7]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[8]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[9]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[10]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[11]) ? "yes" : "no") + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_DACVALUE_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_DACVALUE_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_ADCVALUE_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_ADCVALUE_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_PWM_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_PWM_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_ADC_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_ADC_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_PWM_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_PWM_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_DRIVER_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_DRIVER_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_SPEED_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_SPEED_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_PRESS_SENSOR_ADC_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_PRESS_SENSOR_ADC_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_HADC_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_HADC_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_LADC_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_LADC_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_DRIVER_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_DRIVER_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_SPEED_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_SPEED_H));
+                                     #endregion
+                                 }
+                                 else
+                                 {
+                                     #region
+                                     line = i.ToString() + ","
+                                             + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
+                                             //+ Convert.ToString(Convert.ToBoolean(workDataMsg.SET_MODE) ? "雾化" : "湿化") + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_TEMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_FLOW)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_HIGH_OXYGEN_ALARM)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_LOW_OXYGEN_ALARM)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_LEVEL)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_TIME)) + ","
+                                             + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? "成人" : "儿童") + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_PATIENT_TEMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_TMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_ENVIRONMENT_TMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_DRIVERBOARD_TMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_FLOW)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_TYPE)) + ","
+                                             + (Convert.ToBoolean(faultStates[0]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[1]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[2]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[3]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[4]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[5]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[6]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[7]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[8]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[9]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[10]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[11]) ? "yes" : "no") + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_DACVALUE_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_DACVALUE_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_ADCVALUE_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_ADCVALUE_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_PWM_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_PWM_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_ADC_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_ADC_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_PWM_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_PWM_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_DRIVER_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_DRIVER_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_SPEED_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_SPEED_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_PRESS_SENSOR_ADC_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_PRESS_SENSOR_ADC_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_HADC_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_HADC_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_LADC_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_LADC_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_DRIVER_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_DRIVER_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_SPEED_L)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_SPEED_H));
+                                     #endregion
+                                 }
+                             }
+                             else
+                             {
+                                 if (DataMngr.m_machineType == 2)
+                                 {
+                                     #region
+                                     line = i.ToString() + ","
+                                             + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
+                                             + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_MODE) ? "雾化" : "湿化") + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_TEMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_FLOW)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_HIGH_OXYGEN_ALARM)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_LOW_OXYGEN_ALARM)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_LEVEL)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_TIME)) + ","
+                                             + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? "成人" : "儿童") + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_PATIENT_TEMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_TMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_ENVIRONMENT_TMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_DRIVERBOARD_TMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_FLOW)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_TYPE)) + ","
+                                             + (Convert.ToBoolean(faultStates[0]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[1]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[2]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[3]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[4]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[5]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[6]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[7]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[8]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[9]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[10]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[11]) ? "yes" : "no");      
+                                     #endregion
+                                 }
+                                 else
+                                 {
+                                     #region
+                                     line = i.ToString() + ","
+                                             + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
+                                             //+ Convert.ToString(Convert.ToBoolean(workDataMsg.SET_MODE) ? "雾化" : "湿化") + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_TEMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_FLOW)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_HIGH_OXYGEN_ALARM)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_LOW_OXYGEN_ALARM)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_LEVEL)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_TIME)) + ","
+                                             + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? "成人" : "儿童") + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_PATIENT_TEMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_TMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_ENVIRONMENT_TMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_DRIVERBOARD_TMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_FLOW)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_TYPE)) + ","
+                                             + (Convert.ToBoolean(faultStates[0]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[1]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[2]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[3]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[4]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[5]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[6]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[7]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[8]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[9]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[10]) ? "yes" : "no") + ","
+                                             + (Convert.ToBoolean(faultStates[11]) ? "yes" : "no");
+                                     #endregion
+                                 }
+                             }
+                        }
+                        #endregion
+                        sw_workData.WriteLine(line);
+                        i++;
+                    }
+                    #endregion 
                 }
             }
             #endregion
 
+            MessageBox.Show("文件导出完毕！");
             sw_alarm.Close();
             sw_workData.Close();
             fs_workData.Close();
@@ -1566,12 +1977,17 @@ namespace BreathingMachine
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            //debug,产生测试文档
+            if(FileMngr.m_bCreateTestFiles)
+            {
+                FileMngr.CreateTestFiles();
+            }
             
             //工作参数不需要了，直接隐藏起来
             this.groupBox_workingParam.Visible = false;
 
             //初始化高级模式！！！
-            DataMngr.m_advanceMode = false;  //默认开启高级模式，这里以后用户使用的话，改成false
+            DataMngr.m_advanceMode = true;  //默认开启高级模式，这里以后用户使用的话，改成false
             if (DataMngr.m_advanceMode==false)
             {
                 this.高级模式ToolStripMenuItem.Visible = false;
@@ -1915,15 +2331,7 @@ namespace BreathingMachine
 
         private void 高级模式ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DataMngr.m_advanceMode = true;
-            MessageBox.Show("高级模式会在工作信息中显示更多数据！");
-            #region
-            for (int i = 30; i <= 56;i++ )
-            {
-                this.listView_workData.Columns[i].Width = 150;
-            }
-
-            #endregion
+            
 
         }
 
@@ -2008,6 +2416,8 @@ namespace BreathingMachine
             }
             WorkDataList.m_nCurrentPage = 1;
             ShowWorkdataListPage(WorkDataList.m_WorkData_List, WorkDataList.m_nCurrentPage);
+
+            
         }
 
         private void button_listview_prev_Click(object sender, EventArgs e)
@@ -2184,7 +2594,8 @@ namespace BreathingMachine
                 FileStream fs = new FileStream(reportPath, FileMode.Create);
 
                 ////创建A4纸、横向PDF文档  
-                Document document = new Document(PageSize.A4.Rotate());
+                //Document document = new Document(PageSize.A4.Rotate());
+                Document document = new Document(PageSize.A4);
                 PdfWriter writer = PdfWriter.GetInstance(document, fs);    //将PDF文档写入创建的文件中  
                 document.Open();
 
@@ -2196,6 +2607,8 @@ namespace BreathingMachine
                 iTextSharp.text.Font nullparagraph = new iTextSharp.text.Font(bf1, 8);          //单元格中的字体，大小12  
                 iTextSharp.text.Font fonttitle2 = new iTextSharp.text.Font(bf1, 12);        //副标题字体，大小15  
 
+                //填写基本信息
+                #region
                 //设备信息标头 
                 string strContent = "设备信息";
                 Paragraph line = new Paragraph(strContent, fonttitle);     //添加段落，第二个参数指定使用fonttitle格式的字体，写入中文必须指定字体否则无法显示中文  
@@ -2209,7 +2622,7 @@ namespace BreathingMachine
 
                 //设备信息：设备类型 + SN
                 strContent = "设备类型：" + this.label_equipType_Value.Text;
-                strContent = strContent.PadRight(68, Convert.ToChar(" ")) + "SN：" + this.label_SN_Value.Text;
+                strContent = strContent.PadRight(43, Convert.ToChar(" ")) + "SN：" + this.label_SN_Value.Text;
                 line = new Paragraph(strContent, fonttitle2);
                 document.Add(line);
 
@@ -2246,14 +2659,14 @@ namespace BreathingMachine
                 //病人信息： 姓名 + 身高
                 document.Add(nullp);
                 strContent = "姓名：" + this.label_value_patient_name.Text;
-                strContent = strContent.PadRight(70,Convert.ToChar(" ")) + "身高: " + this.label_value_patient_height.Text + "cm";
+                strContent = strContent.PadRight(45,Convert.ToChar(" ")) + "身高: " + this.label_value_patient_height.Text + "cm";
                 line = new Paragraph(strContent, fonttitle2);
                 document.Add(line);
 
                 //病人信息： 年龄 + 体重
                 document.Add(nullp);
                 strContent = "年龄：" + this.label_value_patient_age.Text;
-                strContent = strContent.PadRight(70, Convert.ToChar(" ")) + "体重: " + this.label_value_patient_weight.Text + "kg";
+                strContent = strContent.PadRight(45, Convert.ToChar(" ")) + "体重: " + this.label_value_patient_weight.Text + "kg";
                 line = new Paragraph(strContent, fonttitle2);
                 document.Add(line);
 
@@ -2278,61 +2691,153 @@ namespace BreathingMachine
                 document.Add(nullp);
                 document.Add(nullp);
                 document.Add(nullp);
+                #endregion
 
-                //图表
+                //定义图片在PDF中宽和高
+                int chart_Height_inPDF = 250;
+                int chart_Width_inPDF = 500;
+
+                //图表,大标题
                 strContent = "图表";
                 line = new Paragraph("图表", fonttitle);
                 document.Add(line);
-
-                //图表：工作信息-使用时间
                 document.Add(nullp);
+                //图表：工作信息-使用时间
+                #region
                 strContent = "使用时间：" ;
                 line = new Paragraph(strContent, fonttitle2);
                 document.Add(line);
-
-                #region
                 document.Add(nullp);
-                string workDataChart_image = Environment.CurrentDirectory + "\\" + "workData.png";
-                //this.chart_workData.Width = 100;
-                //this.chart_workData.Height = 300;
-                this.chart_workData.SaveImage(workDataChart_image, ChartImageFormat.Png);
 
+                string workDataChart_image = Environment.CurrentDirectory + "\\" + "workData.png";
+                //先获取原图的宽和高
+                int old_width = this.chart_workData.Width;
+                int old_height = this.chart_workData.Height;
+                //设置保存成图片是的宽和高
+                this.chart_workData.Width = chart_Width_inPDF;
+                this.chart_workData.Height = chart_Height_inPDF;
+                this.chart_workData.SaveImage(workDataChart_image, ChartImageFormat.Png);
                 iTextSharp.text.Image png = iTextSharp.text.Image.GetInstance(workDataChart_image);
                 document.Add(png);
+                //还原chart的原来宽和高
+                this.chart_workData.Width = old_width;
+                this.chart_workData.Height = old_height;
+                document.Add(nullp);
                 #endregion
 
-
                 //图表：病人温度
-                document.Add(nullp);
+                #region
                 strContent = "病人温度：" ;
                 line = new Paragraph(strContent, fonttitle2);
                 document.Add(line);
-
-                #region
                 document.Add(nullp);
+
                 string patientTmp_image = Environment.CurrentDirectory + "\\" + "PatientTmp.png";
-                //this.chart_patientTmp.Dock = DockStyle.None;
-                //this.chart_patientTmp.Width = 100;
-                //this.chart_patientTmp.Height = 100;
+                //先获取原图的宽和高
+                old_width = this.chart_patientTmp.Width;
+                old_height = this.chart_patientTmp.Height;
+                //设置保存成图片是的宽和高
+                this.chart_patientTmp.Width = chart_Width_inPDF;
+                this.chart_patientTmp.Height = chart_Height_inPDF;
+
                 this.chart_patientTmp.SaveImage(patientTmp_image, ChartImageFormat.Png);
                 png = iTextSharp.text.Image.GetInstance(patientTmp_image);
-                this.chart_patientTmp.Dock = DockStyle.Fill;
                 document.Add(png);
+                //还原chart的原来宽和高
+                this.chart_patientTmp.Width = old_width;
+                this.chart_patientTmp.Height = old_height;
+                document.Add(nullp);
                 #endregion
 
+                //图表：出气口温度
                 #region
-                //PdfPTable table = new PdfPTable(int)(numericUpDown2.Value);         //numericUpDown2为用户设置的列数，创建Value列的表格,行会根据写入数据自动扩展  
+                strContent = "出气口温度：";
+                line = new Paragraph(strContent, fonttitle2);
+                document.Add(line);
+                document.Add(nullp);
 
-                //PdfPTable tb = new PdfPTable(2); //两列
-                ////tb.AddCell("123");
-                ////tb.AddCell("456");
-
-                ////tb.AddCell("789");
-                //document.Add(tb);
+                string airOutLetTmp_image = Environment.CurrentDirectory + "\\" + "airOutLetTmp_images.png";
+                //先获取原图的宽和高
+                old_width = this.chart_air_outlet_tmp.Width;
+                old_height = this.chart_air_outlet_tmp.Height;
+                //设置保存成图片是的宽和高
+                this.chart_air_outlet_tmp.Width = chart_Width_inPDF;
+                this.chart_air_outlet_tmp.Height = chart_Height_inPDF;
+                this.chart_air_outlet_tmp.SaveImage(airOutLetTmp_image, ChartImageFormat.Png);
+                png = iTextSharp.text.Image.GetInstance(airOutLetTmp_image);
+                document.Add(png);
+                //还原chart的原来宽和高
+                this.chart_air_outlet_tmp.Width = old_width;
+                this.chart_air_outlet_tmp.Height = old_height;
+                document.Add(nullp);
                 #endregion
 
+                document.Add(nullp);
+                document.Add(nullp);
+                document.Add(nullp);
+                document.Add(nullp);
+                document.Add(nullp);
+                document.Add(nullp);
+                document.Add(nullp);
+                document.Add(nullp);
+                document.Add(nullp);
+                document.Add(nullp);
+                document.Add(nullp);
+                document.Add(nullp);
+                document.Add(nullp);
+                document.Add(nullp);
+                
+
+                //图表：流量
+                #region
+                strContent = "流量：";
+                line = new Paragraph(strContent, fonttitle2);
+                document.Add(line);
+                document.Add(nullp);
+
+                string flow_image = Environment.CurrentDirectory + "\\" + "flow.png";
+                //先获取原图的宽和高
+                old_width = this.chart_flow.Width;
+                old_height = this.chart_flow.Height;
+                //设置保存成图片是的宽和高
+                this.chart_flow.Width = chart_Width_inPDF;
+                this.chart_flow.Height = chart_Height_inPDF;
+                this.chart_flow.SaveImage(flow_image, ChartImageFormat.Png);
+                png = iTextSharp.text.Image.GetInstance(flow_image);
+                document.Add(png);
+                //还原chart的原来宽和高
+                this.chart_flow.Width = old_width;
+                this.chart_flow.Height = old_height;
+                document.Add(nullp);
+                #endregion
+
+                //图表：氧浓度
+                #region
+                strContent = "氧浓度：";
+                line = new Paragraph(strContent, fonttitle2);
+                document.Add(line);
+                document.Add(nullp);
+
+                string oxyConcentration_image = Environment.CurrentDirectory + "\\" + "oxyConcentration.png";
+                //先获取原图的宽和高
+                old_width = this.chart_oxy_concentration.Width;
+                old_height = this.chart_oxy_concentration.Height;
+                //设置保存成图片是的宽和高
+                this.chart_oxy_concentration.Width = chart_Width_inPDF;
+                this.chart_oxy_concentration.Height = chart_Height_inPDF;
+                this.chart_oxy_concentration.SaveImage(oxyConcentration_image, ChartImageFormat.Png);
+                png = iTextSharp.text.Image.GetInstance(oxyConcentration_image);
+                document.Add(png);
+                //还原chart的原来宽和高
+                this.chart_oxy_concentration.Width = old_width;
+                this.chart_oxy_concentration.Height = old_height;
+                #endregion
+
+                //删除照片
                 File.Delete(workDataChart_image);
                 File.Delete(patientTmp_image);
+                File.Delete(flow_image);
+                File.Delete(oxyConcentration_image);
 
                 document.Close();
                 fs.Close();
@@ -2348,6 +2853,13 @@ namespace BreathingMachine
             
             if(e.TabPageIndex==1||e.TabPageIndex==2||e.TabPageIndex==3||e.TabPageIndex==4)
             {
+                if(FileMngr.m_dirPath==null)
+                {
+                    MessageBox.Show("请先导入数据！");
+                    e.Cancel = true;
+                    return;
+                }
+
                 if (DataMngr.m_bDateTimePicker_ValueChanged)
                 {
                     e.Cancel = false;
@@ -2355,6 +2867,7 @@ namespace BreathingMachine
                 else
                 {
                     e.Cancel = true;
+                    MessageBox.Show("请先选择时间！");
                 } 
             }
         }
@@ -2386,10 +2899,68 @@ namespace BreathingMachine
             }
         }
 
-       
+        private void 显示所有数据ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+            if (FileMngr.m_dirPath == null || !DataMngr.m_bDateTimePicker_ValueChanged)
+            {
+                显示所有数据ToolStripMenuItem.CheckState = CheckState.Unchecked;
+                MessageBox.Show("请确认导入了数据，并且选择了时间！");
+                return;
+            }
+
+            if (显示所有数据ToolStripMenuItem.CheckState==CheckState.Checked)
+            {
+                if (DataMngr.m_machineType == 2)
+                {
+                    //VNU002的时候有56列，这里将31~56列全部显示出来
+                    for (int i = 31; i <= 56; i++)
+                    {
+                        this.listView_workData.Columns[i].Width = 150;
+                    }
+                }
+                else if (DataMngr.m_machineType == 1)
+                {
+                    //VNU001的时候有55列，这里将30~56列全部显示出来
+                    for (int i = 30; i <= 55; i++)
+                    {
+                        this.listView_workData.Columns[i].Width = 150;
+                    }
+                }
+                else
+                {
+                    //do nothing
+                }
+            }
+            else
+            {
+                if (DataMngr.m_machineType == 2)
+                {
+                    //VNU002的时候有56列，这里将31~56列全部显示出来
+                    for (int i = 31; i <= 56; i++)
+                    {
+                        this.listView_workData.Columns[i].Width = 0;
+                    }
+                }
+                else if (DataMngr.m_machineType == 1)
+                {
+                    //VNU001的时候有55列，这里将30~56列全部显示出来
+                    for (int i = 30; i <= 55; i++)
+                    {
+                        this.listView_workData.Columns[i].Width = 0;
+                    }
+                }
+                else
+                {
+                    //do nothing
+                }
+            } 
+        }
+ 
     }
     public class FileMngr
     {
+        public static bool m_bCreateTestFiles = true;    //这个仅仅是为了产生测试文件，正式版本将它改成false
         public static WORK_INFO_HEAD m_lastWorkHead;            //这个是为了显示app上的基本信息，才保留的一个信息
         public static WORK_INFO_MESSAGE m_lastWorkMsg;          //这个是为了显示app上的基本信息，才保留的一个信息
         public static DateTime m_dateTime_begin;
@@ -2409,6 +2980,144 @@ namespace BreathingMachine
         public static List<ALARM_INFO_MESSAGE> m_alarmMsgList;  //alarm消息体链表
 
         public static Dictionary<WORK_INFO_HEAD, List<WORK_INFO_MESSAGE>> m_workHead_Msg_Map;   //每天的工作信息头和Msg链表放到Map中
+
+        public static void CreateTestFiles()
+        {
+            //定义产生测试文件的时间范围
+            DateTime tmBegin=new DateTime(2017,1,1,0,0,0);
+            Int32 duration = 365;
+            
+            //产生工作文件
+            for(int i=0;i<duration;i++)
+            {
+                DateTime tmp= tmBegin.AddDays(i);
+
+                string strFilePath = "C:/Users/Administrator/Desktop/SD_TEST/170000000001/DATA";
+                string strData=Convert.ToString(tmp.Year) + Convert.ToString(tmp.Month).PadLeft(2, '0') + Convert.ToString(tmp.Day).PadLeft(2, '0');
+                strFilePath += strData + ".vmf";
+                FileStream fs = new FileStream(strFilePath, FileMode.Create);
+                BinaryWriter bw = new BinaryWriter(fs, Encoding.ASCII);
+
+                //填充工作信息头
+                #region
+                WORK_INFO_HEAD workHead = new WORK_INFO_HEAD();
+                workHead.WORK_FLAG = "8DATA" + strData;//没加校验
+                workHead.WORK_FLAG.PadRight(64, '0');
+                workHead.MACHINETYPE = "6VNU002000".PadRight(64, '0');
+                workHead.SN = "91700002342".PadRight(64, '0');
+                workHead.SOFTWAR_VER = "31110000".PadRight(64, '0');
+                workHead.RESERVE_0 = "".PadRight(64, '0');
+                workHead.RESERVE_1 = "".PadRight(64, '0');
+                workHead.RESERVE_2 = "".PadRight(64, '0');
+                workHead.RESERVE_3 = "".PadRight(64, '0');
+                workHead.RESERVE_4 = "".PadRight(64, '0');
+                workHead.RESERVE_5 = "".PadRight(64, '0');
+                workHead.RESERVE_6 = "".PadRight(64, '0');
+                workHead.RESERVE_7 = "".PadRight(64, '0');
+                workHead.RESERVE_8 = "".PadRight(64, '0');
+                workHead.RESERVE_9 = "".PadRight(64, '0');
+                workHead.RESERVE_10 = "".PadRight(64, '0');
+                workHead.WORKDATA_NUM="45678912".PadRight(64,'0');
+
+                var buff=GetData(workHead);
+                bw.Write(buff, 0, Marshal.SizeOf(workHead));
+                #endregion
+
+                Random rnd=new Random();
+                //写入信息体
+                int m = 0;
+                for (int j = 0; j < 1000 + rnd.Next(0, 360);j++ )
+                {
+                    int runMode = 0;
+                    m++;
+                    if(m==30)
+                    {
+                        runMode = 1;
+                        m = 0;
+                    }
+                    DateTime tmp1 = tmp.AddMinutes(j);
+
+                    byte[] bt = new byte[64]{
+                    #region
+                        Convert.ToByte(tmp1.Year/100),
+                        Convert.ToByte(tmp1.Year%100),
+                        Convert.ToByte(tmp1.Month),
+                        Convert.ToByte(tmp1.Day),
+                        Convert.ToByte(tmp1.Hour),
+                        Convert.ToByte(tmp1.Minute),
+                        Convert.ToByte(tmp1.Second),
+                        Convert.ToByte(runMode), //运行模式
+                        Convert.ToByte(30),   //设定温度
+                        Convert.ToByte(60),   //设定流量
+                        Convert.ToByte(95),   //设定高氧浓度报警
+                        Convert.ToByte(21),   //设定低氧浓度报警
+                        Convert.ToByte(5),   //设定雾化量档位
+                        Convert.ToByte(30),   //设定雾化时间
+				        Convert.ToByte(rnd.Next(0,1)), //成人儿童
+                        Convert.ToByte(rnd.Next(0,5)+32), //患者端温度
+                        Convert.ToByte(rnd.Next(0,5)+30), //出气口温度
+                        Convert.ToByte(100), //加热盘温度
+                        Convert.ToByte(26), //环境温度
+                        Convert.ToByte(41), //驱动板温度
+                        Convert.ToByte(rnd.Next(0,5)+60), //流量
+                        Convert.ToByte(rnd.Next(0,5)+30), //氧浓度
+                        Convert.ToByte(2), //气道压力
+                        Convert.ToByte(rnd.Next(0,5)), //回路类型
+                        Convert.ToByte(161), //故障状态位 A1
+                        Convert.ToByte(162), //故障状态位 A2
+                        Convert.ToByte(0), //雾化DAC数值L
+                        Convert.ToByte(0), //雾化DAC数值H
+                        Convert.ToByte(0), //雾化ADC数值L
+                        Convert.ToByte(0), //雾化ADC数值H
+                        Convert.ToByte(0), //回路加热PWM数值L
+                        Convert.ToByte(0), //回路加热PWM数值H
+                        Convert.ToByte(0), //回路加热ADC数值L
+                        Convert.ToByte(0), //回路加热ADC数值H
+                        Convert.ToByte(0), //加热盘加热PWM数值L
+                        Convert.ToByte(0), //加热盘加热PWM数值H
+                        Convert.ToByte(0), //加热盘加热ADC数值L
+                        Convert.ToByte(0), //加热盘加热ADC数值H
+                        Convert.ToByte(0), //主马达驱动数值L
+                        Convert.ToByte(0), //主马达驱动数值H
+                        Convert.ToByte(0), //主马达转数数值L
+                        Convert.ToByte(0), //主马达转数数值H
+                        Convert.ToByte(0), //压力传感器ADC值L
+                        Convert.ToByte(0), //压力传感器ADC值H
+                        Convert.ToByte(0), //水位传感器HADC值L
+                        Convert.ToByte(0), //水位传感器HADC值H
+                        Convert.ToByte(0), //水位传感器LADC值L
+                        Convert.ToByte(0), //水位传感器LADC值H
+                        Convert.ToByte(0), //散热风扇驱动数值L
+                        Convert.ToByte(0), //散热风扇驱动数值H
+                        Convert.ToByte(0), //散热风扇转速数值L
+                        Convert.ToByte(0), //散热风扇转速数值H
+                        Convert.ToByte(0), //保留0
+                        Convert.ToByte(0), //保留1
+                        Convert.ToByte(0), //保留2
+                        Convert.ToByte(0), //保留3
+                        Convert.ToByte(0), //保留4
+                        Convert.ToByte(0), //保留5
+                        Convert.ToByte(0), //保留6
+                        Convert.ToByte(0), //保留7
+                        Convert.ToByte(0), //保留8
+                        Convert.ToByte(0), //保留9
+                        Convert.ToByte(30), //
+                        Convert.ToByte(89), //
+                        #endregion
+                    };
+
+                    bw.Write(bt, 0, 64);
+                }
+
+                
+
+                bw.Close();
+                fs.Close();
+            }
+
+
+            
+        }
 
         public static void GetMinMaxDateTime()
         {
