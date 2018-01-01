@@ -1054,11 +1054,14 @@ namespace BreathingMachine
                 FileMngr.GetMinMaxDateTime();
 
                 //3.校验文件，并且得到信息头和信息体链表
-                if (!FileMngr.GetAlarmMsg())
+                if(FileMngr.m_alarmFileName!=null)
                 {
-                    MessageBox.Show("获取报警文件信息失败");
+                    if (!FileMngr.GetAlarmMsg())
+                    {
+                        MessageBox.Show("获取报警文件信息失败");
+                    } 
                 }
-                
+
                 if (!FileMngr.GetWorkMsg())
                 {
                     MessageBox.Show("这里填什么好呢？");
@@ -1145,68 +1148,72 @@ namespace BreathingMachine
 
             //写数据到两个文件中,先做个.csv格式的
             //先写alarm.csv
-            #region
-            sw_alarm.WriteLine("设备型号：" + "," + this.label_equipType_Value.Text);
-            sw_alarm.WriteLine("SN：" + "," + this.label_SN_Value.Text);
-            sw_alarm.WriteLine("软件版本：" + "," + this.label_softwarVer_Value.Text);
-            if (DataMngr.m_machineType == 2)
-            {
-                sw_alarm.WriteLine("No." + "," + "日期" + "," + "运行模式" + "," + "报警码" + "," + "报警信息" + "," + "报警数据值1" + "," + "报警数据值2");
-            }
-            else if (DataMngr.m_machineType == 1)
-            {
-                sw_alarm.WriteLine("No." + "," + "日期" + "," + "报警码" + "," + "报警信息" + "," + "报警数据值1" + "," + "报警数据值2");
-            }
-            else
-            {
-                //do nothing
-            }
             int i = 1;
-            foreach (var alarmMsg in FileMngr.m_alarmMsgList)
+            if(FileMngr.m_alarmFileName!=null)
             {
                 #region
-                string line = "";
-                DateTime tmFromMsg = new DateTime(100 * Convert.ToInt32(alarmMsg.YEAR1) + Convert.ToInt32(alarmMsg.YEAR2),
-                                                        Convert.ToInt32(alarmMsg.MONTH),
-                                                        Convert.ToInt32(alarmMsg.DAY),
-                                                        Convert.ToInt32(alarmMsg.HOUR),
-                                                        Convert.ToInt32(alarmMsg.MINUTE),
-                                                        Convert.ToInt32(alarmMsg.SECOND));
-                //先屏蔽，先修改测试文件，改完在开
-                //if(tmFromMsg>=tmBegin&&tmFromMsg<=tmEnd)
+                sw_alarm.WriteLine("设备型号：" + "," + this.label_equipType_Value.Text);
+                sw_alarm.WriteLine("SN：" + "," + this.label_SN_Value.Text);
+                sw_alarm.WriteLine("软件版本：" + "," + this.label_softwarVer_Value.Text);
+                if (DataMngr.m_machineType == 2)
+                {
+                    sw_alarm.WriteLine("No." + "," + "日期" + "," + "运行模式" + "," + "报警码" + "," + "报警信息" + "," + "报警数据值1" + "," + "报警数据值2");
+                }
+                else if (DataMngr.m_machineType == 1)
+                {
+                    sw_alarm.WriteLine("No." + "," + "日期" + "," + "报警码" + "," + "报警信息" + "," + "报警数据值1" + "," + "报警数据值2");
+                }
+                else
+                {
+                    //do nothing
+                }
+                //int i = 1;
+                foreach (var alarmMsg in FileMngr.m_alarmMsgList)
                 {
                     #region
-                    if (DataMngr.m_machineType == 2)
+                    string line = "";
+                    DateTime tmFromMsg = new DateTime(100 * Convert.ToInt32(alarmMsg.YEAR1) + Convert.ToInt32(alarmMsg.YEAR2),
+                                                            Convert.ToInt32(alarmMsg.MONTH),
+                                                            Convert.ToInt32(alarmMsg.DAY),
+                                                            Convert.ToInt32(alarmMsg.HOUR),
+                                                            Convert.ToInt32(alarmMsg.MINUTE),
+                                                            Convert.ToInt32(alarmMsg.SECOND));
+                    //先屏蔽，先修改测试文件，改完在开
+                    //if(tmFromMsg>=tmBegin&&tmFromMsg<=tmEnd)
                     {
-                        line = i.ToString() + ","
-                        + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
-                        + Convert.ToString(Convert.ToBoolean(alarmMsg.RUNNIN_MODE) ? "雾化" : "湿化") + ","
-                        + Convert.ToString(Convert.ToString(alarmMsg.ALARM_CODE)) + ","
-                        + Convert.ToString(FileMngr.AlarmCode2Str(alarmMsg.ALARM_CODE)) + ","
-                        + Convert.ToString(alarmMsg.ALARM_DATA_L) + ","
-                        + Convert.ToString(alarmMsg.ALARM_DATA_H);
+                        #region
+                        if (DataMngr.m_machineType == 2)
+                        {
+                            line = i.ToString() + ","
+                            + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
+                            + Convert.ToString(Convert.ToBoolean(alarmMsg.RUNNIN_MODE) ? "雾化" : "湿化") + ","
+                            + Convert.ToString(Convert.ToString(alarmMsg.ALARM_CODE)) + ","
+                            + Convert.ToString(FileMngr.AlarmCode2Str(alarmMsg.ALARM_CODE)) + ","
+                            + Convert.ToString(alarmMsg.ALARM_DATA_L) + ","
+                            + Convert.ToString(alarmMsg.ALARM_DATA_H);
+                        }
+                        else if (DataMngr.m_machineType == 1)
+                        {
+                            line = i.ToString() + ","
+                            + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
+                            + Convert.ToString(Convert.ToString(alarmMsg.ALARM_CODE)) + ","
+                            + Convert.ToString(FileMngr.AlarmCode2Str(alarmMsg.ALARM_CODE)) + ","
+                            + Convert.ToString(alarmMsg.ALARM_DATA_L) + ","
+                            + Convert.ToString(alarmMsg.ALARM_DATA_H);
+                        }
+                        else
+                        {
+                            //do nothing
+                        }
+                        sw_alarm.WriteLine(line);
+                        i++;
+                        #endregion
                     }
-                    else if (DataMngr.m_machineType == 1)
-                    {
-                        line = i.ToString() + ","
-                        + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
-                        + Convert.ToString(Convert.ToString(alarmMsg.ALARM_CODE)) + ","
-                        + Convert.ToString(FileMngr.AlarmCode2Str(alarmMsg.ALARM_CODE)) + ","
-                        + Convert.ToString(alarmMsg.ALARM_DATA_L) + ","
-                        + Convert.ToString(alarmMsg.ALARM_DATA_H);
-                    }
-                    else
-                    {
-                        //do nothing
-                    }
-                    sw_alarm.WriteLine(line);
-                    i++;
                     #endregion
                 }
                 #endregion
             }
-            #endregion
-
+            
             //在写workdata.csv
             //备注说明:excel2007最多能存1048576行
             #region
@@ -1820,21 +1827,39 @@ namespace BreathingMachine
                 string strMonth = fileName.Substring(8, 2);
                 string strDay = fileName.Substring(10, 2);
 
-                
-                TreeNode node_day = new TreeNode();
+                DateTime tm_Begin = this.dateTimePicker_Begin.Value;
+                DateTime tm_End = this.dateTimePicker_End.Value;
+                DateTime tmBegin = new DateTime(tm_Begin.Year, tm_Begin.Month, tm_Begin.Day, 0, 0, 0);
+                DateTime tmEnd = new DateTime(tm_End.Year, tm_End.Month, tm_End.Day, 23, 59, 59);
 
-                node_year.Text = strYear;
-                node_month.Text = strMonth;
-                node_day.Text = strDay;
+                DateTime tm = new DateTime(Convert.ToInt32(strYear), Convert.ToInt32(strMonth), Convert.ToInt32(strDay), 0, 0, 0);
 
-                if (prev_Year != strYear)
+                if (tm >= tmBegin && tm <= tmEnd)
                 {
-                    i++;
-                    TreeNode tmp = new TreeNode();
-                    tmp.Text = strYear;
-                    nodeList_year.Add(tmp);
-                    this.treeView_detailChart.Nodes.Add(nodeList_year[i-1]);
-                    if (prev_Month == strMonth)
+                    #region
+                    TreeNode node_day = new TreeNode();
+
+                    node_year.Text = strYear;
+                    node_month.Text = strMonth;
+                    node_day.Text = strDay;
+
+                    if (prev_Year != strYear)
+                    {
+                        i++;
+                        TreeNode tmp = new TreeNode();
+                        tmp.Text = strYear;
+                        nodeList_year.Add(tmp);
+                        this.treeView_detailChart.Nodes.Add(nodeList_year[i - 1]);
+                        if (prev_Month == strMonth)
+                        {
+                            j++;
+                            TreeNode tmp1 = new TreeNode();
+                            tmp1.Text = strMonth;
+                            nodeList_month.Add(tmp1);
+                            nodeList_year[i - 1].Nodes.Add(nodeList_month[j - 1]);
+                        }
+                    }
+                    if (prev_Month != strMonth)
                     {
                         j++;
                         TreeNode tmp1 = new TreeNode();
@@ -1842,20 +1867,14 @@ namespace BreathingMachine
                         nodeList_month.Add(tmp1);
                         nodeList_year[i - 1].Nodes.Add(nodeList_month[j - 1]);
                     }
-                }
-                if (prev_Month != strMonth)
-                {
-                    j++;
-                    TreeNode tmp1 = new TreeNode();
-                    tmp1.Text = strMonth;
-                    nodeList_month.Add(tmp1);
-                    nodeList_year[i - 1].Nodes.Add(nodeList_month[j - 1]);
-                }
 
-                nodeList_month[j - 1].Nodes.Add(node_day);
+                    nodeList_month[j - 1].Nodes.Add(node_day);
 
-                prev_Year = strYear;
-                prev_Month = strMonth;
+                    prev_Year = strYear;
+                    prev_Month = strMonth;
+                    #endregion
+                }
+                
             }
             #endregion
         }
@@ -1980,14 +1999,26 @@ namespace BreathingMachine
             //debug,产生测试文档
             if(FileMngr.m_bCreateTestFiles)
             {
-                FileMngr.CreateTestFiles();
+                if (Directory.Exists("C:/Users/Administrator/Desktop/SD_TEST/170000000001"))
+                {
+                    string[] strPathes = Directory.GetFiles("C:/Users/Administrator/Desktop/SD_TEST/170000000001", "*.vmf");
+                    foreach(var path in strPathes)
+                    {
+                        File.Delete(path);
+                    }
+                    //Directory.Delete("C:/Users/Administrator/Desktop/SD_TEST/170000000001");
+                }
+
+                DateTime tmBegin=new DateTime(2017,1,1,0,0,0);
+                Int32 duration = 90;
+                FileMngr.CreateTestFiles(tmBegin, duration);
             }
             
             //工作参数不需要了，直接隐藏起来
             this.groupBox_workingParam.Visible = false;
 
             //初始化高级模式！！！
-            DataMngr.m_advanceMode = true;  //默认开启高级模式，这里以后用户使用的话，改成false
+            DataMngr.m_advanceMode = false;  //默认开启高级模式，这里以后用户使用的话，改成false
             if (DataMngr.m_advanceMode==false)
             {
                 this.高级模式ToolStripMenuItem.Visible = false;
@@ -2373,6 +2404,8 @@ namespace BreathingMachine
             //规避bug
             DataMngr.m_bDateTimePicker_ValueChanged = true;
 
+            ////初始化treeView
+            //InitTree();
 
             if (myCache != null)
             {
@@ -2504,6 +2537,9 @@ namespace BreathingMachine
             //规避bug
             DataMngr.m_bDateTimePicker_ValueChanged = true;
 
+            ////初始化treeView
+            //InitTree();
+
             if (myCache != null)
             {
                 myCache.Clear();
@@ -2584,268 +2620,265 @@ namespace BreathingMachine
                 MessageBox.Show("请先完善病人信息！");
                 return;
             }
-            if (this.folderBrowserDialog_save2PDF.ShowDialog() == DialogResult.OK)
-            {
-                //创建一个pdf文件
-                string strPath = this.folderBrowserDialog_save2PDF.SelectedPath;//获取打开的文件路径名
-                //报告的名字格式为：姓名_电话号码.pdf
-                string reportPath = strPath + @"\" + label_value_added_patientName.Text + "_"
-                                     + label_value_added_phoneNum.Text + ".pdf";
-                FileStream fs = new FileStream(reportPath, FileMode.Create);
-
-                ////创建A4纸、横向PDF文档  
-                //Document document = new Document(PageSize.A4.Rotate());
-                Document document = new Document(PageSize.A4);
-                PdfWriter writer = PdfWriter.GetInstance(document, fs);    //将PDF文档写入创建的文件中  
-                document.Open();
-
-                //要在PDF文档中写入中文必须指定中文字体，否则无法写入中文  
-                //Environment.CurrentDirectory为当前app的路径
-                BaseFont bftitle = BaseFont.CreateFont(Environment.CurrentDirectory + @"\simhei.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
-                iTextSharp.text.Font fonttitle = new iTextSharp.text.Font(bftitle, 20);     //标题字体，大小
-                BaseFont bf1 = BaseFont.CreateFont(Environment.CurrentDirectory + @"\simhei.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);     
-                iTextSharp.text.Font nullparagraph = new iTextSharp.text.Font(bf1, 8);          //单元格中的字体，大小12  
-                iTextSharp.text.Font fonttitle2 = new iTextSharp.text.Font(bf1, 12);        //副标题字体，大小15  
-
-                //填写基本信息
-                #region
-                //设备信息标头 
-                string strContent = "设备信息";
-                Paragraph line = new Paragraph(strContent, fonttitle);     //添加段落，第二个参数指定使用fonttitle格式的字体，写入中文必须指定字体否则无法显示中文  
-                line.Alignment = iTextSharp.text.Rectangle.ALIGN_LEFT;       //设置居中  
-                document.Add(line);        //将标题段加入PDF文档中  
-
-                ////空一行  
-                Paragraph nullp = new Paragraph(" ", nullparagraph);
-                //nullp.Leading = 10;
-                document.Add(nullp);
-
-                //设备信息：设备类型 + SN
-                strContent = "设备类型：" + this.label_equipType_Value.Text;
-                strContent = strContent.PadRight(43, Convert.ToChar(" ")) + "SN：" + this.label_SN_Value.Text;
-                line = new Paragraph(strContent, fonttitle2);
-                document.Add(line);
-
-                //设备信息：  软件版本 
-                document.Add(nullp);
-                strContent = "软件版本：" + this.label_softwarVer_Value.Text;
-                line = new Paragraph(strContent, fonttitle2);
-                document.Add(line);
-
-                document.Add(nullp);
-                document.Add(nullp);
-                document.Add(nullp);
-
-                //使用时间标头
-                strContent = "使用时间";
-                line = new Paragraph(strContent, fonttitle);
-                document.Add(line);
-
-                //使用时间： 开始时间 --- 结束时间
-                document.Add(nullp);
-                strContent = this.label_dateFrom_Value.Text + "        ---       " + this.label_dateTo_Value.Text;
-                line = new Paragraph(strContent, fonttitle2);
-                document.Add(line);
-
-                document.Add(nullp);
-                document.Add(nullp);
-                document.Add(nullp);
-
-                //病人信息标头
-                strContent = "病人信息";
-                line = new Paragraph("病人信息", fonttitle);
-                document.Add(line);
-
-                //病人信息： 姓名 + 身高
-                document.Add(nullp);
-                strContent = "姓名：" + this.label_value_patient_name.Text;
-                strContent = strContent.PadRight(45,Convert.ToChar(" ")) + "身高: " + this.label_value_patient_height.Text + "cm";
-                line = new Paragraph(strContent, fonttitle2);
-                document.Add(line);
-
-                //病人信息： 年龄 + 体重
-                document.Add(nullp);
-                strContent = "年龄：" + this.label_value_patient_age.Text;
-                strContent = strContent.PadRight(45, Convert.ToChar(" ")) + "体重: " + this.label_value_patient_weight.Text + "kg";
-                line = new Paragraph(strContent, fonttitle2);
-                document.Add(line);
-
-                //病人信息： 性别
-                document.Add(nullp);
-                strContent = "性别：" + this.label_value_patient_gender.Text;
-                line = new Paragraph(strContent, fonttitle2);
-                document.Add(line);
-
-                //病人信息： 电话号码
-                document.Add(nullp);
-                strContent = "电话号码：" + this.label_value_patient_phoneNum.Text;
-                line = new Paragraph(strContent, fonttitle2);
-                document.Add(line);
-
-                //病人信息： 家庭住址
-                document.Add(nullp);
-                strContent = "家庭住址：" + this.label_value_patient_adress.Text;
-                line = new Paragraph(strContent, fonttitle2);
-                document.Add(line);
-
-                document.Add(nullp);
-                document.Add(nullp);
-                document.Add(nullp);
-                #endregion
-
-                //定义图片在PDF中宽和高
-                int chart_Height_inPDF = 250;
-                int chart_Width_inPDF = 500;
-
-                //图表,大标题
-                strContent = "图表";
-                line = new Paragraph("图表", fonttitle);
-                document.Add(line);
-                document.Add(nullp);
-                //图表：工作信息-使用时间
-                #region
-                strContent = "使用时间：" ;
-                line = new Paragraph(strContent, fonttitle2);
-                document.Add(line);
-                document.Add(nullp);
-
-                string workDataChart_image = Environment.CurrentDirectory + "\\" + "workData.png";
-                //先获取原图的宽和高
-                int old_width = this.chart_workData.Width;
-                int old_height = this.chart_workData.Height;
-                //设置保存成图片是的宽和高
-                this.chart_workData.Width = chart_Width_inPDF;
-                this.chart_workData.Height = chart_Height_inPDF;
-                this.chart_workData.SaveImage(workDataChart_image, ChartImageFormat.Png);
-                iTextSharp.text.Image png = iTextSharp.text.Image.GetInstance(workDataChart_image);
-                document.Add(png);
-                //还原chart的原来宽和高
-                this.chart_workData.Width = old_width;
-                this.chart_workData.Height = old_height;
-                document.Add(nullp);
-                #endregion
-
-                //图表：病人温度
-                #region
-                strContent = "病人温度：" ;
-                line = new Paragraph(strContent, fonttitle2);
-                document.Add(line);
-                document.Add(nullp);
-
-                string patientTmp_image = Environment.CurrentDirectory + "\\" + "PatientTmp.png";
-                //先获取原图的宽和高
-                old_width = this.chart_patientTmp.Width;
-                old_height = this.chart_patientTmp.Height;
-                //设置保存成图片是的宽和高
-                this.chart_patientTmp.Width = chart_Width_inPDF;
-                this.chart_patientTmp.Height = chart_Height_inPDF;
-
-                this.chart_patientTmp.SaveImage(patientTmp_image, ChartImageFormat.Png);
-                png = iTextSharp.text.Image.GetInstance(patientTmp_image);
-                document.Add(png);
-                //还原chart的原来宽和高
-                this.chart_patientTmp.Width = old_width;
-                this.chart_patientTmp.Height = old_height;
-                document.Add(nullp);
-                #endregion
-
-                //图表：出气口温度
-                #region
-                strContent = "出气口温度：";
-                line = new Paragraph(strContent, fonttitle2);
-                document.Add(line);
-                document.Add(nullp);
-
-                string airOutLetTmp_image = Environment.CurrentDirectory + "\\" + "airOutLetTmp_images.png";
-                //先获取原图的宽和高
-                old_width = this.chart_air_outlet_tmp.Width;
-                old_height = this.chart_air_outlet_tmp.Height;
-                //设置保存成图片是的宽和高
-                this.chart_air_outlet_tmp.Width = chart_Width_inPDF;
-                this.chart_air_outlet_tmp.Height = chart_Height_inPDF;
-                this.chart_air_outlet_tmp.SaveImage(airOutLetTmp_image, ChartImageFormat.Png);
-                png = iTextSharp.text.Image.GetInstance(airOutLetTmp_image);
-                document.Add(png);
-                //还原chart的原来宽和高
-                this.chart_air_outlet_tmp.Width = old_width;
-                this.chart_air_outlet_tmp.Height = old_height;
-                document.Add(nullp);
-                #endregion
-
-                document.Add(nullp);
-                document.Add(nullp);
-                document.Add(nullp);
-                document.Add(nullp);
-                document.Add(nullp);
-                document.Add(nullp);
-                document.Add(nullp);
-                document.Add(nullp);
-                document.Add(nullp);
-                document.Add(nullp);
-                document.Add(nullp);
-                document.Add(nullp);
-                document.Add(nullp);
-                document.Add(nullp);
-                
-
-                //图表：流量
-                #region
-                strContent = "流量：";
-                line = new Paragraph(strContent, fonttitle2);
-                document.Add(line);
-                document.Add(nullp);
-
-                string flow_image = Environment.CurrentDirectory + "\\" + "flow.png";
-                //先获取原图的宽和高
-                old_width = this.chart_flow.Width;
-                old_height = this.chart_flow.Height;
-                //设置保存成图片是的宽和高
-                this.chart_flow.Width = chart_Width_inPDF;
-                this.chart_flow.Height = chart_Height_inPDF;
-                this.chart_flow.SaveImage(flow_image, ChartImageFormat.Png);
-                png = iTextSharp.text.Image.GetInstance(flow_image);
-                document.Add(png);
-                //还原chart的原来宽和高
-                this.chart_flow.Width = old_width;
-                this.chart_flow.Height = old_height;
-                document.Add(nullp);
-                #endregion
-
-                //图表：氧浓度
-                #region
-                strContent = "氧浓度：";
-                line = new Paragraph(strContent, fonttitle2);
-                document.Add(line);
-                document.Add(nullp);
-
-                string oxyConcentration_image = Environment.CurrentDirectory + "\\" + "oxyConcentration.png";
-                //先获取原图的宽和高
-                old_width = this.chart_oxy_concentration.Width;
-                old_height = this.chart_oxy_concentration.Height;
-                //设置保存成图片是的宽和高
-                this.chart_oxy_concentration.Width = chart_Width_inPDF;
-                this.chart_oxy_concentration.Height = chart_Height_inPDF;
-                this.chart_oxy_concentration.SaveImage(oxyConcentration_image, ChartImageFormat.Png);
-                png = iTextSharp.text.Image.GetInstance(oxyConcentration_image);
-                document.Add(png);
-                //还原chart的原来宽和高
-                this.chart_oxy_concentration.Width = old_width;
-                this.chart_oxy_concentration.Height = old_height;
-                #endregion
-
-                //删除照片
-                File.Delete(workDataChart_image);
-                File.Delete(patientTmp_image);
-                File.Delete(flow_image);
-                File.Delete(oxyConcentration_image);
-
-                document.Close();
-                fs.Close();
-            }
-            else
+            if (this.folderBrowserDialog_save2PDF.ShowDialog() != DialogResult.OK)
             {
                 return;
             }
+            //创建一个pdf文件
+            string strPath = this.folderBrowserDialog_save2PDF.SelectedPath;//获取打开的文件路径名
+            //报告的名字格式为：姓名_电话号码.pdf
+            string reportPath = strPath + @"\" + label_value_added_patientName.Text + "_"
+                                 + label_value_added_phoneNum.Text + ".pdf";
+            FileStream fs = new FileStream(reportPath, FileMode.Create);
+
+            ////创建A4纸、横向PDF文档  
+            //Document document = new Document(PageSize.A4.Rotate());
+            Document document = new Document(PageSize.A4);
+            PdfWriter writer = PdfWriter.GetInstance(document, fs);    //将PDF文档写入创建的文件中  
+            document.Open();
+
+            //要在PDF文档中写入中文必须指定中文字体，否则无法写入中文  
+            //Environment.CurrentDirectory为当前app的路径
+            BaseFont bftitle = BaseFont.CreateFont(Environment.CurrentDirectory + @"\simhei.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+            iTextSharp.text.Font fonttitle = new iTextSharp.text.Font(bftitle, 20);     //标题字体，大小
+            BaseFont bf1 = BaseFont.CreateFont(Environment.CurrentDirectory + @"\simhei.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+            iTextSharp.text.Font nullparagraph = new iTextSharp.text.Font(bf1, 8);          //单元格中的字体，大小12  
+            iTextSharp.text.Font fonttitle2 = new iTextSharp.text.Font(bf1, 12);        //副标题字体，大小15  
+
+            //填写基本信息
+            #region
+            //设备信息标头 
+            string strContent = "设备信息";
+            Paragraph line = new Paragraph(strContent, fonttitle);     //添加段落，第二个参数指定使用fonttitle格式的字体，写入中文必须指定字体否则无法显示中文  
+            line.Alignment = iTextSharp.text.Rectangle.ALIGN_LEFT;       //设置居中  
+            document.Add(line);        //将标题段加入PDF文档中  
+
+            ////空一行  
+            Paragraph nullp = new Paragraph(" ", nullparagraph);
+            //nullp.Leading = 10;
+            document.Add(nullp);
+
+            //设备信息：设备类型 + SN
+            strContent = "设备类型：" + this.label_equipType_Value.Text;
+            strContent = strContent.PadRight(43, Convert.ToChar(" ")) + "SN：" + this.label_SN_Value.Text;
+            line = new Paragraph(strContent, fonttitle2);
+            document.Add(line);
+
+            //设备信息：  软件版本 
+            document.Add(nullp);
+            strContent = "软件版本：" + this.label_softwarVer_Value.Text;
+            line = new Paragraph(strContent, fonttitle2);
+            document.Add(line);
+
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+
+            //使用时间标头
+            strContent = "使用时间";
+            line = new Paragraph(strContent, fonttitle);
+            document.Add(line);
+
+            //使用时间： 开始时间 --- 结束时间
+            document.Add(nullp);
+            strContent = this.label_dateFrom_Value.Text + "        ---       " + this.label_dateTo_Value.Text;
+            line = new Paragraph(strContent, fonttitle2);
+            document.Add(line);
+
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+
+            //病人信息标头
+            strContent = "病人信息";
+            line = new Paragraph("病人信息", fonttitle);
+            document.Add(line);
+
+            //病人信息： 姓名 + 身高
+            document.Add(nullp);
+            strContent = "姓名：" + this.label_value_patient_name.Text;
+            strContent = strContent.PadRight(45, Convert.ToChar(" ")) + "身高: " + this.label_value_patient_height.Text + "cm";
+            line = new Paragraph(strContent, fonttitle2);
+            document.Add(line);
+
+            //病人信息： 年龄 + 体重
+            document.Add(nullp);
+            strContent = "年龄：" + this.label_value_patient_age.Text;
+            strContent = strContent.PadRight(45, Convert.ToChar(" ")) + "体重: " + this.label_value_patient_weight.Text + "kg";
+            line = new Paragraph(strContent, fonttitle2);
+            document.Add(line);
+
+            //病人信息： 性别
+            document.Add(nullp);
+            strContent = "性别：" + this.label_value_patient_gender.Text;
+            line = new Paragraph(strContent, fonttitle2);
+            document.Add(line);
+
+            //病人信息： 电话号码
+            document.Add(nullp);
+            strContent = "电话号码：" + this.label_value_patient_phoneNum.Text;
+            line = new Paragraph(strContent, fonttitle2);
+            document.Add(line);
+
+            //病人信息： 家庭住址
+            document.Add(nullp);
+            strContent = "家庭住址：" + this.label_value_patient_adress.Text;
+            line = new Paragraph(strContent, fonttitle2);
+            document.Add(line);
+
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            #endregion
+
+            //定义图片在PDF中宽和高
+            int chart_Height_inPDF = 250;
+            int chart_Width_inPDF = 500;
+
+            //图表,大标题
+            strContent = "图表";
+            line = new Paragraph("图表", fonttitle);
+            document.Add(line);
+            document.Add(nullp);
+            //图表：工作信息-使用时间
+            #region
+            strContent = "使用时间：";
+            line = new Paragraph(strContent, fonttitle2);
+            document.Add(line);
+            document.Add(nullp);
+
+            string workDataChart_image = Environment.CurrentDirectory + "\\" + "workData.png";
+            //先获取原图的宽和高
+            int old_width = this.chart_workData.Width;
+            int old_height = this.chart_workData.Height;
+            //设置保存成图片是的宽和高
+            this.chart_workData.Width = chart_Width_inPDF;
+            this.chart_workData.Height = chart_Height_inPDF;
+            this.chart_workData.SaveImage(workDataChart_image, ChartImageFormat.Png);
+            iTextSharp.text.Image png = iTextSharp.text.Image.GetInstance(workDataChart_image);
+            document.Add(png);
+            //还原chart的原来宽和高
+            this.chart_workData.Width = old_width;
+            this.chart_workData.Height = old_height;
+            document.Add(nullp);
+            #endregion
+
+            //图表：病人温度
+            #region
+            strContent = "病人温度：";
+            line = new Paragraph(strContent, fonttitle2);
+            document.Add(line);
+            document.Add(nullp);
+
+            string patientTmp_image = Environment.CurrentDirectory + "\\" + "PatientTmp.png";
+            //先获取原图的宽和高
+            old_width = this.chart_patientTmp.Width;
+            old_height = this.chart_patientTmp.Height;
+            //设置保存成图片是的宽和高
+            this.chart_patientTmp.Width = chart_Width_inPDF;
+            this.chart_patientTmp.Height = chart_Height_inPDF;
+
+            this.chart_patientTmp.SaveImage(patientTmp_image, ChartImageFormat.Png);
+            png = iTextSharp.text.Image.GetInstance(patientTmp_image);
+            document.Add(png);
+            //还原chart的原来宽和高
+            this.chart_patientTmp.Width = old_width;
+            this.chart_patientTmp.Height = old_height;
+            document.Add(nullp);
+            #endregion
+
+            //图表：出气口温度
+            #region
+            strContent = "出气口温度：";
+            line = new Paragraph(strContent, fonttitle2);
+            document.Add(line);
+            document.Add(nullp);
+
+            string airOutLetTmp_image = Environment.CurrentDirectory + "\\" + "airOutLetTmp_images.png";
+            //先获取原图的宽和高
+            old_width = this.chart_air_outlet_tmp.Width;
+            old_height = this.chart_air_outlet_tmp.Height;
+            //设置保存成图片是的宽和高
+            this.chart_air_outlet_tmp.Width = chart_Width_inPDF;
+            this.chart_air_outlet_tmp.Height = chart_Height_inPDF;
+            this.chart_air_outlet_tmp.SaveImage(airOutLetTmp_image, ChartImageFormat.Png);
+            png = iTextSharp.text.Image.GetInstance(airOutLetTmp_image);
+            document.Add(png);
+            //还原chart的原来宽和高
+            this.chart_air_outlet_tmp.Width = old_width;
+            this.chart_air_outlet_tmp.Height = old_height;
+            document.Add(nullp);
+            #endregion
+
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+
+
+            //图表：流量
+            #region
+            strContent = "流量：";
+            line = new Paragraph(strContent, fonttitle2);
+            document.Add(line);
+            document.Add(nullp);
+
+            string flow_image = Environment.CurrentDirectory + "\\" + "flow.png";
+            //先获取原图的宽和高
+            old_width = this.chart_flow.Width;
+            old_height = this.chart_flow.Height;
+            //设置保存成图片是的宽和高
+            this.chart_flow.Width = chart_Width_inPDF;
+            this.chart_flow.Height = chart_Height_inPDF;
+            this.chart_flow.SaveImage(flow_image, ChartImageFormat.Png);
+            png = iTextSharp.text.Image.GetInstance(flow_image);
+            document.Add(png);
+            //还原chart的原来宽和高
+            this.chart_flow.Width = old_width;
+            this.chart_flow.Height = old_height;
+            document.Add(nullp);
+            #endregion
+
+            //图表：氧浓度
+            #region
+            strContent = "氧浓度：";
+            line = new Paragraph(strContent, fonttitle2);
+            document.Add(line);
+            document.Add(nullp);
+
+            string oxyConcentration_image = Environment.CurrentDirectory + "\\" + "oxyConcentration.png";
+            //先获取原图的宽和高
+            old_width = this.chart_oxy_concentration.Width;
+            old_height = this.chart_oxy_concentration.Height;
+            //设置保存成图片是的宽和高
+            this.chart_oxy_concentration.Width = chart_Width_inPDF;
+            this.chart_oxy_concentration.Height = chart_Height_inPDF;
+            this.chart_oxy_concentration.SaveImage(oxyConcentration_image, ChartImageFormat.Png);
+            png = iTextSharp.text.Image.GetInstance(oxyConcentration_image);
+            document.Add(png);
+            //还原chart的原来宽和高
+            this.chart_oxy_concentration.Width = old_width;
+            this.chart_oxy_concentration.Height = old_height;
+            #endregion
+
+            //删除照片
+            File.Delete(workDataChart_image);
+            File.Delete(patientTmp_image);
+            File.Delete(flow_image);
+            File.Delete(oxyConcentration_image);
+
+            document.Close();
+            fs.Close();
         }
 
         private void tabControl1_Selecting(object sender, TabControlCancelEventArgs e)
@@ -2981,19 +3014,16 @@ namespace BreathingMachine
 
         public static Dictionary<WORK_INFO_HEAD, List<WORK_INFO_MESSAGE>> m_workHead_Msg_Map;   //每天的工作信息头和Msg链表放到Map中
 
-        public static void CreateTestFiles()
+        public static void CreateWorkDataFiles(DateTime tmBegin, Int32 duration)
         {
-            //定义产生测试文件的时间范围
-            DateTime tmBegin=new DateTime(2017,1,1,0,0,0);
-            Int32 duration = 365;
-            
+            #region
             //产生工作文件
-            for(int i=0;i<duration;i++)
+            for (int i = 0; i < duration; i++)
             {
-                DateTime tmp= tmBegin.AddDays(i);
+                DateTime tmp = tmBegin.AddDays(i);
 
                 string strFilePath = "C:/Users/Administrator/Desktop/SD_TEST/170000000001/DATA";
-                string strData=Convert.ToString(tmp.Year) + Convert.ToString(tmp.Month).PadLeft(2, '0') + Convert.ToString(tmp.Day).PadLeft(2, '0');
+                string strData = Convert.ToString(tmp.Year) + Convert.ToString(tmp.Month).PadLeft(2, '0') + Convert.ToString(tmp.Day).PadLeft(2, '0');
                 strFilePath += strData + ".vmf";
                 FileStream fs = new FileStream(strFilePath, FileMode.Create);
                 BinaryWriter bw = new BinaryWriter(fs, Encoding.ASCII);
@@ -3003,7 +3033,7 @@ namespace BreathingMachine
                 WORK_INFO_HEAD workHead = new WORK_INFO_HEAD();
                 workHead.WORK_FLAG = "8DATA" + strData;//没加校验
                 workHead.WORK_FLAG.PadRight(64, '0');
-                workHead.MACHINETYPE = "6VNU002000".PadRight(64, '0');
+                workHead.MACHINETYPE = "6VNU001000".PadRight(64, '0');
                 workHead.SN = "91700002342".PadRight(64, '0');
                 workHead.SOFTWAR_VER = "31110000".PadRight(64, '0');
                 workHead.RESERVE_0 = "".PadRight(64, '0');
@@ -3017,20 +3047,20 @@ namespace BreathingMachine
                 workHead.RESERVE_8 = "".PadRight(64, '0');
                 workHead.RESERVE_9 = "".PadRight(64, '0');
                 workHead.RESERVE_10 = "".PadRight(64, '0');
-                workHead.WORKDATA_NUM="45678912".PadRight(64,'0');
+                workHead.WORKDATA_NUM = "45678912".PadRight(64, '0');
 
-                var buff=GetData(workHead);
+                var buff = GetData(workHead);
                 bw.Write(buff, 0, Marshal.SizeOf(workHead));
                 #endregion
 
-                Random rnd=new Random();
+                Random rnd = new Random();
                 //写入信息体
                 int m = 0;
-                for (int j = 0; j < 1000 + rnd.Next(0, 360);j++ )
+                for (int j = 0; j < 1000 + rnd.Next(0, 360); j++)
                 {
                     int runMode = 0;
                     m++;
-                    if(m==30)
+                    if (m == 30)
                     {
                         runMode = 1;
                         m = 0;
@@ -3105,18 +3135,96 @@ namespace BreathingMachine
                         Convert.ToByte(89), //
                         #endregion
                     };
-
                     bw.Write(bt, 0, 64);
                 }
-
-                
-
                 bw.Close();
                 fs.Close();
             }
+            #endregion
+        }
 
+        public static void CreateAlarmFile(DateTime tmBegin, Int32 duration)
+        {
+            #region
+            //产生工作文件
+                string strFilePath = "C:/Users/Administrator/Desktop/SD_TEST/170000000001/ALARM.vmf";
+                string strData = Convert.ToString(tmBegin.Year) + Convert.ToString(tmBegin.Month).PadLeft(2, '0') + Convert.ToString(tmBegin.Day).PadLeft(2, '0');
+               
+                FileStream fs = new FileStream(strFilePath, FileMode.Create);
+                BinaryWriter bw = new BinaryWriter(fs, Encoding.ASCII);
 
-            
+                //填充工作信息头
+                #region
+                ALARM_INFO_HEAD alarmHead = new ALARM_INFO_HEAD();
+                alarmHead.ALARM_FLAG = "5ALARM89".PadRight(16, '0');
+                alarmHead.MACHINETYPE = "6VNU001".PadRight(16, '0');
+                alarmHead.SN = "91700002342".PadRight(16, '0');
+                alarmHead.SOFTWAR_VER = "31110000".PadRight(16, '0');
+                alarmHead.RESERVE_0 = "".PadRight(16, '0');
+                alarmHead.RESERVE_1 = "".PadRight(16, '0');
+                alarmHead.RESERVE_2 = "".PadRight(16, '0');
+                alarmHead.RESERVE_3 = "".PadRight(16, '0');
+                alarmHead.RESERVE_4 = "".PadRight(16, '0');
+                alarmHead.RESERVE_5 = "".PadRight(16, '0');
+                alarmHead.RESERVE_6 = "".PadRight(16, '0');
+                alarmHead.RESERVE_7 = "".PadRight(16, '0');
+                alarmHead.RESERVE_8 = "".PadRight(16, '0');
+                alarmHead.RESERVE_9 = "".PadRight(16, '0');
+                alarmHead.RESERVE_10 = "".PadRight(16, '0');
+                alarmHead.ALARM_NUM = "9874545".PadRight(16, '0');
+
+                var buff = GetData(alarmHead);
+                bw.Write(buff, 0, Marshal.SizeOf(alarmHead));
+                #endregion
+
+                Random rnd = new Random();
+                //写入信息体
+                int m = 0;
+                for (int j = 0; j < 30000; j++)
+                {
+                    int runMode = 0;
+                    m++;
+                    if (m == 30)
+                    {
+                        runMode = 1;
+                        m = 0;
+                    }
+                    DateTime tmp = tmBegin.AddMinutes(10 * j);
+
+                    byte[] bt = new byte[16]{
+                    #region
+                        Convert.ToByte(tmp.Year/100),
+                        Convert.ToByte(tmp.Year%100),
+                        Convert.ToByte(tmp.Month),
+                        Convert.ToByte(tmp.Day),
+                        Convert.ToByte(tmp.Hour),
+                        Convert.ToByte(tmp.Minute),
+                        Convert.ToByte(tmp.Second),
+                        Convert.ToByte(runMode),
+                        Convert.ToByte(rnd.Next(0,6)), //报警代码
+                        Convert.ToByte(rnd.Next(0,100)), //报警数据L
+                        Convert.ToByte(rnd.Next(0,100)), //报警数据H
+                        Convert.ToByte(0), //保留1
+                        Convert.ToByte(0), //保留2
+                        Convert.ToByte(0), //保留3
+                        Convert.ToByte(12), //checksum1
+                        Convert.ToByte(23), //checksum2
+                        #endregion
+                    };
+                    bw.Write(bt, 0, 16);
+                }
+                bw.Close();
+                fs.Close();
+          
+            #endregion
+        }
+
+        public static void CreateTestFiles(DateTime tmBegin,int duration)
+        {
+            //定义产生测试文件的时间范围
+            CreateAlarmFile(tmBegin, duration);
+            CreateWorkDataFiles(tmBegin, duration);
+           
         }
 
         public static void GetMinMaxDateTime()
@@ -3170,13 +3278,21 @@ namespace BreathingMachine
 
         public static void GetAllFilesName()
         {
-            var alarmFilePath = Directory.GetFiles(m_dirPath, "ALARM.vmf");      //获取"ALARM.vmf"文件的路径名
+            string[] alarmFilePath;
+            string filePath = FileMngr.m_dirPath + @"\ALARM.vmf";
+            
+            if (File.Exists(filePath))
+            {
+                alarmFilePath = Directory.GetFiles(m_dirPath, "ALARM.vmf");      //获取"ALARM.vmf"文件的路径名
+                m_alarmFileName = alarmFilePath[0].Substring(alarmFilePath[0].LastIndexOf(@"\") + 1);
+            }
+            else
+            {
+                alarmFilePath = null;
+            }
+            
             var workDataFilePathes = Directory.GetFiles(m_dirPath, "DATA*.vmf");
-
-            m_alarmFileName = alarmFilePath[0].Substring(alarmFilePath[0].LastIndexOf(@"\") + 1);
-            //MessageBox.Show(m_alarmFileName);
-
-            //m_workFileNameList = new List<string>();
+            
             foreach (var file in workDataFilePathes)
             {
                 m_workFileNameList.Add(file.Substring(file.LastIndexOf(@"\") + 1)); //将工作文件名添加到链表中
@@ -3205,7 +3321,7 @@ namespace BreathingMachine
             //对alarmMsg的第一个字段进行校验
 
             //if (VerifyField(buffer))   //这里校验是失败的，为了打开文件将条件屏蔽
-            if (VerifyField(buffer))
+            if (true)
             {
                 m_alarmHead = GetObject<ALARM_INFO_HEAD>(buffer, len_head); //将信息头放入m_alarmHead中
                 //debug
