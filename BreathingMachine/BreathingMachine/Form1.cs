@@ -2514,6 +2514,10 @@ namespace BreathingMachine
         private void textBox_jumpto_TextChanged(object sender, EventArgs e)
         {
             var str = textBox_jumpto.Text;
+            if(str.Length>=10)
+            {
+                return;
+            }
             if(str=="")
             {
                 return;

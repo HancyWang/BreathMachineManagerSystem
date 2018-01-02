@@ -52,11 +52,11 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(72, 29);
+            this.label1.Location = new System.Drawing.Point(67, 29);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(41, 12);
+            this.label1.Size = new System.Drawing.Size(47, 12);
             this.label1.TabIndex = 0;
-            this.label1.Text = "姓名：";
+            this.label1.Text = "*姓名：";
             // 
             // textBox_name
             // 
@@ -68,11 +68,11 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(72, 70);
+            this.label2.Location = new System.Drawing.Point(67, 70);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(41, 12);
+            this.label2.Size = new System.Drawing.Size(47, 12);
             this.label2.TabIndex = 2;
-            this.label2.Text = "年龄：";
+            this.label2.Text = "*年龄：";
             // 
             // textBox_age
             // 
