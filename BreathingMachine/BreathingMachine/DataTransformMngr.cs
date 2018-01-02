@@ -11,6 +11,8 @@ namespace BreathingMachine
 {
     class DataMngr
     {
+        public static double m_DateTimePicker_Range_Limit = 60;//默认2个月的时间
+        public static double m_UsageChart_DateRange_Limit = 60;//默认2个月的时间
         public static List<DETAIL_CHART_INFO> m_listInfo;
         public static CHART_SIZE m_chartSize;
         public static bool m_bPatientInfo_Geted;

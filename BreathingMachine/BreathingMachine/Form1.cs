@@ -109,8 +109,15 @@ namespace BreathingMachine
             DateTime tm_begin = new DateTime(tmBegin.Year, tmBegin.Month, tmBegin.Day, 0, 0, 0);
             DateTime tm_end = new DateTime(tmEnd.Year, tmEnd.Month, tmEnd.Day, 0, 0, 0);
 
-            double day_min = (tm_begin - tmFirstDay).TotalDays - 1; //x轴上的最小值 ,-1表示多放前一天，为了图表显示好看
-            double day_max = (tm_end - tmFirstDay).TotalDays + 1;   //y轴上的最大值,+1表示日期在后推一天
+            double day_min = (tm_begin - tmFirstDay).TotalDays /*- 1*/; //x轴上的最小值 ,-1表示多放前一天，为了图表显示好看
+            double day_max = (tm_end - tmFirstDay).TotalDays /*+ 1*/;   //y轴上的最大值,+1表示日期在后推一天
+
+            //加一个时间范围限制，就显示2个月的数据
+            if (day_max - day_min >= DataMngr.m_UsageChart_DateRange_Limit)
+            {
+                day_min = day_max - DataMngr.m_UsageChart_DateRange_Limit;
+            }
+
             //var duration = (tmEnd - tmBegin).TotalDays;
             //画图
             this.chart_workData.Series.Clear();//清除所有图
@@ -144,7 +151,14 @@ namespace BreathingMachine
             chartArea_usage.AxisY.IsReversed = true;
             chartArea_usage.AxisX.Minimum = day_min;
             chartArea_usage.AxisX.Maximum = day_max;
-            chartArea_usage.AxisX.Interval = 1;
+            if((this.dateTimePicker_End.Value-this.dateTimePicker_Begin.Value).TotalDays>=DataMngr.m_UsageChart_DateRange_Limit)
+            {
+                chartArea_usage.AxisX.Interval = 2;
+            }
+            else
+            {
+                chartArea_usage.AxisX.Interval = 1;
+            }
 
             chartArea_usage.AxisY.LabelStyle.Format = "HH:mm";
             chartArea_usage.AxisY.Minimum = 0;
@@ -775,7 +789,7 @@ namespace BreathingMachine
                                                          Convert.ToInt32(alarmMsg.SECOND));
                     
                     //12.26,先暂时屏蔽掉
-                    //if (tmFromMsg >= TmLow && tmFromMsg <= TmHigh)
+                    if (tmFromMsg >= TmLow && tmFromMsg <= TmHigh)
                     {
                         ListViewItem lvi = new ListViewItem();
                         lvi.Text = i.ToString();  //第一列,No.
@@ -987,8 +1001,6 @@ namespace BreathingMachine
 
         private void 导入数据ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
-
             //加载文件内容到内存中，存放在FileMngr的链表中
             #region
             if (this.folderBrowserDialog_selectFolder.ShowDialog() == DialogResult.OK)
@@ -1178,8 +1190,8 @@ namespace BreathingMachine
                                                             Convert.ToInt32(alarmMsg.HOUR),
                                                             Convert.ToInt32(alarmMsg.MINUTE),
                                                             Convert.ToInt32(alarmMsg.SECOND));
-                    //先屏蔽，先修改测试文件，改完在开
-                    //if(tmFromMsg>=tmBegin&&tmFromMsg<=tmEnd)
+                    //先屏蔽，先修改测试文件，改完在开 //已经改完
+                    if(tmFromMsg>=tmBegin&&tmFromMsg<=tmEnd)
                     {
                         #region
                         if (DataMngr.m_machineType == 2)
@@ -1834,7 +1846,7 @@ namespace BreathingMachine
 
                 DateTime tm = new DateTime(Convert.ToInt32(strYear), Convert.ToInt32(strMonth), Convert.ToInt32(strDay), 0, 0, 0);
 
-                if (tm >= tmBegin && tm <= tmEnd)
+                //if (tm >= tmBegin && tm <= tmEnd)
                 {
                     #region
                     TreeNode node_day = new TreeNode();
@@ -1997,7 +2009,9 @@ namespace BreathingMachine
         private void Form1_Load(object sender, EventArgs e)
         {
             //debug,产生测试文档
-            if(FileMngr.m_bCreateTestFiles)
+            #region
+            FileMngr.m_bCreateTestFiles = false;
+            if (FileMngr.m_bCreateTestFiles)
             {
                 if (Directory.Exists("C:/Users/Administrator/Desktop/SD_TEST/170000000001"))
                 {
@@ -2010,10 +2024,11 @@ namespace BreathingMachine
                 }
 
                 DateTime tmBegin=new DateTime(2017,1,1,0,0,0);
-                Int32 duration = 90;
+                //产生多少天数据
+                Int32 duration = 365;
                 FileMngr.CreateTestFiles(tmBegin, duration);
             }
-            
+            #endregion
             //工作参数不需要了，直接隐藏起来
             this.groupBox_workingParam.Visible = false;
 
@@ -2026,7 +2041,6 @@ namespace BreathingMachine
 
             this.用户模式ToolStripMenuItem.Visible = false;
             this.工程师模式ToolStripMenuItem.Visible = false;
-
 
             //初始化工程师模式
             this.g_bEngineerMode = true;
@@ -2135,7 +2149,13 @@ namespace BreathingMachine
             
             this.dateTimePicker_Begin.MaxDate = FileMngr.m_DateTime_max;
             this.dateTimePicker_End.MaxDate = FileMngr.m_DateTime_max;
-                
+            
+            //设置时间控件的显示范围，默认显示3个月
+            if((this.dateTimePicker_End.Value-this.dateTimePicker_Begin.Value).TotalDays>=DataMngr.m_DateTimePicker_Range_Limit)
+            {
+                this.dateTimePicker_Begin.Value = this.dateTimePicker_End.Value.AddDays(0 - DataMngr.m_DateTimePicker_Range_Limit);
+            }
+
         }
 
 
@@ -2382,11 +2402,13 @@ namespace BreathingMachine
             //校验开始时间，结束时间的正确性
             DateTime tmp1 = this.dateTimePicker_Begin.Value;
             DateTime tmp2 = this.dateTimePicker_End.Value;
-            if (tmp1 < FileMngr.m_DateTime_min)
-            {
-                this.dateTimePicker_Begin.Value = FileMngr.m_DateTime_min;
-                MessageBox.Show("当前最小日期为:" + this.dateTimePicker_Begin.Value.ToString("yyyy-MM-dd"));
-            }
+            #region
+            //if (tmp1 < FileMngr.m_DateTime_min)
+            //{
+            //    this.dateTimePicker_Begin.Value = FileMngr.m_DateTime_min;
+            //    MessageBox.Show("当前最小日期为:" + this.dateTimePicker_Begin.Value.ToString("yyyy-MM-dd"));
+            //}
+            #endregion
 
             if (tmp1 > tmp2)
             {
@@ -2399,6 +2421,13 @@ namespace BreathingMachine
             {
                 FileMngr.m_dateTime_begin = tmp1;
                 FileMngr.m_dateTime_end = tmp2;
+            }
+
+            //设置时间范围，最多跨度为3个月
+            if ((this.dateTimePicker_End.Value - this.dateTimePicker_Begin.Value).TotalDays>=DataMngr.m_DateTimePicker_Range_Limit)
+            {
+                this.dateTimePicker_End.Value = this.dateTimePicker_Begin.Value.AddDays(DataMngr.m_DateTimePicker_Range_Limit);
+                
             }
 
             //规避bug
@@ -2418,8 +2447,8 @@ namespace BreathingMachine
             this.label_dateTo_Value.Text = this.dateTimePicker_End.Value.ToString("yyyy/MM/dd");
             this.label_dateFrom_Value.Text = this.dateTimePicker_Begin.Value.ToString("yyyy/MM/dd");
 
-            //DateTime tmp1 = this.dateTimePicker_Begin.Value;
-            //DateTime tmp2 = this.dateTimePicker_End.Value;
+            tmp1 = this.dateTimePicker_Begin.Value;
+            tmp2 = this.dateTimePicker_End.Value;
             DateTime TmLow = new DateTime(tmp1.Year, tmp1.Month, tmp1.Day, 0, 0, 0);
             DateTime TmHight = new DateTime(tmp2.Year, tmp2.Month, tmp2.Day, 23, 59, 59);
 
@@ -2448,9 +2477,7 @@ namespace BreathingMachine
                 return;
             }
             WorkDataList.m_nCurrentPage = 1;
-            ShowWorkdataListPage(WorkDataList.m_WorkData_List, WorkDataList.m_nCurrentPage);
-
-            
+            ShowWorkdataListPage(WorkDataList.m_WorkData_List, WorkDataList.m_nCurrentPage);   
         }
 
         private void button_listview_prev_Click(object sender, EventArgs e)
@@ -2514,11 +2541,7 @@ namespace BreathingMachine
             //校验开始时间，结束时间的正确性
             DateTime tmp1 = this.dateTimePicker_Begin.Value;
             DateTime tmp2 = this.dateTimePicker_End.Value;
-            if (tmp2 > FileMngr.m_DateTime_max)
-            {
-                this.dateTimePicker_End.Value = FileMngr.m_DateTime_max;
-                MessageBox.Show("当前最大日期为:" + this.dateTimePicker_End.Value.ToString("yyyy-MM-dd"));
-            }
+
             #region
             if (tmp1 > tmp2)
             {
@@ -2531,6 +2554,12 @@ namespace BreathingMachine
             {
                 FileMngr.m_dateTime_begin = tmp1;
                 FileMngr.m_dateTime_end = tmp2;
+            }
+
+            //设置时间范围，最多跨度为3个月
+            if ((this.dateTimePicker_End.Value - this.dateTimePicker_Begin.Value).TotalDays >= DataMngr.m_DateTimePicker_Range_Limit)
+            {
+                this.dateTimePicker_Begin.Value = this.dateTimePicker_End.Value.AddDays(0-DataMngr.m_DateTimePicker_Range_Limit);
             }
             #endregion
 
@@ -2550,8 +2579,8 @@ namespace BreathingMachine
             //初始化app面板上，基本信息中的时间
             this.label_dateFrom_Value.Text = this.dateTimePicker_Begin.Value.ToString("yyyy/MM/dd");
             this.label_dateTo_Value.Text = this.dateTimePicker_End.Value.ToString("yyyy/MM/dd");
-            //DateTime tmp1 = this.dateTimePicker_Begin.Value;
-            //DateTime tmp2 = this.dateTimePicker_End.Value;
+            tmp1 = this.dateTimePicker_Begin.Value;
+            tmp2 = this.dateTimePicker_End.Value;
             DateTime TmLow = new DateTime(tmp1.Year, tmp1.Month, tmp1.Day, 0, 0, 0);
             DateTime TmHight = new DateTime(tmp2.Year, tmp2.Month, tmp2.Day, 23, 59, 59);
 
@@ -2874,11 +2903,13 @@ namespace BreathingMachine
             //删除照片
             File.Delete(workDataChart_image);
             File.Delete(patientTmp_image);
+            File.Delete(airOutLetTmp_image);
             File.Delete(flow_image);
             File.Delete(oxyConcentration_image);
 
             document.Close();
             fs.Close();
+            MessageBox.Show("生成报告成功！");
         }
 
         private void tabControl1_Selecting(object sender, TabControlCancelEventArgs e)
@@ -2905,10 +2936,7 @@ namespace BreathingMachine
             }
         }
 
-        private void dateTimePicker_Begin_ValueChanged(object sender, EventArgs e)
-        {
-            
-        }
+        
 
         private void treeView_detailChart_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
@@ -2993,7 +3021,7 @@ namespace BreathingMachine
     }
     public class FileMngr
     {
-        public static bool m_bCreateTestFiles = true;    //这个仅仅是为了产生测试文件，正式版本将它改成false
+        public static bool m_bCreateTestFiles;    //这个仅仅是为了产生测试文件，正式版本将它改成false
         public static WORK_INFO_HEAD m_lastWorkHead;            //这个是为了显示app上的基本信息，才保留的一个信息
         public static WORK_INFO_MESSAGE m_lastWorkMsg;          //这个是为了显示app上的基本信息，才保留的一个信息
         public static DateTime m_dateTime_begin;
@@ -3180,7 +3208,7 @@ namespace BreathingMachine
                 Random rnd = new Random();
                 //写入信息体
                 int m = 0;
-                for (int j = 0; j < 30000; j++)
+                for (int j = 0; j < 100000; j++)
                 {
                     int runMode = 0;
                     m++;
