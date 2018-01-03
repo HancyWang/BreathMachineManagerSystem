@@ -18,69 +18,7 @@ using iTextSharp.text.pdf;
 namespace BreathingMachine
 {
     //将工作信息列表中的一行数据，封装成一个结构体
-    public struct WorkData
-    {
-        #region
-        public string No;
-        public string tm;
-        public string set_mode;
-        public string set_tmp;
-        public string set_flow;
-        public string set_high_oxy_alarm;
-        public string set_low_oxy_alrm;
-        public string set_atomiz_level;
-        public string set_atomiz_time;
-        public string set_adault_or_child;
-        public string data_patient_tmp;
-        public string data_air_outlet_tmp;
-        public string data_heating_plate_tmp;
-        public string data_env_tmp;
-        public string data_driveboard_tmp;
-        public string data_flow;
-        public string data_oxy_concentration;
-        public string data_air_pressure;
-        public string data_loop_type;
-        public string data_faultstates_0;
-        public string data_faultstates_1;
-        public string data_faultstates_2;
-        public string data_faultstates_3;
-        public string data_faultstates_4;
-        public string data_faultstates_5;
-        public string data_faultstates_6;
-        public string data_faultstates_7;
-        public string data_faultstates_8;
-        public string data_faultstates_9;
-        public string data_faultstates_10;
-        public string data_faultstates_11;
-
-        public string data_atmoz_DAC_L;
-        public string data_atmoz_DAC_H;
-        public string data_atmoz_ADC_L;
-        public string data_atmoz_ADC_H;
-        public string data_loop_heating_PWM_L;
-        public string data_loop_heating_PWM_H;
-        public string data_loop_heating_ADC_L;
-        public string data_loop_heating_ADC_H;
-        public string data_loop_heating_plate_PWM_L;  
-        public string data_loop_heating_plate_PWM_H;       
-        public string data_loop_heating_plate_ADC_L; 
-        public string data_loop_heating_plate_ADC_H; 
-        public string data_main_motor_drive_L;                 
-        public string data_main_motor_drive_H;                     
-        public string data_main_motor_speed_L;                 
-        public string data_main_motor_speed_H;                 
-        public string data_press_sensor_ADC_L;
-        public string data_press_sensor_ADC_H;   
-        public string data_waterlevel_sensor_HADC_L;
-        public string data_waterlevel_sensor_HADC_H; 
-        public string data_waterlevel_sensor_LADC_L;
-        public string data_waterlevel_sensor_LADC_H;           
-        public string data_fan_driver_L;
-        public string data_fan_driver_H;          
-        public string data_fan_speed_L;
-        public string data_fan_speed_H;
-        #endregion
-    }
+    
     public partial class Form1 : Form
     {
         public static string g_username;
@@ -578,7 +516,18 @@ namespace BreathingMachine
             int i = 1;
             foreach (KeyValuePair<WORK_INFO_HEAD, List<WORK_INFO_MESSAGE>> kv in FileMngr.m_workHead_Msg_Map)
             {
+                //先判断,减少不必要的foreach (var workDataMsg in list)
                 var list = kv.Value;
+                WORK_INFO_MESSAGE msg = list[0];
+                DateTime msgTm = new DateTime(100 * Convert.ToInt32(msg.YEAR1) + Convert.ToInt32(msg.YEAR2),
+                                                Convert.ToInt32(msg.MONTH), Convert.ToInt32(msg.DAY), 23, 59, 59);
+                if (msgTm < TmLow || msgTm > TmHigh)
+                {
+                    continue;
+                }
+
+
+
                 #region
                 foreach (var workDataMsg in list)
                 {
@@ -590,7 +539,7 @@ namespace BreathingMachine
                                                          Convert.ToInt32(workDataMsg.HOUR),
                                                          Convert.ToInt32(workDataMsg.MINUTE),
                                                          Convert.ToInt32(workDataMsg.SECOND));
-                        if (tmFromMsg > TmLow && tmFromMsg < TmHigh)
+                        //if (tmFromMsg > TmLow && tmFromMsg < TmHigh)
                         {
                             //解析故障状态位,一共12位
                             int[] faultStates = new int[12];
@@ -761,10 +710,7 @@ namespace BreathingMachine
                 }
                 #endregion
             }
-
-
             #endregion
-
             //this.listView_workData.VirtualListSize = myCache1.Count;
             //this.listView_workData.EndUpdate();
         }
@@ -2032,6 +1978,7 @@ namespace BreathingMachine
             //工作参数不需要了，直接隐藏起来
             this.groupBox_workingParam.Visible = false;
 
+
             //初始化高级模式！！！
             DataMngr.m_advanceMode = false;  //默认开启高级模式，这里以后用户使用的话，改成false
             if (DataMngr.m_advanceMode==false)
@@ -2250,7 +2197,7 @@ namespace BreathingMachine
             //this.listView_workData.Dispose();
         }
 
-        public void ShowWorkdataListPage(List<WorkData> list, int page)
+        public void ShowWorkdataListPage(object list, int page)
         {
             if(list==null)
             {
@@ -2358,26 +2305,26 @@ namespace BreathingMachine
                 }
                 else
                 {
-                    lvi.Text = WorkDataList.m_WorkData_List[i].No;
-                    lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].tm);
+                    #region
+                    lvi.Text = WorkDataList.m_WorkData_Basic_List[i].No;
+                    lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].tm);
                     if(DataMngr.m_machineType==2)
                     {
-                        lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].set_mode);
+                        lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].set_mode);
                     }
-                    lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].set_adault_or_child);
-                    lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_patient_tmp);
-                    lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_air_outlet_tmp);
-                    lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_flow);
-                    lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_oxy_concentration);
+                    lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].set_adault_or_child);
+                    lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].data_patient_tmp);
+                    lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].data_air_outlet_tmp);
+                    lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].data_flow);
+                    lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].data_oxy_concentration);
+                    #endregion
                 }
 
                 this.listView_workData.Items.Add(lvi);
                 #endregion
             }
             
-            this.listView_workData.EndUpdate();
-
-            
+            this.listView_workData.EndUpdate();   
         }
 
         private void 高级模式ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2388,17 +2335,11 @@ namespace BreathingMachine
 
         private void button_listview_toppage_Click(object sender, EventArgs e)
         {
-            if (WorkDataList.m_WorkData_List == null || WorkDataList.m_WorkData_List.Count==0)
-            {
-                return;
-            }
-            WorkDataList.m_nCurrentPage = 1;
-            ShowWorkdataListPage(WorkDataList.m_WorkData_List, WorkDataList.m_nCurrentPage);
+            ShowCurrentPage(1);   
         }
 
         private void dateTimePicker_Begin_CloseUp(object sender, EventArgs e)
         {
-            
             //校验开始时间，结束时间的正确性
             DateTime tmp1 = this.dateTimePicker_Begin.Value;
             DateTime tmp2 = this.dateTimePicker_End.Value;
@@ -2472,43 +2413,44 @@ namespace BreathingMachine
             ShowUsageChart(this.dateTimePicker_Begin.Value, this.dateTimePicker_End.Value);
 
             //将工作信息的内容填充，相当于点了一下首页
-            if (WorkDataList.m_WorkData_List == null || WorkDataList.m_WorkData_List.Count == 0)
-            {
-                return;
-            }
-            WorkDataList.m_nCurrentPage = 1;
-            ShowWorkdataListPage(WorkDataList.m_WorkData_List, WorkDataList.m_nCurrentPage);   
+            ShowCurrentPage(1);  
         }
 
         private void button_listview_prev_Click(object sender, EventArgs e)
         {
-            if (WorkDataList.m_WorkData_List == null || WorkDataList.m_WorkData_List.Count == 0)
-            {
-                return;
-            }
-            WorkDataList.m_nCurrentPage -= 1;
-            ShowWorkdataListPage(WorkDataList.m_WorkData_List, WorkDataList.m_nCurrentPage);
+            ShowCurrentPage(WorkDataList.m_nCurrentPage - 1);
         }
 
         private void button_listview_next_Click(object sender, EventArgs e)
         {
-            if (WorkDataList.m_WorkData_List == null || WorkDataList.m_WorkData_List.Count == 0)
+            ShowCurrentPage(WorkDataList.m_nCurrentPage + 1);
+        }
+
+        private void ShowCurrentPage(int currentPage)
+        {
+            if (DataMngr.m_advanceMode)
             {
-                return;
+                if (WorkDataList.m_WorkData_List == null || WorkDataList.m_WorkData_List.Count == 0)
+                {
+                    return;
+                }
+                WorkDataList.m_nCurrentPage = currentPage;
+                ShowWorkdataListPage(WorkDataList.m_WorkData_List, WorkDataList.m_nCurrentPage);
             }
-            WorkDataList.m_nCurrentPage += 1;
-            ShowWorkdataListPage(WorkDataList.m_WorkData_List, WorkDataList.m_nCurrentPage);
+            else
+            {
+                if (WorkDataList.m_WorkData_Basic_List == null || WorkDataList.m_WorkData_Basic_List.Count == 0)
+                {
+                    return;
+                }
+                WorkDataList.m_nCurrentPage = currentPage;
+                ShowWorkdataListPage(WorkDataList.m_WorkData_Basic_List, WorkDataList.m_nCurrentPage);
+            }
         }
 
         private void button_listview_endpage_Click(object sender, EventArgs e)
         {
-            if (WorkDataList.m_WorkData_List == null || WorkDataList.m_WorkData_List.Count == 0)
-            {
-                return;
-            }
-            WorkDataList.m_nCurrentPage = WorkDataList.m_nPageCount;
-            ShowWorkdataListPage(WorkDataList.m_WorkData_List, WorkDataList.m_nCurrentPage);
-            
+            ShowCurrentPage(WorkDataList.m_nPageCount);
         }
 
         private void textBox_jumpto_TextChanged(object sender, EventArgs e)
@@ -2535,13 +2477,19 @@ namespace BreathingMachine
             if (value >= 1 && value <= WorkDataList.m_nPageCount)
             {
                 WorkDataList.m_nCurrentPage = value;
-                ShowWorkdataListPage(WorkDataList.m_WorkData_List, value);
+                if(DataMngr.m_advanceMode)
+                {
+                    ShowWorkdataListPage(WorkDataList.m_WorkData_List, value);
+                }
+                else
+                {
+                    ShowWorkdataListPage(WorkDataList.m_WorkData_Basic_List, value);
+                }
             }
         }
 
         private void dateTimePicker_End_CloseUp(object sender, EventArgs e)
         {
-
             //校验开始时间，结束时间的正确性
             DateTime tmp1 = this.dateTimePicker_Begin.Value;
             DateTime tmp2 = this.dateTimePicker_End.Value;
@@ -2567,7 +2515,7 @@ namespace BreathingMachine
             }
             #endregion
 
-            //规避bug
+            //规避bug,虚模式问题
             DataMngr.m_bDateTimePicker_ValueChanged = true;
 
             ////初始化treeView
@@ -2604,14 +2552,8 @@ namespace BreathingMachine
                 }
             }
             ShowUsageChart(this.dateTimePicker_Begin.Value, this.dateTimePicker_End.Value);
-
             //将工作信息的内容填充，相当于点了一下首页
-            if (WorkDataList.m_WorkData_List == null || WorkDataList.m_WorkData_List.Count == 0)
-            {
-                return;
-            }
-            WorkDataList.m_nCurrentPage = 1;
-            ShowWorkdataListPage(WorkDataList.m_WorkData_List, WorkDataList.m_nCurrentPage);
+            ShowCurrentPage(1);
         }
 
         private void button_add_patientInfo_Click(object sender, EventArgs e)

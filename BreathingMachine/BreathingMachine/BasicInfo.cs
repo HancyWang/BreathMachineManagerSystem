@@ -6,6 +6,87 @@ using System.Threading.Tasks;
 
 namespace BreathingMachine
 {
+    //全部的工作信息
+    public struct WorkData
+    {
+        #region
+        public string No;
+        public string tm;
+        public string set_mode;
+        public string set_tmp;
+        public string set_flow;
+        public string set_high_oxy_alarm;
+        public string set_low_oxy_alrm;
+        public string set_atomiz_level;
+        public string set_atomiz_time;
+        public string set_adault_or_child;
+        public string data_patient_tmp;
+        public string data_air_outlet_tmp;
+        public string data_heating_plate_tmp;
+        public string data_env_tmp;
+        public string data_driveboard_tmp;
+        public string data_flow;
+        public string data_oxy_concentration;
+        public string data_air_pressure;
+        public string data_loop_type;
+        public string data_faultstates_0;
+        public string data_faultstates_1;
+        public string data_faultstates_2;
+        public string data_faultstates_3;
+        public string data_faultstates_4;
+        public string data_faultstates_5;
+        public string data_faultstates_6;
+        public string data_faultstates_7;
+        public string data_faultstates_8;
+        public string data_faultstates_9;
+        public string data_faultstates_10;
+        public string data_faultstates_11;
+
+        public string data_atmoz_DAC_L;
+        public string data_atmoz_DAC_H;
+        public string data_atmoz_ADC_L;
+        public string data_atmoz_ADC_H;
+        public string data_loop_heating_PWM_L;
+        public string data_loop_heating_PWM_H;
+        public string data_loop_heating_ADC_L;
+        public string data_loop_heating_ADC_H;
+        public string data_loop_heating_plate_PWM_L;
+        public string data_loop_heating_plate_PWM_H;
+        public string data_loop_heating_plate_ADC_L;
+        public string data_loop_heating_plate_ADC_H;
+        public string data_main_motor_drive_L;
+        public string data_main_motor_drive_H;
+        public string data_main_motor_speed_L;
+        public string data_main_motor_speed_H;
+        public string data_press_sensor_ADC_L;
+        public string data_press_sensor_ADC_H;
+        public string data_waterlevel_sensor_HADC_L;
+        public string data_waterlevel_sensor_HADC_H;
+        public string data_waterlevel_sensor_LADC_L;
+        public string data_waterlevel_sensor_LADC_H;
+        public string data_fan_driver_L;
+        public string data_fan_driver_H;
+        public string data_fan_speed_L;
+        public string data_fan_speed_H;
+        #endregion
+    }
+
+    //基本的工作信息
+    public struct WorkData_Basic
+    {
+        #region
+        public string No;
+        public string tm;
+        public string set_mode;
+        public string set_adault_or_child;
+        public string data_patient_tmp;
+        public string data_air_outlet_tmp;
+        public string data_flow;
+        public string data_oxy_concentration;
+        public string data_air_pressure;
+        #endregion
+    }
+
     public struct DETAIL_CHART_INFO
     {
         public DateTime tm;

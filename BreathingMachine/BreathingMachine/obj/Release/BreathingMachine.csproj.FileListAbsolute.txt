@@ -1,11 +1,11 @@
-D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Release\BreathingMachine.exe.config
-D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Release\BreathingMachine.exe
-D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Release\BreathingMachine.pdb
-D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Release\itextsharp.dll
 D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.Form1.resources
 D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.Form_engineer.resources
 D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.Form_PatientInfo.resources
 D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.Properties.Resources.resources
 D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.csproj.GenerateResource.Cache
+D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Release\BreathingMachine.exe.config
+D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Release\BreathingMachine.exe
+D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Release\BreathingMachine.pdb
+D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Release\itextsharp.dll
 D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.exe
 D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.pdb
