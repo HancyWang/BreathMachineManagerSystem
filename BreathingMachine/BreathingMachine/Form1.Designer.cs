@@ -28,17 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend7 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend8 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea9 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend9 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea10 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend10 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.语言设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -201,35 +202,35 @@
             this.中文ToolStripMenuItem,
             this.英文ToolStripMenuItem});
             this.语言设置ToolStripMenuItem.Name = "语言设置ToolStripMenuItem";
-            this.语言设置ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.语言设置ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.语言设置ToolStripMenuItem.Text = "语言设置";
             this.语言设置ToolStripMenuItem.Click += new System.EventHandler(this.语言ToolStripMenuItem_Click);
             // 
             // 中文ToolStripMenuItem
             // 
             this.中文ToolStripMenuItem.Name = "中文ToolStripMenuItem";
-            this.中文ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.中文ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.中文ToolStripMenuItem.Text = "中文";
             this.中文ToolStripMenuItem.Click += new System.EventHandler(this.中文ToolStripMenuItem_Click);
             // 
             // 英文ToolStripMenuItem
             // 
             this.英文ToolStripMenuItem.Name = "英文ToolStripMenuItem";
-            this.英文ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.英文ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.英文ToolStripMenuItem.Text = "英文";
             this.英文ToolStripMenuItem.Click += new System.EventHandler(this.英文ToolStripMenuItem_Click);
             // 
             // 导入数据ToolStripMenuItem
             // 
             this.导入数据ToolStripMenuItem.Name = "导入数据ToolStripMenuItem";
-            this.导入数据ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.导入数据ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.导入数据ToolStripMenuItem.Text = "导入数据";
             this.导入数据ToolStripMenuItem.Click += new System.EventHandler(this.导入数据ToolStripMenuItem_Click);
             // 
             // 导出数据ToolStripMenuItem
             // 
             this.导出数据ToolStripMenuItem.Name = "导出数据ToolStripMenuItem";
-            this.导出数据ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.导出数据ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.导出数据ToolStripMenuItem.Text = "导出数据";
             this.导出数据ToolStripMenuItem.Click += new System.EventHandler(this.导出数据ToolStripMenuItem_Click);
             // 
@@ -247,6 +248,7 @@
             this.软件版本ToolStripMenuItem.Name = "软件版本ToolStripMenuItem";
             this.软件版本ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.软件版本ToolStripMenuItem.Text = "软件版本";
+            this.软件版本ToolStripMenuItem.Click += new System.EventHandler(this.软件版本ToolStripMenuItem_Click);
             // 
             // 高级模式ToolStripMenuItem
             // 
@@ -278,7 +280,7 @@
             this.显示所有数据ToolStripMenuItem.CheckOnClick = true;
             this.显示所有数据ToolStripMenuItem.Name = "显示所有数据ToolStripMenuItem";
             this.显示所有数据ToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.显示所有数据ToolStripMenuItem.Text = "显示所有数据";
+            this.显示所有数据ToolStripMenuItem.Text = "显示所有工作数据";
             this.显示所有数据ToolStripMenuItem.Click += new System.EventHandler(this.显示所有数据ToolStripMenuItem_Click);
             // 
             // groupBox_TimeSet
@@ -333,7 +335,6 @@
             this.dateTimePicker_Begin.Size = new System.Drawing.Size(165, 21);
             this.dateTimePicker_Begin.TabIndex = 0;
             this.dateTimePicker_Begin.CloseUp += new System.EventHandler(this.dateTimePicker_Begin_CloseUp);
-            
             // 
             // tabControl1
             // 
@@ -369,9 +370,9 @@
             // 
             this.button_generateReport.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.button_generateReport.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_generateReport.Location = new System.Drawing.Point(353, 349);
+            this.button_generateReport.Location = new System.Drawing.Point(339, 349);
             this.button_generateReport.Name = "button_generateReport";
-            this.button_generateReport.Size = new System.Drawing.Size(100, 27);
+            this.button_generateReport.Size = new System.Drawing.Size(153, 27);
             this.button_generateReport.TabIndex = 18;
             this.button_generateReport.Text = "生成报告";
             this.button_generateReport.UseVisualStyleBackColor = true;
@@ -400,7 +401,7 @@
             this.groupBox_Patientinfo.Size = new System.Drawing.Size(801, 160);
             this.groupBox_Patientinfo.TabIndex = 17;
             this.groupBox_Patientinfo.TabStop = false;
-            this.groupBox_Patientinfo.Text = "病人信息：";
+            this.groupBox_Patientinfo.Text = "病人信息";
             // 
             // label_value_patient_adress
             // 
@@ -434,9 +435,9 @@
             this.label_patient_adress.AutoSize = true;
             this.label_patient_adress.Location = new System.Drawing.Point(9, 136);
             this.label_patient_adress.Name = "label_patient_adress";
-            this.label_patient_adress.Size = new System.Drawing.Size(65, 12);
+            this.label_patient_adress.Size = new System.Drawing.Size(41, 12);
             this.label_patient_adress.TabIndex = 13;
-            this.label_patient_adress.Text = "家庭住址：";
+            this.label_patient_adress.Text = "住址：";
             // 
             // label_patient_phoneNum
             // 
@@ -710,7 +711,7 @@
             this.groupBox_time.Size = new System.Drawing.Size(803, 57);
             this.groupBox_time.TabIndex = 2;
             this.groupBox_time.TabStop = false;
-            this.groupBox_time.Text = "使用时间：";
+            this.groupBox_time.Text = "时间段";
             // 
             // label5
             // 
@@ -754,7 +755,7 @@
             this.groupBox_equipInfo.Size = new System.Drawing.Size(804, 91);
             this.groupBox_equipInfo.TabIndex = 0;
             this.groupBox_equipInfo.TabStop = false;
-            this.groupBox_equipInfo.Text = "设备信息：";
+            this.groupBox_equipInfo.Text = "设备信息";
             // 
             // label_SN_Value
             // 
@@ -818,7 +819,7 @@
             this.tabPage_workDataChart.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage_workDataChart.Size = new System.Drawing.Size(810, 389);
             this.tabPage_workDataChart.TabIndex = 1;
-            this.tabPage_workDataChart.Text = "图表";
+            this.tabPage_workDataChart.Text = "使用时间";
             this.tabPage_workDataChart.UseVisualStyleBackColor = true;
             // 
             // panel_for_charts
@@ -834,22 +835,22 @@
             // chart_workData
             // 
             this.chart_workData.BorderlineColor = System.Drawing.Color.Black;
-            chartArea1.AxisY.IsReversed = true;
-            chartArea1.AxisY.MaximumAutoSize = 100F;
-            chartArea1.Name = "ChartArea1";
-            this.chart_workData.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chart_workData.Legends.Add(legend1);
+            chartArea6.AxisY.IsReversed = true;
+            chartArea6.AxisY.MaximumAutoSize = 100F;
+            chartArea6.Name = "ChartArea1";
+            this.chart_workData.ChartAreas.Add(chartArea6);
+            legend6.Name = "Legend1";
+            this.chart_workData.Legends.Add(legend6);
             this.chart_workData.Location = new System.Drawing.Point(0, 0);
             this.chart_workData.Name = "chart_workData";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.RangeColumn;
-            series1.Legend = "Legend1";
-            series1.Name = "usage";
-            series1.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
-            series1.YValuesPerPoint = 2;
-            series1.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Time;
-            this.chart_workData.Series.Add(series1);
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.RangeColumn;
+            series2.Legend = "Legend1";
+            series2.Name = "usage";
+            series2.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
+            series2.YValuesPerPoint = 2;
+            series2.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Time;
+            this.chart_workData.Series.Add(series2);
             this.chart_workData.Size = new System.Drawing.Size(804, 203);
             this.chart_workData.TabIndex = 0;
             this.chart_workData.Text = "chart_usage";
@@ -883,12 +884,12 @@
             // chart_oxy_concentration
             // 
             this.chart_oxy_concentration.BorderlineColor = System.Drawing.Color.Black;
-            chartArea2.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            chartArea2.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            chartArea2.Name = "ChartArea1";
-            this.chart_oxy_concentration.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chart_oxy_concentration.Legends.Add(legend2);
+            chartArea7.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea7.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            chartArea7.Name = "ChartArea1";
+            this.chart_oxy_concentration.ChartAreas.Add(chartArea7);
+            legend7.Name = "Legend1";
+            this.chart_oxy_concentration.Legends.Add(legend7);
             this.chart_oxy_concentration.Location = new System.Drawing.Point(6, 305);
             this.chart_oxy_concentration.Name = "chart_oxy_concentration";
             this.chart_oxy_concentration.Size = new System.Drawing.Size(439, 107);
@@ -898,12 +899,12 @@
             // chart_flow
             // 
             this.chart_flow.BorderlineColor = System.Drawing.Color.Black;
-            chartArea3.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            chartArea3.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            chartArea3.Name = "ChartArea1";
-            this.chart_flow.ChartAreas.Add(chartArea3);
-            legend3.Name = "Legend1";
-            this.chart_flow.Legends.Add(legend3);
+            chartArea8.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea8.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            chartArea8.Name = "ChartArea1";
+            this.chart_flow.ChartAreas.Add(chartArea8);
+            legend8.Name = "Legend1";
+            this.chart_flow.Legends.Add(legend8);
             this.chart_flow.Location = new System.Drawing.Point(32, 192);
             this.chart_flow.Name = "chart_flow";
             this.chart_flow.Size = new System.Drawing.Size(439, 107);
@@ -913,12 +914,12 @@
             // chart_air_outlet_tmp
             // 
             this.chart_air_outlet_tmp.BorderlineColor = System.Drawing.Color.Black;
-            chartArea4.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            chartArea4.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            chartArea4.Name = "ChartArea1";
-            this.chart_air_outlet_tmp.ChartAreas.Add(chartArea4);
-            legend4.Name = "Legend1";
-            this.chart_air_outlet_tmp.Legends.Add(legend4);
+            chartArea9.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea9.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            chartArea9.Name = "ChartArea1";
+            this.chart_air_outlet_tmp.ChartAreas.Add(chartArea9);
+            legend9.Name = "Legend1";
+            this.chart_air_outlet_tmp.Legends.Add(legend9);
             this.chart_air_outlet_tmp.Location = new System.Drawing.Point(4, 115);
             this.chart_air_outlet_tmp.Name = "chart_air_outlet_tmp";
             this.chart_air_outlet_tmp.Size = new System.Drawing.Size(439, 107);
@@ -928,12 +929,12 @@
             // chart_patientTmp
             // 
             this.chart_patientTmp.BorderlineColor = System.Drawing.Color.Black;
-            chartArea5.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            chartArea5.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            chartArea5.Name = "ChartArea1";
-            this.chart_patientTmp.ChartAreas.Add(chartArea5);
-            legend5.Name = "Legend1";
-            this.chart_patientTmp.Legends.Add(legend5);
+            chartArea10.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea10.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            chartArea10.Name = "ChartArea1";
+            this.chart_patientTmp.ChartAreas.Add(chartArea10);
+            legend10.Name = "Legend1";
+            this.chart_patientTmp.Legends.Add(legend10);
             this.chart_patientTmp.Location = new System.Drawing.Point(2, 2);
             this.chart_patientTmp.Name = "chart_patientTmp";
             this.chart_patientTmp.Size = new System.Drawing.Size(439, 107);
@@ -1028,7 +1029,7 @@
             // 
             // textBox_jumpto
             // 
-            this.textBox_jumpto.Location = new System.Drawing.Point(460, 14);
+            this.textBox_jumpto.Location = new System.Drawing.Point(462, 14);
             this.textBox_jumpto.Name = "textBox_jumpto";
             this.textBox_jumpto.Size = new System.Drawing.Size(55, 21);
             this.textBox_jumpto.TabIndex = 7;
@@ -1037,7 +1038,7 @@
             // label_listview_jumpto
             // 
             this.label_listview_jumpto.AutoSize = true;
-            this.label_listview_jumpto.Location = new System.Drawing.Point(407, 17);
+            this.label_listview_jumpto.Location = new System.Drawing.Point(409, 19);
             this.label_listview_jumpto.Name = "label_listview_jumpto";
             this.label_listview_jumpto.Size = new System.Drawing.Size(47, 12);
             this.label_listview_jumpto.TabIndex = 6;
@@ -1045,14 +1046,14 @@
             // 
             // textBox_listview_currentpage
             // 
-            this.textBox_listview_currentpage.Location = new System.Drawing.Point(313, 13);
+            this.textBox_listview_currentpage.Location = new System.Drawing.Point(307, 14);
             this.textBox_listview_currentpage.Name = "textBox_listview_currentpage";
             this.textBox_listview_currentpage.Size = new System.Drawing.Size(76, 21);
             this.textBox_listview_currentpage.TabIndex = 5;
             // 
             // button_listview_endpage
             // 
-            this.button_listview_endpage.Location = new System.Drawing.Point(537, 14);
+            this.button_listview_endpage.Location = new System.Drawing.Point(540, 12);
             this.button_listview_endpage.Name = "button_listview_endpage";
             this.button_listview_endpage.Size = new System.Drawing.Size(75, 23);
             this.button_listview_endpage.TabIndex = 4;
@@ -1062,7 +1063,7 @@
             // 
             // button_listview_next
             // 
-            this.button_listview_next.Location = new System.Drawing.Point(210, 12);
+            this.button_listview_next.Location = new System.Drawing.Point(214, 12);
             this.button_listview_next.Name = "button_listview_next";
             this.button_listview_next.Size = new System.Drawing.Size(75, 23);
             this.button_listview_next.TabIndex = 3;
@@ -1072,7 +1073,7 @@
             // 
             // button_listview_prev
             // 
-            this.button_listview_prev.Location = new System.Drawing.Point(105, 11);
+            this.button_listview_prev.Location = new System.Drawing.Point(113, 12);
             this.button_listview_prev.Name = "button_listview_prev";
             this.button_listview_prev.Size = new System.Drawing.Size(75, 23);
             this.button_listview_prev.TabIndex = 2;
@@ -1145,7 +1146,7 @@
             this.groupBox_add_patient_info.Size = new System.Drawing.Size(217, 198);
             this.groupBox_add_patient_info.TabIndex = 3;
             this.groupBox_add_patient_info.TabStop = false;
-            this.groupBox_add_patient_info.Text = "病人信息：";
+            this.groupBox_add_patient_info.Text = "病人信息";
             // 
             // button_add_patientInfo
             // 
@@ -1160,7 +1161,7 @@
             // label_value_added_phoneNum
             // 
             this.label_value_added_phoneNum.AutoSize = true;
-            this.label_value_added_phoneNum.Location = new System.Drawing.Point(54, 162);
+            this.label_value_added_phoneNum.Location = new System.Drawing.Point(70, 162);
             this.label_value_added_phoneNum.Name = "label_value_added_phoneNum";
             this.label_value_added_phoneNum.Size = new System.Drawing.Size(17, 12);
             this.label_value_added_phoneNum.TabIndex = 7;
@@ -1169,7 +1170,7 @@
             // label_value_added_patientGender
             // 
             this.label_value_added_patientGender.AutoSize = true;
-            this.label_value_added_patientGender.Location = new System.Drawing.Point(54, 123);
+            this.label_value_added_patientGender.Location = new System.Drawing.Point(70, 123);
             this.label_value_added_patientGender.Name = "label_value_added_patientGender";
             this.label_value_added_patientGender.Size = new System.Drawing.Size(17, 12);
             this.label_value_added_patientGender.TabIndex = 6;
@@ -1178,7 +1179,7 @@
             // label_value_added_patientAge
             // 
             this.label_value_added_patientAge.AutoSize = true;
-            this.label_value_added_patientAge.Location = new System.Drawing.Point(54, 86);
+            this.label_value_added_patientAge.Location = new System.Drawing.Point(70, 86);
             this.label_value_added_patientAge.Name = "label_value_added_patientAge";
             this.label_value_added_patientAge.Size = new System.Drawing.Size(17, 12);
             this.label_value_added_patientAge.TabIndex = 5;
@@ -1187,7 +1188,7 @@
             // label_value_added_patientName
             // 
             this.label_value_added_patientName.AutoSize = true;
-            this.label_value_added_patientName.Location = new System.Drawing.Point(54, 50);
+            this.label_value_added_patientName.Location = new System.Drawing.Point(70, 50);
             this.label_value_added_patientName.Name = "label_value_added_patientName";
             this.label_value_added_patientName.Size = new System.Drawing.Size(17, 12);
             this.label_value_added_patientName.TabIndex = 4;
@@ -1198,9 +1199,9 @@
             this.label_added_patient_phoneNum.AutoSize = true;
             this.label_added_patient_phoneNum.Location = new System.Drawing.Point(7, 162);
             this.label_added_patient_phoneNum.Name = "label_added_patient_phoneNum";
-            this.label_added_patient_phoneNum.Size = new System.Drawing.Size(41, 12);
+            this.label_added_patient_phoneNum.Size = new System.Drawing.Size(65, 12);
             this.label_added_patient_phoneNum.TabIndex = 3;
-            this.label_added_patient_phoneNum.Text = "电话：";
+            this.label_added_patient_phoneNum.Text = "电话号码：";
             // 
             // label_added_patient_gender
             // 
@@ -1249,9 +1250,10 @@
             this.ClientSize = new System.Drawing.Size(1053, 466);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.menuStrip);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Vincent Medical";
+            this.Text = "永胜宏碁数据分析软件";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Shown += new System.EventHandler(this.Form1_Shown);
             this.menuStrip.ResumeLayout(false);

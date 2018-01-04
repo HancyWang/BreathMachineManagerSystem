@@ -11,6 +11,8 @@ namespace BreathingMachine
 {
     class DataMngr
     {
+        public static DateTime m_chart_selected_date;
+        public static string m_App_Version = "1.1.0";
         public static PATIENT_INFO m_old_PatientInfo=new PATIENT_INFO();
         public static double m_DateTimePicker_Range_Limit = 60;//默认2个月的时间
         public static double m_UsageChart_DateRange_Limit = 60;//默认2个月的时间

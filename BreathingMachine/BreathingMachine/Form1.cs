@@ -118,7 +118,8 @@ namespace BreathingMachine
             this.chart_workData.Legends.Clear(); //清除chart_workData的legend
 
             this.chart_workData.Location = new Point(0, 0);
-            this.chart_workData.Titles.Add("usage");
+            LanguageMngr lang = new LanguageMngr();
+            this.chart_workData.Titles.Add(lang.usageTime());
             //这里要调整
             this.chart_workData.Width = DataMngr.m_chartSize.Width;    //按照显示天数的比例来调整图表的宽度
             this.chart_workData.Height = DataMngr.m_chartSize.Height;
@@ -294,7 +295,7 @@ namespace BreathingMachine
             //这句话很重要，不加的话会认为（0，0）是可视的坐标原点，而不是真是控件的坐标原点
             //http://bbs.csdn.net/topics/390179469
             this.panel_detailCharts.VerticalScroll.Value = this.panel_detailCharts.VerticalScroll.Minimum;
-
+            LanguageMngr lang = new LanguageMngr();
             switch(chartType)
             {
                 case CHARTTYPE.PATIENT_TMP:
@@ -303,7 +304,7 @@ namespace BreathingMachine
                     this.chart_patientTmp.Titles.Clear();
 
                     this.chart_patientTmp.Location = new Point(0,0);
-                    this.chart_patientTmp.Titles.Add("Patient Temperature");
+                    this.chart_patientTmp.Titles.Add(lang.data_patient_tmp());
 
                     this.chart_patientTmp.Width = Convert.ToInt32(duration) * DataMngr.m_chartSize.Width;    //按照显示天数的比例来调整图表的宽度
                     this.chart_patientTmp.Height = DataMngr.m_chartSize.Height;
@@ -323,7 +324,7 @@ namespace BreathingMachine
 
 
                     this.chart_air_outlet_tmp.Location = new Point(0, DataMngr.m_chartSize.Height);
-                    this.chart_air_outlet_tmp.Titles.Add("Air Outlet Temperature");
+                    this.chart_air_outlet_tmp.Titles.Add(lang.data_air_outlet_tmp());
 
                     this.chart_air_outlet_tmp.Width = Convert.ToInt32(duration) * DataMngr.m_chartSize.Width;    //按照显示天数的比例来调整图表的宽度
                     this.chart_air_outlet_tmp.Height = DataMngr.m_chartSize.Height;
@@ -342,7 +343,7 @@ namespace BreathingMachine
                     this.chart_flow.Titles.Clear();
 
                     this.chart_flow.Location = new Point(0, DataMngr.m_chartSize.Height * 2);
-                    this.chart_flow.Titles.Add("Flow");
+                    this.chart_flow.Titles.Add(lang.data_flow());
 
                     this.chart_flow.Width = Convert.ToInt32(duration) * DataMngr.m_chartSize.Width;    //按照显示天数的比例来调整图表的宽度
                     this.chart_flow.Height = DataMngr.m_chartSize.Height;
@@ -360,7 +361,7 @@ namespace BreathingMachine
                     this.chart_oxy_concentration.Titles.Clear();
 
                     this.chart_oxy_concentration.Location = new Point(0, DataMngr.m_chartSize.Height * 3);
-                    this.chart_oxy_concentration.Titles.Add("Oxygen Concentration");
+                    this.chart_oxy_concentration.Titles.Add(lang.data_Oxy_concentration());
 
                     this.chart_oxy_concentration.Width = Convert.ToInt32(duration) * DataMngr.m_chartSize.Width;    //按照显示天数的比例来调整图表的宽度
                     this.chart_oxy_concentration.Height = DataMngr.m_chartSize.Height;
@@ -374,7 +375,7 @@ namespace BreathingMachine
                     series_common.ChartArea = "chartArea_oxyConcentration";
                     break;
                 default:
-                    MessageBox.Show("Unkonw chart type in common_series!");
+                    //MessageBox.Show("Unkonw chart type in common_series!");
                     break;
             }
             #region
@@ -468,7 +469,7 @@ namespace BreathingMachine
                     this.chart_oxy_concentration.Series["oxyConcentration"].Points.DataBind(table1.AsEnumerable(), "时间", "数据", "");
                     break;
                 default:
-                    MessageBox.Show("Unkonw chart type in common_series!");
+                    //MessageBox.Show("Unkonw chart type in common_series!");
                     break;
             }
             #endregion
@@ -507,11 +508,14 @@ namespace BreathingMachine
 
         }
 
+        //这个函数废弃了
         public void ShowWorkDataList(DateTime TmLow, DateTime TmHigh)
         {
+            LanguageMngr lang = new LanguageMngr();
             this.listView_workData.Items.Clear();
             //this.listView_workData.BeginUpdate();
-
+            DateTime tmBegin = new DateTime(TmLow.Year, TmLow.Month, TmLow.Day, 0, 0, 0);
+            DateTime tmEnd = new DateTime(TmHigh.Year, TmHigh.Month, TmHigh.Day, 23, 59, 59);
             #region
             int i = 1;
             foreach (KeyValuePair<WORK_INFO_HEAD, List<WORK_INFO_MESSAGE>> kv in FileMngr.m_workHead_Msg_Map)
@@ -521,12 +525,10 @@ namespace BreathingMachine
                 WORK_INFO_MESSAGE msg = list[0];
                 DateTime msgTm = new DateTime(100 * Convert.ToInt32(msg.YEAR1) + Convert.ToInt32(msg.YEAR2),
                                                 Convert.ToInt32(msg.MONTH), Convert.ToInt32(msg.DAY), 23, 59, 59);
-                if (msgTm < TmLow || msgTm > TmHigh)
+                if (msgTm < tmBegin || msgTm > tmEnd)
                 {
                     continue;
                 }
-
-
 
                 #region
                 foreach (var workDataMsg in list)
@@ -645,16 +647,16 @@ namespace BreathingMachine
                             #region
                             wd.No = i.ToString();
                             wd.tm=tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss");
-                            wd.set_mode=Convert.ToBoolean(workDataMsg.SET_MODE) ? "雾化" : "湿化";
+                            wd.set_mode=Convert.ToBoolean(workDataMsg.SET_MODE) ? lang.atomization() : lang.humidification();
                             wd.set_tmp=Convert.ToString(workDataMsg.SET_TEMP);
                             wd.set_flow=Convert.ToString(workDataMsg.SET_FLOW);
                             wd.set_high_oxy_alarm=Convert.ToString(workDataMsg.SET_HIGH_OXYGEN_ALARM);
                             wd.set_low_oxy_alrm=Convert.ToString(workDataMsg.SET_LOW_OXYGEN_ALARM);
                             wd.set_atomiz_level=Convert.ToString(workDataMsg.SET_ATOMIZATION_LEVEL);
                             wd.set_atomiz_time=Convert.ToString(workDataMsg.SET_ATOMIZATION_TIME);
-                            wd.set_adault_or_child=Convert.ToString(workDataMsg.SET_ADULT_OR_CHILDE);
+                            wd.set_adault_or_child = Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? lang.child() : lang.adault();
                             wd.data_patient_tmp = Convert.ToString(workDataMsg.DATA_PATIENT_TEMP);
-                            wd.data_air_outlet_tmp=Convert.ToString(workDataMsg.SET_ADULT_OR_CHILDE);
+                            wd.data_air_outlet_tmp=Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP);
                             wd.data_heating_plate_tmp=Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_H);
                             wd.data_env_tmp=Convert.ToString(workDataMsg.DATA_ENVIRONMENT_TMP);
                             wd.data_driveboard_tmp=Convert.ToString(workDataMsg.DATA_DRIVERBOARD_TMP);
@@ -719,10 +721,14 @@ namespace BreathingMachine
         {
             this.listView_alarmInfo.Items.Clear();
             this.listView_alarmInfo.BeginUpdate();
-           
+            LanguageMngr lang = new LanguageMngr();
             #region
             int i = 1;
-            
+            DateTime tmBeing = new DateTime(TmLow.Year, TmLow.Month, TmLow.Day, 0, 0, 0);
+            DateTime tmEnd = new DateTime(TmHigh.Year, TmHigh.Month, TmHigh.Day, 23, 59, 59);
+            //debug
+            //string str="";
+
             foreach (var alarmMsg in FileMngr.m_alarmMsgList)
             {
                 //if(FileMngr.VerifyAlarmMsg(FileMngr.GetData(alarmMsg))) //校验
@@ -735,17 +741,18 @@ namespace BreathingMachine
                                                          Convert.ToInt32(alarmMsg.SECOND));
                     
                     //12.26,先暂时屏蔽掉
-                    if (tmFromMsg >= TmLow && tmFromMsg <= TmHigh)
+                    if (tmFromMsg >= tmBeing && tmFromMsg <= tmEnd)
                     {
                         ListViewItem lvi = new ListViewItem();
                         lvi.Text = i.ToString();  //第一列,No.
                         lvi.SubItems.Add(tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss")); //第二列，时间
                         if(DataMngr.m_machineType==2)
                         {
-                            lvi.SubItems.Add(Convert.ToString(Convert.ToBoolean(alarmMsg.RUNNIN_MODE) ? "雾化" : "湿化"));
+                            //str = Convert.ToBoolean(alarmMsg.RUNNIN_MODE) ? lang.atomization() : lang.humidification();
+                            lvi.SubItems.Add(Convert.ToBoolean(alarmMsg.RUNNIN_MODE) ? lang.atomization() : lang.humidification());
                         }
                         //lvi.SubItems.Add(Convert.ToString(Convert.ToBoolean(alarmMsg.RUNNIN_MODE) ? "雾化" : "湿化"));  //第三列，运行模式
-                        lvi.SubItems.Add(Convert.ToString(Convert.ToString(alarmMsg.ALARM_CODE)));                      //第四列，错误码
+                        lvi.SubItems.Add(Convert.ToString(alarmMsg.ALARM_CODE));                      //第四列，错误码
                         lvi.SubItems.Add(Convert.ToString(FileMngr.AlarmCode2Str(alarmMsg.ALARM_CODE)));            //第五列，错误描述
                         lvi.SubItems.Add(Convert.ToString(alarmMsg.ALARM_DATA_L));                                      //第六列，数据值
                         lvi.SubItems.Add(Convert.ToString(alarmMsg.ALARM_DATA_H));                                      //第7列，数据值
@@ -756,6 +763,7 @@ namespace BreathingMachine
                 }
             }
             #endregion
+            //MessageBox.Show(str);
             this.listView_alarmInfo.VirtualListSize = myCache.Count;
             this.listView_alarmInfo.Invalidate(); //加了这个貌似点几次之后会释放内存
             this.listView_alarmInfo.EndUpdate();
@@ -768,114 +776,188 @@ namespace BreathingMachine
 
         private void 中文ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //重复点击的时候直接返回
+            if (LanguageMngr.m_language == LANGUAGE.CHINA)
+            {
+                return;
+            }
             LanguageMngr.m_language = LANGUAGE.CHINA;
+            ShowLabelNameByLanguageType(LANGUAGE.CHINA);
+            InitListViewColumnHead_alarm();
+            InitListViewColumnHead_workData();
+            if (this.dateTimePicker_Begin.Enabled == true)
+            {
+                //显示报警数据
+                if (myCache != null)
+                {
+                    myCache.Clear();
+                }
+                ShowAlarmList(this.dateTimePicker_Begin.Value, this.dateTimePicker_End.Value);
+                //显示工作数据
+                if (WorkDataList.m_WorkData_List == null)
+                {
+                    WorkDataList.InitWorkDataList(this.dateTimePicker_Begin.Value, this.dateTimePicker_End.Value);
+                    ShowCurrentPage(WorkDataList.m_nCurrentPage);
+                }
+                else
+                {
+                    WorkDataList.m_WorkData_List.Clear();
+                    WorkDataList.InitWorkDataList(this.dateTimePicker_Begin.Value, this.dateTimePicker_End.Value);
+                    ShowCurrentPage(WorkDataList.m_nCurrentPage);
+                }
+                //显示图表
+                if(this.treeView_detailChart.SelectedNode!=null)
+                {
+                    this.ShowDetailCharts(DataMngr.m_chart_selected_date, 1);
+                }
+                ShowUsageChart(this.dateTimePicker_Begin.Value, this.dateTimePicker_End.Value);
+            }
+            
+        }
+
+        private void ShowLabelNameByLanguageType(LANGUAGE type)
+        {
+            LanguageMngr.m_language = type;
+            LanguageMngr lang = new LanguageMngr();
 
             //初始化app上的标签
             #region
-            this.设置ToolStripMenuItem.Text = "设置";
-            this.帮助ToolStripMenuItem.Text = "帮助";
-            this.软件版本ToolStripMenuItem.Text = "软件版本";
-            this.语言设置ToolStripMenuItem.Text = "语言设置";
-            this.中文ToolStripMenuItem.Text = "中文";
-            this.英文ToolStripMenuItem.Text = "英文";
-            this.导入数据ToolStripMenuItem.Text = "导入数据";
-            this.导出数据ToolStripMenuItem.Text = "导出数据";
+            this.Text = lang.app_name();
+            this.设置ToolStripMenuItem.Text = lang.set();
+            this.帮助ToolStripMenuItem.Text = lang.help();
+            this.软件版本ToolStripMenuItem.Text = lang.soft_ver_in_menu();
+            this.语言设置ToolStripMenuItem.Text = lang.language();
+            this.中文ToolStripMenuItem.Text = lang.chinese();
+            this.英文ToolStripMenuItem.Text = lang.english();
+            this.导入数据ToolStripMenuItem.Text = lang.importData();
+            this.导出数据ToolStripMenuItem.Text = lang.exportData();
 
-            this.高级模式ToolStripMenuItem.Text = "模式选择";
-            this.工程师模式ToolStripMenuItem.Text = "工程师模式";
-            this.用户模式ToolStripMenuItem.Text = "用户模式";
+            this.高级模式ToolStripMenuItem.Text = lang.advanceMode();
+            this.显示所有数据ToolStripMenuItem.Text = lang.showAllWorkData();
 
-            this.groupBox_TimeSet.Text = "时段设置";
-            this.label_startTime.Text = "开始时间";
-            this.label_endTime.Text = "结束时间";
-            this.tabControl1.TabPages["tabPage_BasicInfo"].Text = "基本信息";
-            this.tabControl1.TabPages["tabPage_workDataChart"].Text = "图表";
-            if(this.g_bEngineerMode)
-            {
-                this.tabControl1.TabPages["tabPage_alarmList"].Text = "报警信息";
-                this.tabControl1.TabPages["tabPage_workdatalist"].Text = "工作信息";
-            }
-            
+            this.groupBox_TimeSet.Text = lang.timePeriodSet();
+            this.label_startTime.Text = lang.startDate();
+            this.label_endTime.Text = lang.endDate();
 
-            this.groupBox_equipInfo.Text = "设备信息";
-            this.groupBox_time.Text = "使用时间";
-            this.groupBox_workingParam.Text = "工作参数";
-            this.label_equipType.Text = "设备型号：";
-            this.label_softwarVer.Text = "软件版本：";
+            this.tabControl1.TabPages["tabPage_BasicInfo"].Text = lang.basicInfo();
+            this.tabControl1.TabPages["tabPage_workDataChart"].Text = lang.usageTime();
+            this.tabControl1.TabPages["tabPage_detailChart"].Text = lang.detailCharts();
+            this.tabControl1.TabPages["tabPage_alarmList"].Text = lang.alarmInfo();
+            this.tabControl1.TabPages["tabPage_workdatalist"].Text = lang.workInfo();
+
+
+            //设备信息
+            this.groupBox_equipInfo.Text = lang.equipInfo();
+            this.label_equipType.Text = lang.machineType();
+            this.label_softwarVer.Text = lang.soft_ver();
             this.label_SN.Text = "SN：";
-            this.label_runningMode.Text = "运行模式：";
-            this.label_setTmp.Text = "设定温度：";
-            this.label_setFlow.Text = "设定流量：";
-            this.label_setHighOxyContAlarm.Text = "设定高氧浓度报警：";
-            this.label_setLowOxyContAlarm.Text = "设定低氧浓度报警：";
-            this.label_setAtmoizLevel.Text = "设定雾化档位：";
-            this.label_setAtomizTime.Text = "设定雾化时间：";
-            this.label_setAdaultChild.Text = "设定成人儿童模式：";
+
+            //时间段
+            this.groupBox_time.Text = lang.timePeriod();
+            #region
+            //this.groupBox_equipInfo.Text = "Equipment Info.";
+            //this.groupBox_time.Text = "Time Period";
+            //this.groupBox_workingParam.Text = "Working Parameter";
+            //this.label_equipType.Text = "Machine Type：";
+            //this.label_softwarVer.Text = "Software Ver.：";
+            //this.label_SN.Text = "SN：";
+            //this.label_runningMode.Text = "Running Mode：";
+            //this.label_setTmp.Text = "Temperature Setting：";
+            //this.label_setFlow.Text = "Flow Setting：";
+            //this.label_setHighOxyContAlarm.Text = "High Oxygen Content Alarm Setting：";
+            //this.label_setLowOxyContAlarm.Text = "Low Oxygen Content Alarm Setting：";
+            //this.label_setAtmoizLevel.Text = "Atomizatin Level Setting：";
+            //this.label_setAtomizTime.Text = "Atomizatin time Setting：";
+            //this.label_setAdaultChild.Text = "Adault or Child Setting：";
             #endregion
 
+            #endregion
 
-            this.label_runningMode_value.Text = DataMngr.GetRunningMode(FileMngr.m_lastWorkMsg.SET_MODE);
-            this.label_setAdaultChild_Value.Text = DataMngr.GetAdaultChildSetting(FileMngr.m_lastWorkMsg.SET_ADULT_OR_CHILDE);
+            #region
+            //this.label_runningMode_value.Text = DataMngr.GetRunningMode(FileMngr.m_lastWorkMsg.SET_MODE);
+            //this.label_setAdaultChild_Value.Text = DataMngr.GetAdaultChildSetting(FileMngr.m_lastWorkMsg.SET_ADULT_OR_CHILDE);
 
-            byte[] head = FileMngr.GetData(FileMngr.m_lastWorkHead);
-            this.label_equipType_Value.Text = DataMngr.GetMachineType(head, 1);
-            this.label_SN_Value.Text = DataMngr.GetSN(head, 2);
-            this.label_softwarVer_Value.Text = DataMngr.GetSoftwareVer(head, 3);
+            //显示设备信息
+            
+            //byte[] head = FileMngr.GetData(FileMngr.m_lastWorkHead);
+            //this.label_equipType_Value.Text = DataMngr.GetMachineType(head, 1);
+            //this.label_SN_Value.Text = DataMngr.GetSN(head, 2);
+            //this.label_softwarVer_Value.Text = DataMngr.GetSoftwareVer(head, 3);
+            #endregion
+
+            //病人信息编辑
+            #region
+            this.groupBox_add_patient_info.Text = lang.patient_info();
+            this.label_added_patientName.Text = lang.name();
+            this.label_added_patient_age.Text = lang.age();
+            this.label_added_patient_gender.Text = lang.gender();
+            this.label_added_patient_phoneNum.Text = lang.phoneNum();
+            this.button_add_patientInfo.Text = lang.edit();
+            #endregion
+
+            //病人信息显示
+            #region
+            this.groupBox_Patientinfo.Text = lang.patient_info();
+            this.label1_patient_name.Text = lang.name();
+            this.label_patient_age.Text = lang.age();
+            this.label_patient_gender.Text = lang.gender();
+            this.label_patient_height.Text = lang.height();
+            this.label_patient_weight.Text = lang.weight();
+            this.label_patient_phoneNum.Text = lang.phoneNum();
+            this.label_patient_adress.Text = lang.address();
+
+            this.label_value_patient_gender.Text = lang.showGenderValue(DataMngr.m_old_PatientInfo.gender);
+            this.label_value_added_patientGender.Text = lang.showGenderValue(DataMngr.m_old_PatientInfo.gender);
+            #endregion
+            this.button_generateReport.Text = lang.generateReport();
+
+            //首页，上一页，下一页，尾页，跳转
+            this.button_listview_toppage.Text = lang.top_page();
+            this.button_listview_endpage.Text = lang.end_page();
+            this.button_listview_prev.Text = lang.prev_page();
+            this.button_listview_next.Text = lang.next_page();
+            this.label_listview_jumpto.Text = lang.jump_to();
         }
 
         private void 英文ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            LanguageMngr.m_language = LANGUAGE.ENGLISH;
-
-            //初始化app上的标签
-            #region
-            this.设置ToolStripMenuItem.Text = "Set";
-            this.帮助ToolStripMenuItem.Text = "Help";
-            this.软件版本ToolStripMenuItem.Text = "Soft Ver";
-            this.语言设置ToolStripMenuItem.Text = "Language";
-            this.中文ToolStripMenuItem.Text = "Chinese";
-            this.英文ToolStripMenuItem.Text = "English";
-            this.导入数据ToolStripMenuItem.Text = "ImportData";
-            this.导出数据ToolStripMenuItem.Text = "ExportData";
-
-            this.高级模式ToolStripMenuItem.Text = "Mode Select";
-            this.工程师模式ToolStripMenuItem.Text = "Engineer Mode";
-            this.用户模式ToolStripMenuItem.Text = "User Mode";
-
-            this.groupBox_TimeSet.Text = "Period Setting";
-            this.label_startTime.Text = "Staring Date:";
-            this.label_endTime.Text = "Ending Date:";
-            this.tabControl1.TabPages["tabPage_BasicInfo"].Text = "Basical Info.";
-            this.tabControl1.TabPages["tabPage_workDataChart"].Text = "Charts";
-            if(this.g_bEngineerMode)
+            //重复点击的时候直接返回
+            if (LanguageMngr.m_language == LANGUAGE.ENGLISH)
             {
-                this.tabControl1.TabPages["tabPage_alarmList"].Text = "Alarm Info.";
-                this.tabControl1.TabPages["tabPage_workdatalist"].Text = "Work Info";
+                return;
+            }
+            LanguageMngr.m_language = LANGUAGE.ENGLISH;
+            ShowLabelNameByLanguageType(LANGUAGE.ENGLISH);
+            InitListViewColumnHead_alarm();
+            InitListViewColumnHead_workData();
+            if(this.dateTimePicker_Begin.Enabled==true)
+            {
+                if (myCache != null)
+                {
+                    myCache.Clear();
+                }
+                myCache = new List<ListViewItem>();
+                ShowAlarmList(this.dateTimePicker_Begin.Value, this.dateTimePicker_End.Value);
+                //ShowWorkDataList(this.dateTimePicker_Begin.Value, this.dateTimePicker_End.Value);
+                if (WorkDataList.m_WorkData_List == null)
+                {
+                    WorkDataList.InitWorkDataList(this.dateTimePicker_Begin.Value, this.dateTimePicker_End.Value);
+                    ShowCurrentPage(WorkDataList.m_nCurrentPage);
+                }
+                else
+                {
+                    WorkDataList.m_WorkData_List.Clear();
+                    WorkDataList.InitWorkDataList(this.dateTimePicker_Begin.Value, this.dateTimePicker_End.Value);
+                    ShowCurrentPage(WorkDataList.m_nCurrentPage);
+                }
+
+                if (this.treeView_detailChart.SelectedNode != null)
+                {
+                    this.ShowDetailCharts(DataMngr.m_chart_selected_date, 1);
+                }
+                ShowUsageChart(this.dateTimePicker_Begin.Value, this.dateTimePicker_End.Value);
             }
             
-            this.groupBox_equipInfo.Text = "Equipment Info.";
-            this.groupBox_time.Text = "Time Period";
-            this.groupBox_workingParam.Text = "Working Parameter";
-            this.label_equipType.Text = "Machine Type：";
-            this.label_softwarVer.Text = "Software Ver.：";
-            this.label_SN.Text = "SN：";
-            this.label_runningMode.Text = "Running Mode：";
-            this.label_setTmp.Text = "Temperature Setting：";
-            this.label_setFlow.Text = "Flow Setting：";
-            this.label_setHighOxyContAlarm.Text = "High Oxygen Content Alarm Setting：";
-            this.label_setLowOxyContAlarm.Text = "Low Oxygen Content Alarm Setting：";
-            this.label_setAtmoizLevel.Text = "Atomizatin Level Setting：";
-            this.label_setAtomizTime.Text = "Atomizatin time Setting：";
-            this.label_setAdaultChild.Text = "Adault or Child Setting：";
-            #endregion
-
-            this.label_runningMode_value.Text = DataMngr.GetRunningMode(FileMngr.m_lastWorkMsg.SET_MODE);
-            this.label_setAdaultChild_Value.Text = DataMngr.GetAdaultChildSetting(FileMngr.m_lastWorkMsg.SET_ADULT_OR_CHILDE);
-
-            byte[] head = FileMngr.GetData(FileMngr.m_lastWorkHead);
-            this.label_equipType_Value.Text = DataMngr.GetMachineType(head, 1);
-            this.label_SN_Value.Text = DataMngr.GetSN(head, 2);
-            this.label_softwarVer_Value.Text = DataMngr.GetSoftwareVer(head, 3);
         }
         private void ClearChartInfo()
         {
@@ -1001,7 +1083,7 @@ namespace BreathingMachine
                 //判断打开的文件夹是否有效
                 if (!FileMngr.IsDirValidate(strPath))
                 {
-                    MessageBox.Show("请选择正确的文件夹！");
+                    MessageBox.Show(LanguageMngr.pls_choose_the_right_folder());
                     return;
                 }
 
@@ -1016,13 +1098,13 @@ namespace BreathingMachine
                 {
                     if (!FileMngr.GetAlarmMsg())
                     {
-                        MessageBox.Show("获取报警文件信息失败");
+                        MessageBox.Show(LanguageMngr.fail_to_get_alarmFile_info());
                     } 
                 }
 
                 if (!FileMngr.GetWorkMsg())
                 {
-                    MessageBox.Show("这里填什么好呢？");
+                    //MessageBox.Show("这里填什么好呢？");
                 }
 
                 InitDateTimePicer();
@@ -1081,7 +1163,7 @@ namespace BreathingMachine
 
             if (DataMngr.m_bDateTimePicker_ValueChanged == false)
             {
-                MessageBox.Show("请选择时间！");
+                MessageBox.Show(LanguageMngr.pls_choose_time());
                 return;
             }
             DateTime tm_begin = this.dateTimePicker_Begin.Value;
@@ -1104,22 +1186,26 @@ namespace BreathingMachine
             StreamWriter sw_alarm = new StreamWriter(fs_alarm, Encoding.GetEncoding("gb2312"));
             StreamWriter sw_workData = new StreamWriter(fs_workData, Encoding.GetEncoding("gb2312"));
 
+            LanguageMngr lang = new LanguageMngr();
             //写数据到两个文件中,先做个.csv格式的
             //先写alarm.csv
             int i = 1;
             if(FileMngr.m_alarmFileName!=null)
             {
                 #region
-                sw_alarm.WriteLine("设备型号：" + "," + this.label_equipType_Value.Text);
+                sw_alarm.WriteLine(lang.machineType() + "," + this.label_equipType_Value.Text);
                 sw_alarm.WriteLine("SN：" + "," + this.label_SN_Value.Text);
-                sw_alarm.WriteLine("软件版本：" + "," + this.label_softwarVer_Value.Text);
+                sw_alarm.WriteLine(lang.soft_ver() + "," + this.label_softwarVer_Value.Text);
                 if (DataMngr.m_machineType == 2)
                 {
-                    sw_alarm.WriteLine("No." + "," + "日期" + "," + "运行模式" + "," + "报警码" + "," + "报警信息" + "," + "报警数据值1" + "," + "报警数据值2");
+                    sw_alarm.WriteLine("No." + "," + lang.date() + "," + lang.running_mode() + "," + lang.alarm_code()
+                        + "," + lang.alarm_info() + "," + lang.alarm_value_L() + "," + lang.alarm_value_H());
                 }
                 else if (DataMngr.m_machineType == 1)
                 {
-                    sw_alarm.WriteLine("No." + "," + "日期" + "," + "报警码" + "," + "报警信息" + "," + "报警数据值1" + "," + "报警数据值2");
+                    //sw_alarm.WriteLine("No." + "," + "日期" + "," + "报警码" + "," + "报警信息" + "," + "报警数据值1" + "," + "报警数据值2");
+                    sw_alarm.WriteLine("No." + "," + lang.date()  + "," + lang.alarm_code()
+                        + "," + lang.alarm_info() + "," + lang.alarm_value_L() + "," + lang.alarm_value_H());
                 }
                 else
                 {
@@ -1144,7 +1230,7 @@ namespace BreathingMachine
                         {
                             line = i.ToString() + ","
                             + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
-                            + Convert.ToString(Convert.ToBoolean(alarmMsg.RUNNIN_MODE) ? "雾化" : "湿化") + ","
+                            + Convert.ToString(Convert.ToBoolean(alarmMsg.RUNNIN_MODE) ?  lang.atomization(): lang.humidification()) + ","
                             + Convert.ToString(Convert.ToString(alarmMsg.ALARM_CODE)) + ","
                             + Convert.ToString(FileMngr.AlarmCode2Str(alarmMsg.ALARM_CODE)) + ","
                             + Convert.ToString(alarmMsg.ALARM_DATA_L) + ","
@@ -1175,9 +1261,9 @@ namespace BreathingMachine
             //在写workdata.csv
             //备注说明:excel2007最多能存1048576行
             #region
-            sw_workData.WriteLine("设备型号：" + "," + this.label_equipType_Value.Text);
+            sw_workData.WriteLine(lang.machineType() + "," + this.label_equipType_Value.Text);
             sw_workData.WriteLine("SN：" + "," + this.label_SN_Value.Text);
-            sw_workData.WriteLine("软件版本：" + "," + this.label_softwarVer_Value.Text);
+            sw_workData.WriteLine(lang.soft_ver() + "," + this.label_softwarVer_Value.Text);
             i = 1;
             //写列头
             #region
@@ -1188,16 +1274,22 @@ namespace BreathingMachine
                 if (DataMngr.m_machineType == 2)
                 {
                     //VNU002,有运行模式
-                    sw_workData.WriteLine("No." + ","+ "日期" + ","+ "运行模式" + ","
-                                    + "设定成人儿童模式" + ","+ "患者端温度" + ","
-                                    + "出气口温度" + ","+ "流量" + ","+ "氧浓度");
+                    //sw_workData.WriteLine("No." + ","+ "日期" + ","+ "运行模式" + ","
+                    //                + "设定成人儿童模式" + ","+ "患者端温度" + ","
+                    //                + "出气口温度" + ","+ "流量" + ","+ "氧浓度");
+                    sw_workData.WriteLine("No." + "," + lang.date() + "," + lang.running_mode()+ ","
+                                    + lang.set_adault_or_child() + "," + lang.data_patient_tmp() + ","
+                                    + lang.data_air_outlet_tmp() + "," + lang.data_flow()+ "," + lang.data_Oxy_concentration());
                 }
                 else
                 {
                     //VNU001,没有运行模式
-                    sw_workData.WriteLine("No." + ","+ "日期" + ","
-                                    + "设定成人儿童模式" + ","+ "患者端温度" + ","
-                                    + "出气口温度" + ","+ "流量" + ","+ "氧浓度");
+                    //sw_workData.WriteLine("No." + ","+ "日期" + ","
+                    //                + "设定成人儿童模式" + ","+ "患者端温度" + ","
+                    //                + "出气口温度" + ","+ "流量" + ","+ "氧浓度");
+                    sw_workData.WriteLine("No." + "," + lang.date()  + ","
+                                    + lang.set_adault_or_child() + "," + lang.data_patient_tmp() + ","
+                                    + lang.data_air_outlet_tmp() + "," + lang.data_flow() + "," + lang.data_Oxy_concentration());
                 }
                 #endregion
             }
@@ -1209,128 +1301,248 @@ namespace BreathingMachine
                 {
                     if(DataMngr.m_machineType==2)
                     {
+                        
+                        #region
+                        //sw_workData.WriteLine("No." + ","
+                        //                + "日期" + ","
+                        //                + "运行模式" + ","
+                        //                + "设定温度" + ","
+                        //                + "设定流量" + ","
+                        //                + "设定高氧浓度报警" + ","
+                        //                + "设定低氧浓度报警" + ","
+                        //                + "设定雾化量档位" + ","
+                        //                + "设定雾化时间" + ","
+                        //                + "设定成人儿童模式" + ","
+                        //                + "患者端温度" + ","
+                        //                + "出气口温度" + ","
+                        //                + "加热盘温度" + ","
+                        //                + "环境温度" + ","
+                        //                + "驱动板温度" + ","
+                        //                + "流量" + ","
+                        //                + "氧浓度" + ","
+                        //                + "气道压力" + ","
+                        //                + "回路类型" + ","
+                        //                + "故障1" + ","
+                        //                + "故障2" + ","
+                        //                + "故障3" + ","
+                        //                + "故障4" + ","
+                        //                + "故障5" + ","
+                        //                + "故障6" + ","
+                        //                + "故障7" + ","
+                        //                + "故障8" + ","
+                        //                + "故障9" + ","
+                        //                + "故障10" + ","
+                        //                + "故障11" + ","
+                        //                + "故障12" + ","
+                        //                + "雾化DAC数值L" + ","
+                        //                + "雾化DAC数值H" + ","
+                        //                + "雾化ADC数值L" + ","
+                        //                + "雾化ADC数值H" + ","
+                        //                + "回路加热PWM数值L" + ","
+                        //                + "回路加热PWM数值H" + ","
+                        //                + "回路加热ADC数值L" + ","
+                        //                + "回路加热ADC数值H" + ","
+                        //                + "加热盘加热PWM数值L" + ","
+                        //                + "加热盘加热PWM数值H" + ","
+                        //                + "加热盘加热ADC数值L" + ","
+                        //                + "加热盘加热ADC数值H" + ","
+                        //                + "主马达驱动数值L" + ","
+                        //                + "主马达驱动数值H" + ","
+                        //                + "主马达转速数值L" + ","
+                        //                + "主马达转速数值H" + ","
+                        //                + "压力传感器ADC值L" + ","
+                        //                + "压力传感器ADC值H" + ","
+                        //                + "水位传感器HADC值L" + ","
+                        //                + "水位传感器HADC值H" + ","
+                        //                + "水位传感器LADC值L" + ","
+                        //                + "水位传感器LADC值H" + ","
+                        //                + "散热风扇驱动数值L" + ","
+                        //                + "散热风扇驱动数值H" + ","
+                        //                + "散热风扇转速数值L" + ","
+                        //                + "散热风扇转速数值H");
+                        #endregion
                         //有运行模式
                         #region
                         sw_workData.WriteLine("No." + ","
-                                        + "日期" + ","
-                                        + "运行模式" + ","
-                                        + "设定温度" + ","
-                                        + "设定流量" + ","
-                                        + "设定高氧浓度报警" + ","
-                                        + "设定低氧浓度报警" + ","
-                                        + "设定雾化量档位" + ","
-                                        + "设定雾化时间" + ","
-                                        + "设定成人儿童模式" + ","
-                                        + "患者端温度" + ","
-                                        + "出气口温度" + ","
-                                        + "加热盘温度" + ","
-                                        + "环境温度" + ","
-                                        + "驱动板温度" + ","
-                                        + "流量" + ","
-                                        + "氧浓度" + ","
-                                        + "气道压力" + ","
-                                        + "回路类型" + ","
-                                        + "故障1" + ","
-                                        + "故障2" + ","
-                                        + "故障3" + ","
-                                        + "故障4" + ","
-                                        + "故障5" + ","
-                                        + "故障6" + ","
-                                        + "故障7" + ","
-                                        + "故障8" + ","
-                                        + "故障9" + ","
-                                        + "故障10" + ","
-                                        + "故障11" + ","
-                                        + "故障12" + ","
-                                        + "雾化DAC数值L" + ","
-                                        + "雾化DAC数值H" + ","
-                                        + "雾化ADC数值L" + ","
-                                        + "雾化ADC数值H" + ","
-                                        + "回路加热PWM数值L" + ","
-                                        + "回路加热PWM数值H" + ","
-                                        + "回路加热ADC数值L" + ","
-                                        + "回路加热ADC数值H" + ","
-                                        + "加热盘加热PWM数值L" + ","
-                                        + "加热盘加热PWM数值H" + ","
-                                        + "加热盘加热ADC数值L" + ","
-                                        + "加热盘加热ADC数值H" + ","
-                                        + "主马达驱动数值L" + ","
-                                        + "主马达驱动数值H" + ","
-                                        + "主马达转速数值L" + ","
-                                        + "主马达转速数值H" + ","
-                                        + "压力传感器ADC值L" + ","
-                                        + "压力传感器ADC值H" + ","
-                                        + "水位传感器HADC值L" + ","
-                                        + "水位传感器HADC值H" + ","
-                                        + "水位传感器LADC值L" + ","
-                                        + "水位传感器LADC值H" + ","
-                                        + "散热风扇驱动数值L" + ","
-                                        + "散热风扇驱动数值H" + ","
-                                        + "散热风扇转速数值L" + ","
-                                        + "散热风扇转速数值H");
+                                        + lang.date() + ","
+                                        + lang.running_mode() + ","
+                                        + lang.set_temp() + ","
+                                        + lang.set_flow() + ","
+                                        + lang.set_high_oxy_alarm()+ ","
+                                        + lang.set_low_oxy_alarm() + ","
+                                        + lang.set_atomiz_level() + ","
+                                        + lang.set_atomiz_time() + ","
+                                        + lang.set_adault_or_child() + ","
+                                        + lang.data_patient_tmp() + ","
+                                        + lang.data_air_outlet_tmp()+ ","
+                                        + lang.data_heating_plate_tmp() + ","
+                                        + lang.data_enviroment_tmp() + ","
+                                        + lang.data_driveboard_tmp() + ","
+                                        + lang.data_flow() + ","
+                                        + lang.data_Oxy_concentration() + ","
+                                        + lang.data_air_pressure() + ","
+                                        + lang.data_loop_type() + ","
+                                        + lang.data_fault_statue1() + ","
+                                        + lang.data_fault_statue2() + ","
+                                        + lang.data_fault_statue3() + ","
+                                        + lang.data_fault_statue4() + ","
+                                        + lang.data_fault_statue5() + ","
+                                        + lang.data_fault_statue6() + ","
+                                        + lang.data_fault_statue7() + ","
+                                        + lang.data_fault_statue8() + ","
+                                        + lang.data_fault_statue9() + ","
+                                        + lang.data_fault_statue10() + ","
+                                        + lang.data_fault_statue11() + ","
+                                        + lang.data_fault_statue12() + ","
+                                        + lang.data_atomiz_DAC_L() + ","
+                                        + lang.data_atomiz_DAC_H() + ","
+                                        + lang.data_atomiz_ADC_L() + ","
+                                        + lang.data_atomiz_ADC_H() + ","
+                                        + lang.data_loop_heating_PWM_L()+ ","
+                                        + lang.data_loop_heating_PWM_H() + ","
+                                        + lang.data_loop_heating_ADC_L() + ","
+                                        + lang.data_loop_heating_ADC_H() + ","
+                                        + lang.data_heating_plate_PWM_L() + ","
+                                        + lang.data_heating_plate_PWM_H() + ","
+                                        + lang.data_heating_plate_ADC_L() + ","
+                                        + lang.data_heating_plate_ADC_H() + ","
+                                        + lang.data_main_motor_drive_L() + ","
+                                        + lang.data_main_motor_drive_H() + ","
+                                        + lang.data_main_motor_speed_L()+ ","
+                                        + lang.data_main_motor_speed_H() + ","
+                                        + lang.data_press_sensor_ADC_L() + ","
+                                        + lang.data_press_sensor_ADC_H() + ","
+                                        + lang.data_waterlevel_HADC_L() + ","
+                                        + lang.data_waterlevel_HADC_H() + ","
+                                        + lang.data_waterlevel_LADC_L() + ","
+                                        + lang.data_waterlevel_LADC_H() + ","
+                                        + lang.data_fan_driver_L() + ","
+                                        + lang.data_fan_driver_H() + ","
+                                        + lang.data_fan_speed_L() + ","
+                                        + lang.data_fan_speed_H());
                         #endregion
                     }
                     else
                     {
+                        
+                        #region
+                        //sw_workData.WriteLine("No." + ","
+                        //                + "日期" + ","
+                        //                //+ "运行模式" + ","
+                        //                + "设定温度" + ","
+                        //                + "设定流量" + ","
+                        //                + "设定高氧浓度报警" + ","
+                        //                + "设定低氧浓度报警" + ","
+                        //                + "设定雾化量档位" + ","
+                        //                + "设定雾化时间" + ","
+                        //                + "设定成人儿童模式" + ","
+                        //                + "患者端温度" + ","
+                        //                + "出气口温度" + ","
+                        //                + "加热盘温度" + ","
+                        //                + "环境温度" + ","
+                        //                + "驱动板温度" + ","
+                        //                + "流量" + ","
+                        //                + "氧浓度" + ","
+                        //                + "气道压力" + ","
+                        //                + "回路类型" + ","
+                        //                + "故障1" + ","
+                        //                + "故障2" + ","
+                        //                + "故障3" + ","
+                        //                + "故障4" + ","
+                        //                + "故障5" + ","
+                        //                + "故障6" + ","
+                        //                + "故障7" + ","
+                        //                + "故障8" + ","
+                        //                + "故障9" + ","
+                        //                + "故障10" + ","
+                        //                + "故障11" + ","
+                        //                + "故障12" + ","
+                        //                + "雾化DAC数值L" + ","
+                        //                + "雾化DAC数值H" + ","
+                        //                + "雾化ADC数值L" + ","
+                        //                + "雾化ADC数值H" + ","
+                        //                + "回路加热PWM数值L" + ","
+                        //                + "回路加热PWM数值H" + ","
+                        //                + "回路加热ADC数值L" + ","
+                        //                + "回路加热ADC数值H" + ","
+                        //                + "加热盘加热PWM数值L" + ","
+                        //                + "加热盘加热PWM数值H" + ","
+                        //                + "加热盘加热ADC数值L" + ","
+                        //                + "加热盘加热ADC数值H" + ","
+                        //                + "主马达驱动数值L" + ","
+                        //                + "主马达驱动数值H" + ","
+                        //                + "主马达转速数值L" + ","
+                        //                + "主马达转速数值H" + ","
+                        //                + "压力传感器ADC值L" + ","
+                        //                + "压力传感器ADC值H" + ","
+                        //                + "水位传感器HADC值L" + ","
+                        //                + "水位传感器HADC值H" + ","
+                        //                + "水位传感器LADC值L" + ","
+                        //                + "水位传感器LADC值H" + ","
+                        //                + "散热风扇驱动数值L" + ","
+                        //                + "散热风扇驱动数值H" + ","
+                        //                + "散热风扇转速数值L" + ","
+                        //                + "散热风扇转速数值H");
+                        #endregion
                         //没有运行模式
                         #region
                         sw_workData.WriteLine("No." + ","
-                                        + "日期" + ","
-                                        //+ "运行模式" + ","
-                                        + "设定温度" + ","
-                                        + "设定流量" + ","
-                                        + "设定高氧浓度报警" + ","
-                                        + "设定低氧浓度报警" + ","
-                                        + "设定雾化量档位" + ","
-                                        + "设定雾化时间" + ","
-                                        + "设定成人儿童模式" + ","
-                                        + "患者端温度" + ","
-                                        + "出气口温度" + ","
-                                        + "加热盘温度" + ","
-                                        + "环境温度" + ","
-                                        + "驱动板温度" + ","
-                                        + "流量" + ","
-                                        + "氧浓度" + ","
-                                        + "气道压力" + ","
-                                        + "回路类型" + ","
-                                        + "故障1" + ","
-                                        + "故障2" + ","
-                                        + "故障3" + ","
-                                        + "故障4" + ","
-                                        + "故障5" + ","
-                                        + "故障6" + ","
-                                        + "故障7" + ","
-                                        + "故障8" + ","
-                                        + "故障9" + ","
-                                        + "故障10" + ","
-                                        + "故障11" + ","
-                                        + "故障12" + ","
-                                        + "雾化DAC数值L" + ","
-                                        + "雾化DAC数值H" + ","
-                                        + "雾化ADC数值L" + ","
-                                        + "雾化ADC数值H" + ","
-                                        + "回路加热PWM数值L" + ","
-                                        + "回路加热PWM数值H" + ","
-                                        + "回路加热ADC数值L" + ","
-                                        + "回路加热ADC数值H" + ","
-                                        + "加热盘加热PWM数值L" + ","
-                                        + "加热盘加热PWM数值H" + ","
-                                        + "加热盘加热ADC数值L" + ","
-                                        + "加热盘加热ADC数值H" + ","
-                                        + "主马达驱动数值L" + ","
-                                        + "主马达驱动数值H" + ","
-                                        + "主马达转速数值L" + ","
-                                        + "主马达转速数值H" + ","
-                                        + "压力传感器ADC值L" + ","
-                                        + "压力传感器ADC值H" + ","
-                                        + "水位传感器HADC值L" + ","
-                                        + "水位传感器HADC值H" + ","
-                                        + "水位传感器LADC值L" + ","
-                                        + "水位传感器LADC值H" + ","
-                                        + "散热风扇驱动数值L" + ","
-                                        + "散热风扇驱动数值H" + ","
-                                        + "散热风扇转速数值L" + ","
-                                        + "散热风扇转速数值H");
+                                        + lang.date() + ","
+                                        //+ lang.running_mode() + ","
+                                        + lang.set_temp() + ","
+                                        + lang.set_flow() + ","
+                                        + lang.set_high_oxy_alarm() + ","
+                                        + lang.set_low_oxy_alarm() + ","
+                                        + lang.set_atomiz_level() + ","
+                                        + lang.set_atomiz_time() + ","
+                                        + lang.set_adault_or_child() + ","
+                                        + lang.data_patient_tmp() + ","
+                                        + lang.data_air_outlet_tmp() + ","
+                                        + lang.data_heating_plate_tmp() + ","
+                                        + lang.data_enviroment_tmp() + ","
+                                        + lang.data_driveboard_tmp() + ","
+                                        + lang.data_flow() + ","
+                                        + lang.data_Oxy_concentration() + ","
+                                        + lang.data_air_pressure() + ","
+                                        + lang.data_loop_type() + ","
+                                        + lang.data_fault_statue1() + ","
+                                        + lang.data_fault_statue2() + ","
+                                        + lang.data_fault_statue3() + ","
+                                        + lang.data_fault_statue4() + ","
+                                        + lang.data_fault_statue5() + ","
+                                        + lang.data_fault_statue6() + ","
+                                        + lang.data_fault_statue7() + ","
+                                        + lang.data_fault_statue8() + ","
+                                        + lang.data_fault_statue9() + ","
+                                        + lang.data_fault_statue10() + ","
+                                        + lang.data_fault_statue11() + ","
+                                        + lang.data_fault_statue12() + ","
+                                        + lang.data_atomiz_DAC_L() + ","
+                                        + lang.data_atomiz_DAC_H() + ","
+                                        + lang.data_atomiz_ADC_L() + ","
+                                        + lang.data_atomiz_ADC_H() + ","
+                                        + lang.data_loop_heating_PWM_L() + ","
+                                        + lang.data_loop_heating_PWM_H() + ","
+                                        + lang.data_loop_heating_ADC_L() + ","
+                                        + lang.data_loop_heating_ADC_H() + ","
+                                        + lang.data_heating_plate_PWM_L() + ","
+                                        + lang.data_heating_plate_PWM_H() + ","
+                                        + lang.data_heating_plate_ADC_L() + ","
+                                        + lang.data_heating_plate_ADC_H() + ","
+                                        + lang.data_main_motor_drive_L() + ","
+                                        + lang.data_main_motor_drive_H() + ","
+                                        + lang.data_main_motor_speed_L() + ","
+                                        + lang.data_main_motor_speed_H() + ","
+                                        + lang.data_press_sensor_ADC_L() + ","
+                                        + lang.data_press_sensor_ADC_H() + ","
+                                        + lang.data_waterlevel_HADC_L() + ","
+                                        + lang.data_waterlevel_HADC_H() + ","
+                                        + lang.data_waterlevel_LADC_L() + ","
+                                        + lang.data_waterlevel_LADC_H() + ","
+                                        + lang.data_fan_driver_L() + ","
+                                        + lang.data_fan_driver_H() + ","
+                                        + lang.data_fan_speed_L() + ","
+                                        + lang.data_fan_speed_H());
                         #endregion
                     }
                     
@@ -1341,73 +1553,141 @@ namespace BreathingMachine
                     if (DataMngr.m_machineType == 2)
                     {
                         #region
+                        //sw_workData.WriteLine("No." + ","
+                        //                + "日期" + ","
+                        //                + "运行模式" + ","
+                        //                + "设定温度" + ","
+                        //                + "设定流量" + ","
+                        //                + "设定高氧浓度报警" + ","
+                        //                + "设定低氧浓度报警" + ","
+                        //                + "设定雾化量档位" + ","
+                        //                + "设定雾化时间" + ","
+                        //                + "设定成人儿童模式" + ","
+                        //                + "患者端温度" + ","
+                        //                + "出气口温度" + ","
+                        //                + "加热盘温度" + ","
+                        //                + "环境温度" + ","
+                        //                + "驱动板温度" + ","
+                        //                + "流量" + ","
+                        //                + "氧浓度" + ","
+                        //                + "气道压力" + ","
+                        //                + "回路类型" + ","
+                        //                + "故障1" + ","
+                        //                + "故障2" + ","
+                        //                + "故障3" + ","
+                        //                + "故障4" + ","
+                        //                + "故障5" + ","
+                        //                + "故障6" + ","
+                        //                + "故障7" + ","
+                        //                + "故障8" + ","
+                        //                + "故障9" + ","
+                        //                + "故障10" + ","
+                        //                + "故障11" + ","
+                        //                + "故障12");
+                        #endregion
+                        //有运行模式
+                        #region
                         sw_workData.WriteLine("No." + ","
-                                        + "日期" + ","
-                                        + "运行模式" + ","
-                                        + "设定温度" + ","
-                                        + "设定流量" + ","
-                                        + "设定高氧浓度报警" + ","
-                                        + "设定低氧浓度报警" + ","
-                                        + "设定雾化量档位" + ","
-                                        + "设定雾化时间" + ","
-                                        + "设定成人儿童模式" + ","
-                                        + "患者端温度" + ","
-                                        + "出气口温度" + ","
-                                        + "加热盘温度" + ","
-                                        + "环境温度" + ","
-                                        + "驱动板温度" + ","
-                                        + "流量" + ","
-                                        + "氧浓度" + ","
-                                        + "气道压力" + ","
-                                        + "回路类型" + ","
-                                        + "故障1" + ","
-                                        + "故障2" + ","
-                                        + "故障3" + ","
-                                        + "故障4" + ","
-                                        + "故障5" + ","
-                                        + "故障6" + ","
-                                        + "故障7" + ","
-                                        + "故障8" + ","
-                                        + "故障9" + ","
-                                        + "故障10" + ","
-                                        + "故障11" + ","
-                                        + "故障12");
+                                        + lang.date() + ","
+                                        + lang.running_mode() + ","
+                                        + lang.set_temp() + ","
+                                        + lang.set_flow() + ","
+                                        + lang.set_high_oxy_alarm() + ","
+                                        + lang.set_low_oxy_alarm() + ","
+                                        + lang.set_atomiz_level() + ","
+                                        + lang.set_atomiz_time() + ","
+                                        + lang.set_adault_or_child() + ","
+                                        + lang.data_patient_tmp() + ","
+                                        + lang.data_air_outlet_tmp() + ","
+                                        + lang.data_heating_plate_tmp() + ","
+                                        + lang.data_enviroment_tmp() + ","
+                                        + lang.data_driveboard_tmp() + ","
+                                        + lang.data_flow() + ","
+                                        + lang.data_Oxy_concentration() + ","
+                                        + lang.data_air_pressure() + ","
+                                        + lang.data_loop_type() + ","
+                                        + lang.data_fault_statue1() + ","
+                                        + lang.data_fault_statue2() + ","
+                                        + lang.data_fault_statue3() + ","
+                                        + lang.data_fault_statue4() + ","
+                                        + lang.data_fault_statue5() + ","
+                                        + lang.data_fault_statue6() + ","
+                                        + lang.data_fault_statue7() + ","
+                                        + lang.data_fault_statue8() + ","
+                                        + lang.data_fault_statue9() + ","
+                                        + lang.data_fault_statue10() + ","
+                                        + lang.data_fault_statue11() + ","
+                                        + lang.data_fault_statue12());
                         #endregion
                     }
                     else
                     {
                         #region
+                        //sw_workData.WriteLine("No." + ","
+                        //                + "日期" + ","
+                        //                //+ "运行模式" + ","
+                        //                + "设定温度" + ","
+                        //                + "设定流量" + ","
+                        //                + "设定高氧浓度报警" + ","
+                        //                + "设定低氧浓度报警" + ","
+                        //                + "设定雾化量档位" + ","
+                        //                + "设定雾化时间" + ","
+                        //                + "设定成人儿童模式" + ","
+                        //                + "患者端温度" + ","
+                        //                + "出气口温度" + ","
+                        //                + "加热盘温度" + ","
+                        //                + "环境温度" + ","
+                        //                + "驱动板温度" + ","
+                        //                + "流量" + ","
+                        //                + "氧浓度" + ","
+                        //                + "气道压力" + ","
+                        //                + "回路类型" + ","
+                        //                + "故障1" + ","
+                        //                + "故障2" + ","
+                        //                + "故障3" + ","
+                        //                + "故障4" + ","
+                        //                + "故障5" + ","
+                        //                + "故障6" + ","
+                        //                + "故障7" + ","
+                        //                + "故障8" + ","
+                        //                + "故障9" + ","
+                        //                + "故障10" + ","
+                        //                + "故障11" + ","
+                        //                + "故障12");
+                        #endregion
+                        //没有运行模式
+                        #region
                         sw_workData.WriteLine("No." + ","
-                                        + "日期" + ","
-                                        //+ "运行模式" + ","
-                                        + "设定温度" + ","
-                                        + "设定流量" + ","
-                                        + "设定高氧浓度报警" + ","
-                                        + "设定低氧浓度报警" + ","
-                                        + "设定雾化量档位" + ","
-                                        + "设定雾化时间" + ","
-                                        + "设定成人儿童模式" + ","
-                                        + "患者端温度" + ","
-                                        + "出气口温度" + ","
-                                        + "加热盘温度" + ","
-                                        + "环境温度" + ","
-                                        + "驱动板温度" + ","
-                                        + "流量" + ","
-                                        + "氧浓度" + ","
-                                        + "气道压力" + ","
-                                        + "回路类型" + ","
-                                        + "故障1" + ","
-                                        + "故障2" + ","
-                                        + "故障3" + ","
-                                        + "故障4" + ","
-                                        + "故障5" + ","
-                                        + "故障6" + ","
-                                        + "故障7" + ","
-                                        + "故障8" + ","
-                                        + "故障9" + ","
-                                        + "故障10" + ","
-                                        + "故障11" + ","
-                                        + "故障12");
+                                        + lang.date() + ","
+                                        //+ lang.running_mode() + ","
+                                        + lang.set_temp() + ","
+                                        + lang.set_flow() + ","
+                                        + lang.set_high_oxy_alarm() + ","
+                                        + lang.set_low_oxy_alarm() + ","
+                                        + lang.set_atomiz_level() + ","
+                                        + lang.set_atomiz_time() + ","
+                                        + lang.set_adault_or_child() + ","
+                                        + lang.data_patient_tmp() + ","
+                                        + lang.data_air_outlet_tmp() + ","
+                                        + lang.data_heating_plate_tmp() + ","
+                                        + lang.data_enviroment_tmp() + ","
+                                        + lang.data_driveboard_tmp() + ","
+                                        + lang.data_flow() + ","
+                                        + lang.data_Oxy_concentration() + ","
+                                        + lang.data_air_pressure() + ","
+                                        + lang.data_loop_type() + ","
+                                        + lang.data_fault_statue1() + ","
+                                        + lang.data_fault_statue2() + ","
+                                        + lang.data_fault_statue3() + ","
+                                        + lang.data_fault_statue4() + ","
+                                        + lang.data_fault_statue5() + ","
+                                        + lang.data_fault_statue6() + ","
+                                        + lang.data_fault_statue7() + ","
+                                        + lang.data_fault_statue8() + ","
+                                        + lang.data_fault_statue9() + ","
+                                        + lang.data_fault_statue10() + ","
+                                        + lang.data_fault_statue11() + ","
+                                        + lang.data_fault_statue12());
                         #endregion
                     }
                 }
@@ -1475,8 +1755,8 @@ namespace BreathingMachine
                                 #region
                                 line = i.ToString() + ","
                                         + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
-                                        + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_MODE) ? "雾化" : "湿化") + ","
-                                        + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? "成人" : "儿童") + ","
+                                        + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_MODE) ? lang.atomization() : lang.humidification()) + ","
+                                        + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? lang.child() : lang.adault()) + ","
                                         + Convert.ToString(Convert.ToString(workDataMsg.DATA_PATIENT_TEMP)) + ","
                                         + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
                                         + Convert.ToString(Convert.ToString(workDataMsg.DATA_FLOW)) + ","
@@ -1489,7 +1769,7 @@ namespace BreathingMachine
                                 line = i.ToString() + ","
                                         + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
                                         //+ Convert.ToString(Convert.ToBoolean(workDataMsg.SET_MODE) ? "雾化" : "湿化") + ","
-                                        + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? "成人" : "儿童") + ","
+                                        + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? lang.child() : lang.adault()) + ","
                                         + Convert.ToString(Convert.ToString(workDataMsg.DATA_PATIENT_TEMP)) + ","
                                         + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
                                         + Convert.ToString(Convert.ToString(workDataMsg.DATA_FLOW)) + ","
@@ -1507,14 +1787,14 @@ namespace BreathingMachine
                                      #region
                                      line = i.ToString() + ","
                                              + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
-                                             + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_MODE) ? "雾化" : "湿化") + ","
+                                             + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_MODE) ? lang.atomization() : lang.humidification()) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.SET_TEMP)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.SET_FLOW)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.SET_HIGH_OXYGEN_ALARM)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.SET_LOW_OXYGEN_ALARM)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_LEVEL)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_TIME)) + ","
-                                             + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? "成人" : "儿童") + ","
+                                             + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? lang.child() : lang.adault() ) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_PATIENT_TEMP)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_TMP)) + ","
@@ -1576,7 +1856,7 @@ namespace BreathingMachine
                                              + Convert.ToString(Convert.ToString(workDataMsg.SET_LOW_OXYGEN_ALARM)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_LEVEL)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_TIME)) + ","
-                                             + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? "成人" : "儿童") + ","
+                                             + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? lang.child() : lang.adault()) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_PATIENT_TEMP)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_TMP)) + ","
@@ -1634,14 +1914,14 @@ namespace BreathingMachine
                                      #region
                                      line = i.ToString() + ","
                                              + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
-                                             + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_MODE) ? "雾化" : "湿化") + ","
+                                             + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_MODE) ? lang.atomization() : lang.humidification()) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.SET_TEMP)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.SET_FLOW)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.SET_HIGH_OXYGEN_ALARM)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.SET_LOW_OXYGEN_ALARM)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_LEVEL)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_TIME)) + ","
-                                             + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? "成人" : "儿童") + ","
+                                             + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? lang.child() : lang.adault()) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_PATIENT_TEMP)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_TMP)) + ","
@@ -1677,7 +1957,7 @@ namespace BreathingMachine
                                              + Convert.ToString(Convert.ToString(workDataMsg.SET_LOW_OXYGEN_ALARM)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_LEVEL)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_TIME)) + ","
-                                             + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? "成人" : "儿童") + ","
+                                             + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? lang.child() : lang.adault()) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_PATIENT_TEMP)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_TMP)) + ","
@@ -1712,7 +1992,7 @@ namespace BreathingMachine
             }
             #endregion
 
-            MessageBox.Show("文件导出完毕！");
+            MessageBox.Show(LanguageMngr.file_export_completed());
             sw_alarm.Close();
             sw_workData.Close();
             fs_workData.Close();
@@ -1725,28 +2005,27 @@ namespace BreathingMachine
         }
         private void InitListViewColumnHead_alarm()
         {
+            LanguageMngr lang = new LanguageMngr();
             //获取机型号
             DataMngr.GetMachineTpye();
             this.listView_alarmInfo.Columns.Clear();
 
             this.listView_alarmInfo.Columns.Add("No.", 120, HorizontalAlignment.Left);
-            this.listView_alarmInfo.Columns.Add("日期", 180, HorizontalAlignment.Left);
+            this.listView_alarmInfo.Columns.Add(lang.date(), 180, HorizontalAlignment.Left);
             if (DataMngr.m_machineType == 2) //机型为VNU002是需要运行模式
             {
-                this.listView_alarmInfo.Columns.Add("运行模式", 120, HorizontalAlignment.Left);
+                this.listView_alarmInfo.Columns.Add(lang.running_mode(), 120, HorizontalAlignment.Left);
             } 
             else 
             {
                 //do nothing
             }
-            this.listView_alarmInfo.Columns.Add("报警码", 120, HorizontalAlignment.Left);
-            this.listView_alarmInfo.Columns.Add("报警信息", 120, HorizontalAlignment.Left);
-            this.listView_alarmInfo.Columns.Add("报警数据1", 120, HorizontalAlignment.Left);
-            this.listView_alarmInfo.Columns.Add("报警数据2", 120, HorizontalAlignment.Left);
-           
+            this.listView_alarmInfo.Columns.Add(lang.alarm_code(), 120, HorizontalAlignment.Left);
+            this.listView_alarmInfo.Columns.Add(lang.alarm_info(), 120, HorizontalAlignment.Left);
+            this.listView_alarmInfo.Columns.Add(lang.alarm_value_L(), 120, HorizontalAlignment.Left);
+            this.listView_alarmInfo.Columns.Add(lang.alarm_value_H(), 120, HorizontalAlignment.Left);
         }
 
-        
         private void InitTree()
         {
             #region
@@ -1839,6 +2118,7 @@ namespace BreathingMachine
 
         private void InitListViewColumnHead_workData()
         {
+            LanguageMngr lang=new LanguageMngr();
             //获取机型号
             DataMngr.GetMachineTpye();
             //MessageBox.Show(Convert.ToInt32(DataMngr.m_usageTable_xAxis_list).ToString());
@@ -1848,80 +2128,80 @@ namespace BreathingMachine
             if (!DataMngr.m_advanceMode) //非高级模式时，给用户看，只需要部分数据
             {
                 this.listView_workData.Columns.Add("No.", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("日期", 180, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.date(), 180, HorizontalAlignment.Left);
                 if (DataMngr.m_machineType == 2) //机型为VNU002是需要运行模式
                 {
-                    this.listView_workData.Columns.Add("运行模式", 120, HorizontalAlignment.Left);
+                    this.listView_workData.Columns.Add(lang.running_mode(), 120, HorizontalAlignment.Left);
                 }
-                this.listView_workData.Columns.Add("设定成人儿童模式", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("患者端温度", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("出气口温度", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("流量", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("氧浓度", 120, HorizontalAlignment.Left); 
+                this.listView_workData.Columns.Add(lang.set_adault_or_child(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_patient_tmp(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_air_outlet_tmp(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_flow(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_Oxy_concentration(), 120, HorizontalAlignment.Left); 
             }
             else  //高级模式，给工程师看
             {
                 #region
                 this.listView_workData.Columns.Add("No.", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("日期", 180, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.date(), 180, HorizontalAlignment.Left);
                 if (DataMngr.m_machineType == 2)
                 {
-                    this.listView_workData.Columns.Add("运行模式", 120, HorizontalAlignment.Left);
+                    this.listView_workData.Columns.Add(lang.running_mode(), 120, HorizontalAlignment.Left);
                 }
-                this.listView_workData.Columns.Add("设定温度", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("设定流量", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("设定高氧浓度报警", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("设定低氧浓度报警", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("设定雾化量档位", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("设定雾化时间", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("设定成人儿童模式", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("患者端温度", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("出气口温度", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("加热盘温度", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("环境温度", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("驱动板温度", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("流量", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("氧浓度", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("气道压力", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("回路类型", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("故障1", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("故障2", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("故障3", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("故障4", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("故障5", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("故障6", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("故障7", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("故障8", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("故障9", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("故障10", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("故障11", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("故障12", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("雾化DAC数值L", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("雾化DAC数值H", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("雾化ADC数值L", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("雾化ADC数值H", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("回路加热PWM数值L", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("回路加热PWM数值H", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("回路加热ADC数值L", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("回路加热ADC数值H", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("加热盘加热PWM数值L", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("加热盘加热PWM数值H", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("加热盘加热ADC数值L", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("加热盘加热ADC数值H", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("主马达驱动数值L", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("主马达驱动数值H", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("主马达转速数值L", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("主马达转速数值H", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("压力传感器ADC值L", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("压力传感器ADC值H", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("水位传感器HADC值L", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("水位传感器HADC值H", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("水位传感器LADC值L", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("水位传感器LADC值H", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("散热风扇驱动数值L", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("散热风扇驱动数值H", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("散热风扇转速数值L", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add("散热风扇转速数值H", 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.set_temp(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.set_flow(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.set_high_oxy_alarm(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.set_low_oxy_alarm(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.set_atomiz_level(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.set_atomiz_time(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.set_adault_or_child(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_patient_tmp(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_air_outlet_tmp(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_heating_plate_tmp(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_enviroment_tmp(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_driveboard_tmp(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_flow(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_Oxy_concentration(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_air_pressure(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_loop_type(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_fault_statue1(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_fault_statue2(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_fault_statue3(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_fault_statue4(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_fault_statue5(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_fault_statue6(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_fault_statue7(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_fault_statue8(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_fault_statue9(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_fault_statue10(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_fault_statue11(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_fault_statue12(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_atomiz_DAC_L(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_atomiz_DAC_H(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_atomiz_ADC_L(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_atomiz_ADC_L(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_loop_heating_PWM_L(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_loop_heating_PWM_H(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_loop_heating_ADC_L(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_loop_heating_ADC_H(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_heating_plate_PWM_L(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_heating_plate_PWM_H(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_heating_plate_ADC_L(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_heating_plate_ADC_H(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_main_motor_drive_L(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_main_motor_drive_H(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_main_motor_speed_L(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_main_motor_speed_H(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_press_sensor_ADC_L(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_press_sensor_ADC_H(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_waterlevel_HADC_L(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_waterlevel_HADC_H(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_waterlevel_LADC_L(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_waterlevel_LADC_H(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_fan_driver_L(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_fan_driver_H(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_fan_speed_L(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_fan_speed_H(), 120, HorizontalAlignment.Left);
                 #endregion
                 if(DataMngr.m_advanceMode)
                 {
@@ -2170,21 +2450,21 @@ namespace BreathingMachine
         {
             this.g_bEngineerMode = false;
             //this.g_flag_alreadyInEngMode = false;
-            if (this.用户模式ToolStripMenuItem.Enabled==false)
-            {
-                if(LanguageMngr.m_language==LANGUAGE.CHINA)
-                {
-                    MessageBox.Show("您已经处于用户模式！");
-                }
-                else if(LanguageMngr.m_language==LANGUAGE.ENGLISH)
-                {
-                    MessageBox.Show("You are already in user mode!");
-                }
-                else
-                {
+            //if (this.用户模式ToolStripMenuItem.Enabled==false)
+            //{
+            //    if(LanguageMngr.m_language==LANGUAGE.CHINA)
+            //    {
+            //        MessageBox.Show("您已经处于用户模式！");
+            //    }
+            //    else if(LanguageMngr.m_language==LANGUAGE.ENGLISH)
+            //    {
+            //        MessageBox.Show("You are already in user mode!");
+            //    }
+            //    else
+            //    {
 
-                }
-            }
+            //    }
+            //}
             this.tabPage_alarmList.Parent = null;
             this.tabPage_workdatalist.Parent = null;
             ////试一试,貌似没起什么作用，内存并没有释放，有可能是因为使用了虚模式
@@ -2236,7 +2516,7 @@ namespace BreathingMachine
             this.listView_workData.BeginUpdate();
 
             
-
+            LanguageMngr lang=new LanguageMngr();
             for (int i = start; i < end; ++i)
             {
                 #region
@@ -2246,7 +2526,10 @@ namespace BreathingMachine
                     #region
                     lvi.Text = WorkDataList.m_WorkData_List[i].No;
                     lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].tm);
-                    lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].set_mode);
+                    if(DataMngr.m_machineType==2)
+                    {
+                        lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].set_mode == "雾化" ? lang.atomization() : lang.humidification());
+                    }
                     lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].set_tmp);
                     lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].set_flow);
                     lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].set_high_oxy_alarm);
@@ -2355,7 +2638,7 @@ namespace BreathingMachine
             {
                 this.dateTimePicker_Begin.Value = FileMngr.m_dateTime_begin;
                 this.dateTimePicker_End.Value = FileMngr.m_dateTime_end;
-                MessageBox.Show("开始时间大于结束时间，请重选");
+                MessageBox.Show(LanguageMngr.startTime_begyond_endTime());
                 return;
             }
             else
@@ -2499,7 +2782,7 @@ namespace BreathingMachine
             {
                 this.dateTimePicker_Begin.Value = FileMngr.m_dateTime_begin;
                 this.dateTimePicker_End.Value = FileMngr.m_dateTime_end;
-                MessageBox.Show("开始时间大于结束时间，请重选");
+                MessageBox.Show(LanguageMngr.startTime_begyond_endTime());
                 return;
             }
             else
@@ -2571,14 +2854,16 @@ namespace BreathingMachine
         
         void ParsePatientInfo2appPanel(PATIENT_INFO info)
         {
+            LanguageMngr lang = new LanguageMngr();
             label_value_added_patientName.Text = info.name;
             label_value_patient_name.Text = info.name;
 
             label_value_added_patientAge.Text = info.age;
             label_value_patient_age.Text = info.age;
 
-            label_value_added_patientGender.Text = info.gender;
-            label_value_patient_gender.Text=info.gender;
+            label_value_added_patientGender.Text = lang.showGenderValue(info.gender);
+
+            label_value_patient_gender.Text = lang.showGenderValue(info.gender);
 
             label_value_added_phoneNum.Text = info.phoneNum;
             label_value_patient_phoneNum.Text = info.phoneNum;
@@ -2592,7 +2877,7 @@ namespace BreathingMachine
         {
             if(!DataMngr.m_bPatientInfo_Geted)
             {
-                MessageBox.Show("请先完善病人信息！");
+                MessageBox.Show(LanguageMngr.pls_complete_patient_info());
                 return;
             }
             if (this.folderBrowserDialog_save2PDF.ShowDialog() != DialogResult.OK)
@@ -2621,9 +2906,10 @@ namespace BreathingMachine
             iTextSharp.text.Font fonttitle2 = new iTextSharp.text.Font(bf1, 12);        //副标题字体，大小15  
 
             //填写基本信息
+            LanguageMngr lang = new LanguageMngr();
             #region
             //设备信息标头 
-            string strContent = "设备信息";
+            string strContent = lang.equipInfo();
             Paragraph line = new Paragraph(strContent, fonttitle);     //添加段落，第二个参数指定使用fonttitle格式的字体，写入中文必须指定字体否则无法显示中文  
             line.Alignment = iTextSharp.text.Rectangle.ALIGN_LEFT;       //设置居中  
             document.Add(line);        //将标题段加入PDF文档中  
@@ -2633,15 +2919,15 @@ namespace BreathingMachine
             //nullp.Leading = 10;
             document.Add(nullp);
 
-            //设备信息：设备类型 + SN
-            strContent = "设备类型：" + this.label_equipType_Value.Text;
+            //设备信息：设备型号 + SN
+            strContent = lang.machineType() + this.label_equipType_Value.Text;
             strContent = strContent.PadRight(43, Convert.ToChar(" ")) + "SN：" + this.label_SN_Value.Text;
             line = new Paragraph(strContent, fonttitle2);
             document.Add(line);
 
             //设备信息：  软件版本 
             document.Add(nullp);
-            strContent = "软件版本：" + this.label_softwarVer_Value.Text;
+            strContent = lang.soft_ver() + this.label_softwarVer_Value.Text;
             line = new Paragraph(strContent, fonttitle2);
             document.Add(line);
 
@@ -2650,7 +2936,7 @@ namespace BreathingMachine
             document.Add(nullp);
 
             //使用时间标头
-            strContent = "使用时间";
+            strContent = lang.usageTime();
             line = new Paragraph(strContent, fonttitle);
             document.Add(line);
 
@@ -2665,39 +2951,39 @@ namespace BreathingMachine
             document.Add(nullp);
 
             //病人信息标头
-            strContent = "病人信息";
-            line = new Paragraph("病人信息", fonttitle);
+            strContent = lang.patient_info();
+            line = new Paragraph(strContent, fonttitle);
             document.Add(line);
 
             //病人信息： 姓名 + 身高
             document.Add(nullp);
-            strContent = "姓名：" + this.label_value_patient_name.Text;
-            strContent = strContent.PadRight(45, Convert.ToChar(" ")) + "身高: " + this.label_value_patient_height.Text + "cm";
+            strContent = lang.name() + this.label_value_patient_name.Text;
+            strContent = strContent.PadRight(45, Convert.ToChar(" ")) + lang.height() + this.label_value_patient_height.Text + "cm";
             line = new Paragraph(strContent, fonttitle2);
             document.Add(line);
 
             //病人信息： 年龄 + 体重
             document.Add(nullp);
-            strContent = "年龄：" + this.label_value_patient_age.Text;
-            strContent = strContent.PadRight(45, Convert.ToChar(" ")) + "体重: " + this.label_value_patient_weight.Text + "kg";
+            strContent = lang.age() + this.label_value_patient_age.Text;
+            strContent = strContent.PadRight(45, Convert.ToChar(" ")) + lang.weight() + this.label_value_patient_weight.Text + "kg";
             line = new Paragraph(strContent, fonttitle2);
             document.Add(line);
 
             //病人信息： 性别
             document.Add(nullp);
-            strContent = "性别：" + this.label_value_patient_gender.Text;
+            strContent = lang.gender() + this.label_value_patient_gender.Text;
             line = new Paragraph(strContent, fonttitle2);
             document.Add(line);
 
             //病人信息： 电话号码
             document.Add(nullp);
-            strContent = "电话号码：" + this.label_value_patient_phoneNum.Text;
+            strContent = lang.phoneNum() + this.label_value_patient_phoneNum.Text;
             line = new Paragraph(strContent, fonttitle2);
             document.Add(line);
 
             //病人信息： 家庭住址
             document.Add(nullp);
-            strContent = "家庭住址：" + this.label_value_patient_adress.Text;
+            strContent = lang.address() + this.label_value_patient_adress.Text;
             line = new Paragraph(strContent, fonttitle2);
             document.Add(line);
 
@@ -2711,13 +2997,13 @@ namespace BreathingMachine
             int chart_Width_inPDF = 500;
 
             //图表,大标题
-            strContent = "图表";
-            line = new Paragraph("图表", fonttitle);
+            strContent = lang.charts();
+            line = new Paragraph(strContent, fonttitle);
             document.Add(line);
             document.Add(nullp);
             //图表：工作信息-使用时间
             #region
-            strContent = "使用时间：";
+            strContent = lang.title_usageTime();
             line = new Paragraph(strContent, fonttitle2);
             document.Add(line);
             document.Add(nullp);
@@ -2740,7 +3026,7 @@ namespace BreathingMachine
 
             //图表：病人温度
             #region
-            strContent = "病人温度：";
+            strContent = lang.title_patient_tmp();
             line = new Paragraph(strContent, fonttitle2);
             document.Add(line);
             document.Add(nullp);
@@ -2764,7 +3050,7 @@ namespace BreathingMachine
 
             //图表：出气口温度
             #region
-            strContent = "出气口温度：";
+            strContent = lang.title_air_outlet_tmp();
             line = new Paragraph(strContent, fonttitle2);
             document.Add(line);
             document.Add(nullp);
@@ -2803,7 +3089,7 @@ namespace BreathingMachine
 
             //图表：流量
             #region
-            strContent = "流量：";
+            strContent = lang.title_flow();
             line = new Paragraph(strContent, fonttitle2);
             document.Add(line);
             document.Add(nullp);
@@ -2826,7 +3112,7 @@ namespace BreathingMachine
 
             //图表：氧浓度
             #region
-            strContent = "氧浓度：";
+            strContent = lang.title_oxy_concentration();
             line = new Paragraph(strContent, fonttitle2);
             document.Add(line);
             document.Add(nullp);
@@ -2855,7 +3141,7 @@ namespace BreathingMachine
 
             document.Close();
             fs.Close();
-            MessageBox.Show("生成报告成功！");
+            MessageBox.Show(LanguageMngr.generate_report_successful());
         }
 
         private void tabControl1_Selecting(object sender, TabControlCancelEventArgs e)
@@ -2865,7 +3151,7 @@ namespace BreathingMachine
             {
                 if(FileMngr.m_dirPath==null)
                 {
-                    MessageBox.Show("请先导入数据！");
+                    MessageBox.Show(LanguageMngr.pls_import_data());
                     e.Cancel = true;
                     return;
                 }
@@ -2877,7 +3163,7 @@ namespace BreathingMachine
                 else
                 {
                     e.Cancel = true;
-                    MessageBox.Show("请先选择时间！");
+                    MessageBox.Show(LanguageMngr.pls_choose_time());
                 } 
             }
         }
@@ -2897,7 +3183,8 @@ namespace BreathingMachine
                 {
                     //找到了最终的子节点
                     string strDate = e.Node.Parent.Parent.Text +"/"+ e.Node.Parent.Text +"/"+ e.Node.Text + " 23:59:59";
-                    this.ShowDetailCharts(Convert.ToDateTime(strDate), 1);
+                    DataMngr.m_chart_selected_date = Convert.ToDateTime(strDate);
+                    this.ShowDetailCharts(DataMngr.m_chart_selected_date, 1);
                 }
                 //else
                 //{
@@ -2912,7 +3199,7 @@ namespace BreathingMachine
             if (FileMngr.m_dirPath == null || !DataMngr.m_bDateTimePicker_ValueChanged)
             {
                 显示所有数据ToolStripMenuItem.CheckState = CheckState.Unchecked;
-                MessageBox.Show("请确认导入了数据，并且选择了时间！");
+                MessageBox.Show(LanguageMngr.pls_ensure_import_data_and_choose_time());
                 return;
             }
 
@@ -2962,6 +3249,25 @@ namespace BreathingMachine
                     //do nothing
                 }
             } 
+        }
+
+        private void 软件版本ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(LanguageMngr.m_language==LANGUAGE.CHINA)
+            {
+                Form_About fm = new Form_About();
+                fm.ShowDialog();
+            }
+            else if (LanguageMngr.m_language == LANGUAGE.ENGLISH)
+            {
+                Form_AboutUs_English fm = new Form_AboutUs_English();
+                fm.ShowDialog();
+            }
+            else
+            { 
+                //其它语言
+            }
+
         }
  
     }
@@ -3284,7 +3590,7 @@ namespace BreathingMachine
 
             if (fs == null)
             {
-                MessageBox.Show("打开报警文件失败！");
+                MessageBox.Show(LanguageMngr.open_alarmFile_fail());
                 fs.Close();
                 br.Close();
                 return false;
@@ -3383,7 +3689,7 @@ namespace BreathingMachine
                 #region
                 if (fs == null)
                 {
-                    MessageBox.Show("打开报警文件失败！");
+                    MessageBox.Show(LanguageMngr.open_alarmFile_fail());
                     fs.Close();
                     br.Close();
                     return false;
@@ -3513,37 +3819,48 @@ namespace BreathingMachine
         {
             int nCode = Convert.ToInt32(code);
             string str = "";
+            LanguageMngr lang=new LanguageMngr();
             switch (nCode)
             {
                 case 0:
-                    str = "氧浓度传感器故障";
+                    //str = "氧浓度传感器故障";
+                    str = lang.oxy_concentration_sensor_fault();
                     break;
                 case 1:
-                    str = "流量传感器故障";
+                    //str = "流量传感器故障";
+                    str = lang.flow_sensor_fault();
                     break;
                 case 2:
-                    str = "环境温度传感器故障";
+                    //str = "环境温度传感器故障";
+                    str = lang.enviroment_tmp_sensor_fault();
                     break;
                 case 3:
-                    str = "驱动板温度传感器故障";
+                    //str = "驱动板温度传感器故障";
+                    str = lang.driverBoard_tmp_sensor_fault();
                     break;
                 case 4:
-                    str = "加热盘温度传感器故障";
+                    //str = "加热盘温度传感器故障";
+                    str = lang.heating_plate_tmp_sensor_fault();
                     break;
                 case 5:
-                    str = "散热风扇故障";
+                    //str = "散热风扇故障";
+                    str = lang.fan_fault();
                     break;
                 case 6:
-                    str = "EEPROM校验失败";
+                    //str = "EEPROM校验失败";
+                    str = lang.EEPROM_verify_fail();
                     break;
                 case 7:
-                    str = "出气口温度传感器故障";
+                    //str = "出气口温度传感器故障";
+                    str = lang.air_outlet_sensor_fault();
                     break;
                 case 8:
-                    str = "患者端温度传感器故障";
+                    //str = "患者端温度传感器故障";
+                    str = lang.patient_tmp_sensor_fault();
                     break;
                 default:
-                    str = "未识别的错误";
+                    //str = "未识别的错误";
+                    str = lang.unknow_err();
                     break;
             }
             return str;

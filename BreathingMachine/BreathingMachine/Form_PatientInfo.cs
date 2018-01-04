@@ -117,14 +117,14 @@ namespace BreathingMachine
                 bool b_AgeInfo_Right = true;
                 if (!isNumberic(info.age, ref result))
                 {
-                    str_errAge = "年龄";
+                    str_errAge = LanguageMngr.errAge();
                     b_AgeInfo_Right = false;
                 }
                 else
                 {
                     if(result<=0.0||result>=300.0)
                     {
-                        str_errAge = "年龄";
+                        str_errAge = LanguageMngr.errAge();
                         b_AgeInfo_Right = false;
                     }
                 }
@@ -145,7 +145,11 @@ namespace BreathingMachine
                     }
                     else
                     {
-                        MessageBox.Show("请填写正确的:" + str_errAge + " " + str_errHeight + " " + str_errWeight + " " + str_errPhoneNum);
+                        //str_errAge = LanguageMngr.errAge();
+                        //str_errHeight = LanguageMngr.errHeight();
+                        //str_errWeight = LanguageMngr.errWeight();
+                        //str_errPhoneNum = LanguageMngr.errPhoneNum();
+                        MessageBox.Show(LanguageMngr.pls_fill_in_right() + str_errAge + " " + str_errHeight + " " + str_errWeight + " " + str_errPhoneNum);
                         return;
                     }
                     #region
@@ -173,13 +177,13 @@ namespace BreathingMachine
                             if (db_Heihgt_result <= 0.0 || db_Heihgt_result >= 500.0)
                             {
                                 b_HeightInfo_Right = false;
-                                str_errHeight = "身高";
+                                str_errHeight = LanguageMngr.errHeight();
                             }
                         }
                         else
                         {
                             b_HeightInfo_Right = false;
-                            str_errHeight = "身高";
+                            str_errHeight = LanguageMngr.errHeight();
                         }
                     }
                     #endregion
@@ -195,13 +199,13 @@ namespace BreathingMachine
                             if (db_Weight_result <= 0.0 || db_Weight_result >= 500.0)
                             {
                                 b_WeightInfo_Right = false;
-                                str_errWeight = "体重";
+                                str_errWeight = LanguageMngr.errWeight();
                             }
                         }
                         else
                         {
                             b_WeightInfo_Right = false;
-                            str_errWeight = "体重";
+                            str_errWeight = LanguageMngr.errWeight();
                         }
                     }
                     #endregion
@@ -214,7 +218,7 @@ namespace BreathingMachine
                         if (!isPhoneNum(info.phoneNum))
                         {
                             b_PhoneNum_Right = false;
-                            str_errPhoneNum = "电话号码";
+                            str_errPhoneNum = LanguageMngr.errPhoneNum();
                         }
                     }
                     #endregion
@@ -232,7 +236,11 @@ namespace BreathingMachine
                     }
                     else
                     {
-                        MessageBox.Show("请填写正确的:" + str_errAge + " " + str_errHeight + " " + str_errWeight + " " + str_errPhoneNum);
+                        //str_errAge = LanguageMngr.errAge();
+                        //str_errHeight = LanguageMngr.errHeight();
+                        //str_errWeight = LanguageMngr.errWeight();
+                        //str_errPhoneNum = LanguageMngr.errPhoneNum();
+                        MessageBox.Show(LanguageMngr.pls_fill_in_right() + str_errAge + " " + str_errHeight + " " + str_errWeight + " " + str_errPhoneNum);
                         return;
                     }
                     #endregion
@@ -244,7 +252,7 @@ namespace BreathingMachine
             else
             {
                 //姓名，年龄没有填完全
-                MessageBox.Show("姓名和年龄为必填信息，请将信息填完！");
+                MessageBox.Show(LanguageMngr.pls_fill_up_name_and_age());
             }
             #endregion
         }
@@ -256,6 +264,23 @@ namespace BreathingMachine
 
         private void Form_PatientInfo_Load(object sender, EventArgs e)
         {
+            LanguageMngr lang = new LanguageMngr();
+            //初始化语言
+            #region
+            this.Text = lang.patient_info();
+            this.label_name.Text = lang.name();
+            this.label_age.Text = lang.age();
+            this.label_gender.Text = lang.gender();
+            this.radioButton_male.Text = lang.male();
+            this.radioButton_femal.Text = lang.female();
+            this.label_height.Text = lang.height();
+            this.label_weight.Text = lang.weight();
+            this.label_phoneNum.Text = lang.phoneNum();
+            this.label_address.Text = lang.address();
+            this.button_ok.Text = lang.ok();
+            this.button_cancle.Text = lang.cancle();
+            #endregion
+
             this.textBox_name.Text = DataMngr.m_old_PatientInfo.name;
             this.textBox_age.Text = DataMngr.m_old_PatientInfo.age;
             this.textBox_height.Text = DataMngr.m_old_PatientInfo.height;

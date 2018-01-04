@@ -28,18 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_PatientInfo));
+            this.label_name = new System.Windows.Forms.Label();
             this.textBox_name = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.label_age = new System.Windows.Forms.Label();
             this.textBox_age = new System.Windows.Forms.TextBox();
             this.textBox_height = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
+            this.label_gender = new System.Windows.Forms.Label();
+            this.label_height = new System.Windows.Forms.Label();
+            this.label_weight = new System.Windows.Forms.Label();
             this.textBox_weight = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
+            this.label_phoneNum = new System.Windows.Forms.Label();
             this.textBox_phoneNum = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
+            this.label_address = new System.Windows.Forms.Label();
             this.textBox_adress = new System.Windows.Forms.TextBox();
             this.button_ok = new System.Windows.Forms.Button();
             this.button_cancle = new System.Windows.Forms.Button();
@@ -49,107 +50,107 @@
             this.radioButton_femal = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
-            // label1
+            // label_name
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(67, 29);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(47, 12);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "*姓名：";
+            this.label_name.AutoSize = true;
+            this.label_name.Location = new System.Drawing.Point(69, 29);
+            this.label_name.Name = "label_name";
+            this.label_name.Size = new System.Drawing.Size(41, 12);
+            this.label_name.TabIndex = 0;
+            this.label_name.Text = "姓名：";
             // 
             // textBox_name
             // 
-            this.textBox_name.Location = new System.Drawing.Point(136, 26);
+            this.textBox_name.Location = new System.Drawing.Point(141, 26);
             this.textBox_name.Name = "textBox_name";
             this.textBox_name.Size = new System.Drawing.Size(182, 21);
             this.textBox_name.TabIndex = 1;
             // 
-            // label2
+            // label_age
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(67, 70);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(47, 12);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "*年龄：";
+            this.label_age.AutoSize = true;
+            this.label_age.Location = new System.Drawing.Point(69, 64);
+            this.label_age.Name = "label_age";
+            this.label_age.Size = new System.Drawing.Size(41, 12);
+            this.label_age.TabIndex = 2;
+            this.label_age.Text = "年龄：";
             // 
             // textBox_age
             // 
-            this.textBox_age.Location = new System.Drawing.Point(136, 61);
+            this.textBox_age.Location = new System.Drawing.Point(141, 61);
             this.textBox_age.Name = "textBox_age";
             this.textBox_age.Size = new System.Drawing.Size(182, 21);
             this.textBox_age.TabIndex = 3;
             // 
             // textBox_height
             // 
-            this.textBox_height.Location = new System.Drawing.Point(136, 143);
+            this.textBox_height.Location = new System.Drawing.Point(141, 140);
             this.textBox_height.Name = "textBox_height";
             this.textBox_height.Size = new System.Drawing.Size(182, 21);
             this.textBox_height.TabIndex = 5;
             // 
-            // label3
+            // label_gender
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(72, 105);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(41, 12);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "性别：";
+            this.label_gender.AutoSize = true;
+            this.label_gender.Location = new System.Drawing.Point(69, 105);
+            this.label_gender.Name = "label_gender";
+            this.label_gender.Size = new System.Drawing.Size(41, 12);
+            this.label_gender.TabIndex = 4;
+            this.label_gender.Text = "性别：";
             // 
-            // label4
+            // label_height
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(72, 146);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(41, 12);
-            this.label4.TabIndex = 7;
-            this.label4.Text = "身高：";
+            this.label_height.AutoSize = true;
+            this.label_height.Location = new System.Drawing.Point(69, 143);
+            this.label_height.Name = "label_height";
+            this.label_height.Size = new System.Drawing.Size(41, 12);
+            this.label_height.TabIndex = 7;
+            this.label_height.Text = "身高：";
             // 
-            // label5
+            // label_weight
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(72, 185);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(41, 12);
-            this.label5.TabIndex = 9;
-            this.label5.Text = "体重：";
+            this.label_weight.AutoSize = true;
+            this.label_weight.Location = new System.Drawing.Point(69, 182);
+            this.label_weight.Name = "label_weight";
+            this.label_weight.Size = new System.Drawing.Size(41, 12);
+            this.label_weight.TabIndex = 9;
+            this.label_weight.Text = "体重：";
             // 
             // textBox_weight
             // 
-            this.textBox_weight.Location = new System.Drawing.Point(136, 182);
+            this.textBox_weight.Location = new System.Drawing.Point(141, 179);
             this.textBox_weight.Name = "textBox_weight";
             this.textBox_weight.Size = new System.Drawing.Size(182, 21);
             this.textBox_weight.TabIndex = 8;
             // 
-            // label6
+            // label_phoneNum
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(72, 224);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(41, 12);
-            this.label6.TabIndex = 11;
-            this.label6.Text = "电话：";
+            this.label_phoneNum.AutoSize = true;
+            this.label_phoneNum.Location = new System.Drawing.Point(69, 221);
+            this.label_phoneNum.Name = "label_phoneNum";
+            this.label_phoneNum.Size = new System.Drawing.Size(41, 12);
+            this.label_phoneNum.TabIndex = 11;
+            this.label_phoneNum.Text = "电话：";
             // 
             // textBox_phoneNum
             // 
-            this.textBox_phoneNum.Location = new System.Drawing.Point(136, 221);
+            this.textBox_phoneNum.Location = new System.Drawing.Point(141, 218);
             this.textBox_phoneNum.Name = "textBox_phoneNum";
             this.textBox_phoneNum.Size = new System.Drawing.Size(182, 21);
             this.textBox_phoneNum.TabIndex = 10;
             // 
-            // label7
+            // label_address
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(72, 262);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(41, 12);
-            this.label7.TabIndex = 13;
-            this.label7.Text = "住址：";
+            this.label_address.AutoSize = true;
+            this.label_address.Location = new System.Drawing.Point(69, 259);
+            this.label_address.Name = "label_address";
+            this.label_address.Size = new System.Drawing.Size(41, 12);
+            this.label_address.TabIndex = 13;
+            this.label_address.Text = "住址：";
             // 
             // textBox_adress
             // 
-            this.textBox_adress.Location = new System.Drawing.Point(136, 259);
+            this.textBox_adress.Location = new System.Drawing.Point(141, 256);
             this.textBox_adress.Multiline = true;
             this.textBox_adress.Name = "textBox_adress";
             this.textBox_adress.Size = new System.Drawing.Size(182, 71);
@@ -157,7 +158,7 @@
             // 
             // button_ok
             // 
-            this.button_ok.Location = new System.Drawing.Point(85, 347);
+            this.button_ok.Location = new System.Drawing.Point(86, 348);
             this.button_ok.Name = "button_ok";
             this.button_ok.Size = new System.Drawing.Size(75, 23);
             this.button_ok.TabIndex = 14;
@@ -167,7 +168,7 @@
             // 
             // button_cancle
             // 
-            this.button_cancle.Location = new System.Drawing.Point(254, 347);
+            this.button_cancle.Location = new System.Drawing.Point(282, 348);
             this.button_cancle.Name = "button_cancle";
             this.button_cancle.Size = new System.Drawing.Size(75, 23);
             this.button_cancle.TabIndex = 15;
@@ -178,7 +179,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(324, 146);
+            this.label8.Location = new System.Drawing.Point(329, 146);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(17, 12);
             this.label8.TabIndex = 16;
@@ -187,7 +188,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(324, 185);
+            this.label9.Location = new System.Drawing.Point(329, 185);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(17, 12);
             this.label9.TabIndex = 17;
@@ -196,7 +197,7 @@
             // radioButton_male
             // 
             this.radioButton_male.AutoSize = true;
-            this.radioButton_male.Location = new System.Drawing.Point(152, 105);
+            this.radioButton_male.Location = new System.Drawing.Point(157, 104);
             this.radioButton_male.Name = "radioButton_male";
             this.radioButton_male.Size = new System.Drawing.Size(41, 16);
             this.radioButton_male.TabIndex = 18;
@@ -207,7 +208,7 @@
             // radioButton_femal
             // 
             this.radioButton_femal.AutoSize = true;
-            this.radioButton_femal.Location = new System.Drawing.Point(241, 105);
+            this.radioButton_femal.Location = new System.Drawing.Point(246, 104);
             this.radioButton_femal.Name = "radioButton_femal";
             this.radioButton_femal.Size = new System.Drawing.Size(41, 16);
             this.radioButton_femal.TabIndex = 19;
@@ -226,20 +227,25 @@
             this.Controls.Add(this.label8);
             this.Controls.Add(this.button_cancle);
             this.Controls.Add(this.button_ok);
-            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label_address);
             this.Controls.Add(this.textBox_adress);
-            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label_phoneNum);
             this.Controls.Add(this.textBox_phoneNum);
-            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label_weight);
             this.Controls.Add(this.textBox_weight);
-            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label_height);
             this.Controls.Add(this.textBox_height);
-            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label_gender);
             this.Controls.Add(this.textBox_age);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label_age);
             this.Controls.Add(this.textBox_name);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.label_name);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "Form_PatientInfo";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Patient Info.";
             this.Load += new System.EventHandler(this.Form_PatientInfo_Load);
             this.ResumeLayout(false);
@@ -249,18 +255,18 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label_name;
         private System.Windows.Forms.TextBox textBox_name;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label_age;
         private System.Windows.Forms.TextBox textBox_age;
         private System.Windows.Forms.TextBox textBox_height;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label_gender;
+        private System.Windows.Forms.Label label_height;
+        private System.Windows.Forms.Label label_weight;
         private System.Windows.Forms.TextBox textBox_weight;
-        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label_phoneNum;
         private System.Windows.Forms.TextBox textBox_phoneNum;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label_address;
         private System.Windows.Forms.TextBox textBox_adress;
         private System.Windows.Forms.Button button_ok;
         private System.Windows.Forms.Button button_cancle;

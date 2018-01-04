@@ -21,7 +21,7 @@ namespace BreathingMachine
         {
             DateTime tmBegin = new DateTime(tmLow.Year, tmLow.Month, tmLow.Day, 0, 0, 0);
             DateTime tmEnd = new DateTime(tmHigh.Year, tmHigh.Month, tmHigh.Day, 23, 59, 59);
-
+            LanguageMngr lang = new LanguageMngr();
             if(DataMngr.m_advanceMode)
             {
                 m_WorkData_List = new List<WorkData>();
@@ -91,9 +91,9 @@ namespace BreathingMachine
                             #region
                             wd.No = i.ToString();
                             wd.tm = tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss");
-                            wd.set_mode = Convert.ToBoolean(workDataMsg.SET_MODE) ? "雾化" : "湿化";
+                            wd.set_mode = Convert.ToBoolean(workDataMsg.SET_MODE) ? lang.atomization() : lang.humidification();
 
-                            wd.set_adault_or_child = Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? "儿童" : "成人";
+                            wd.set_adault_or_child = Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? lang.child() : lang.adault();
                             wd.data_patient_tmp = Convert.ToString(workDataMsg.DATA_PATIENT_TEMP);
                             wd.data_air_outlet_tmp = Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP);
 
@@ -157,6 +157,67 @@ namespace BreathingMachine
 
                             #endregion
 
+                            ////debug,使用构造函数,速度还是不够快
+                            #region
+                            //WorkData wd = new WorkData(i.ToString(),
+                            //                        tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss"),
+                            //                        Convert.ToBoolean(workDataMsg.SET_MODE) ? "雾化" : "湿化",
+                            //                        Convert.ToString(workDataMsg.SET_TEMP),
+                            //                        Convert.ToString(workDataMsg.SET_FLOW),
+                            //                        Convert.ToString(workDataMsg.SET_HIGH_OXYGEN_ALARM),
+                            //                        Convert.ToString(workDataMsg.SET_LOW_OXYGEN_ALARM),
+                            //                        Convert.ToString(workDataMsg.SET_ATOMIZATION_LEVEL),
+                            //                        Convert.ToString(workDataMsg.SET_ATOMIZATION_TIME),
+                            //                        Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? "儿童" : "成人",
+                            //                        Convert.ToString(workDataMsg.DATA_PATIENT_TEMP),
+                            //                        Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP),
+                            //                        Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_H),
+                            //                        Convert.ToString(workDataMsg.DATA_ENVIRONMENT_TMP),
+                            //                        Convert.ToString(workDataMsg.DATA_DRIVERBOARD_TMP),
+                            //                        Convert.ToString(workDataMsg.DATA_FLOW),
+                            //                        Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION),
+                            //                        Convert.ToString(workDataMsg.DATA_AIR_PRESSURE),
+                            //                        Convert.ToString(workDataMsg.DATA_LOOP_TYPE),
+                            //                        Convert.ToBoolean(faultStates[0]) ? "yes" : "no",
+                            //                        Convert.ToBoolean(faultStates[1]) ? "yes" : "no",
+                            //                        Convert.ToBoolean(faultStates[2]) ? "yes" : "no",
+                            //                        Convert.ToBoolean(faultStates[3]) ? "yes" : "no",
+                            //                        Convert.ToBoolean(faultStates[4]) ? "yes" : "no",
+                            //                        Convert.ToBoolean(faultStates[5]) ? "yes" : "no",
+                            //                        Convert.ToBoolean(faultStates[6]) ? "yes" : "no",
+                            //                        Convert.ToBoolean(faultStates[7]) ? "yes" : "no",
+                            //                        Convert.ToBoolean(faultStates[8]) ? "yes" : "no",
+                            //                        Convert.ToBoolean(faultStates[9]) ? "yes" : "no",
+                            //                        Convert.ToBoolean(faultStates[10]) ? "yes" : "no",
+                            //                        Convert.ToBoolean(faultStates[11]) ? "yes" : "no",
+                            //                        Convert.ToString(workDataMsg.DATA_ATOMIZ_DACVALUE_L),
+                            //                        Convert.ToString(workDataMsg.DATA_ATOMIZ_DACVALUE_H),
+                            //                        Convert.ToString(workDataMsg.DATA_ATOMIZ_ADCVALUE_L),
+                            //                        Convert.ToString(workDataMsg.DATA_ATOMIZ_ADCVALUE_H),
+                            //                        Convert.ToString(workDataMsg.DATA_LOOP_HEATING_PWM_L),
+                            //                        Convert.ToString(workDataMsg.DATA_LOOP_HEATING_PWM_H),
+                            //                        Convert.ToString(workDataMsg.DATA_LOOP_HEATING_ADC_L),
+                            //                        Convert.ToString(workDataMsg.DATA_LOOP_HEATING_ADC_H),
+                            //                        Convert.ToString(workDataMsg.DATA_HEATING_PLATE_PWM_L),
+                            //                        Convert.ToString(workDataMsg.DATA_HEATING_PLATE_PWM_H),
+                            //                        Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_L),
+                            //                        Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_H),
+                            //                        Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_DRIVER_L),
+                            //                        Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_DRIVER_H),
+                            //                        Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_SPEED_L),
+                            //                        Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_SPEED_H),
+                            //                        Convert.ToString(workDataMsg.DATA_PRESS_SENSOR_ADC_L),
+                            //                        Convert.ToString(workDataMsg.DATA_PRESS_SENSOR_ADC_H),
+                            //                        Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_HADC_L),
+                            //                        Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_HADC_H),
+                            //                        Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_LADC_L),
+                            //                        Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_LADC_H),
+                            //                        Convert.ToString(workDataMsg.DATA_FAN_DRIVER_L),
+                            //                        Convert.ToString(workDataMsg.DATA_FAN_DRIVER_H),
+                            //                        Convert.ToString(workDataMsg.DATA_FAN_SPEED_L),
+                            //                        Convert.ToString(workDataMsg.DATA_FAN_SPEED_H));
+                            #endregion
+
                             WorkDataList.m_WorkData_List.Add(wd);
                             //myCache1.Add(lvi);
                             i++;
@@ -203,17 +264,27 @@ namespace BreathingMachine
                         //if(tmFromMsg>=tmBegin&&tmFromMsg<=tmEnd)
                         {
                             //添加到链表中
-                            WorkData_Basic wd = new WorkData_Basic(); //实例化一个WorkData_Basic
-                            #region
-                            wd.No = i.ToString();
-                            wd.tm = tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss");
-                            wd.set_mode = Convert.ToBoolean(workDataMsg.SET_MODE) ? "雾化" : "湿化";
-                            wd.set_adault_or_child = Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? "儿童" : "成人";
-                            wd.data_patient_tmp = Convert.ToString(workDataMsg.DATA_PATIENT_TEMP);
-                            wd.data_air_outlet_tmp = Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP);
-                            wd.data_flow = Convert.ToString(workDataMsg.DATA_FLOW);
-                            wd.data_oxy_concentration = Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION);
-                            #endregion
+                            //WorkData_Basic wd = new WorkData_Basic(); //实例化一个WorkData_Basic
+                            //#region
+                            //wd.No = i.ToString();
+                            //wd.tm = tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss");
+                            //wd.set_mode = Convert.ToBoolean(workDataMsg.SET_MODE) ? "雾化" : "湿化";
+                            //wd.set_adault_or_child = Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? "儿童" : "成人";
+                            //wd.data_patient_tmp = Convert.ToString(workDataMsg.DATA_PATIENT_TEMP);
+                            //wd.data_air_outlet_tmp = Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP);
+                            //wd.data_flow = Convert.ToString(workDataMsg.DATA_FLOW);
+                            //wd.data_oxy_concentration = Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION);
+                            //#endregion
+
+
+                            WorkData_Basic wd = new WorkData_Basic(i.ToString(),
+                                                        tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss"),
+                                                        Convert.ToBoolean(workDataMsg.SET_MODE) ? lang.atomization() : lang.humidification(),
+                                                        Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? lang.child() : lang.adault(),
+                                                        Convert.ToString(workDataMsg.DATA_PATIENT_TEMP),
+                                                        Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP),
+                                                        Convert.ToString(workDataMsg.DATA_FLOW),
+                                                        Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION));
 
                             WorkDataList.m_WorkData_Basic_List.Add(wd);
                             i++;

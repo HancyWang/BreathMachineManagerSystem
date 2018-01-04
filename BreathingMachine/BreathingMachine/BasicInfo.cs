@@ -9,6 +9,131 @@ namespace BreathingMachine
     //全部的工作信息
     public struct WorkData
     {
+        //构造函数
+        public WorkData(
+        #region
+            string no,
+            string time,
+            string setmode,
+            string settmp,
+            string setflow,
+            string sethighoxyalarm,
+            string setlowoxyalrm,
+            string setatomizlevel,
+            string setatomiztime,
+            string setadaultorchild,
+            string datapatienttmp,
+            string dataairoutlettmp,
+            string dataheatingplatetmp,
+            string dataenvtmp,
+            string datadriveboardtmp,
+            string dataflow,
+            string dataoxyconcentration,
+            string dataairpressure,
+            string datalooptype,
+            string datafaultstates0,
+            string datafaultstates1,
+            string datafaultstates2,
+            string datafaultstates3,
+            string datafaultstates4,
+            string datafaultstates5,
+            string datafaultstates6,
+            string datafaultstates7,
+            string datafaultstates8,
+            string datafaultstates9,
+            string datafaultstates10,
+            string datafaultstates11,
+            string dataatmozDACL,
+            string dataatmozDACH,
+            string dataatmozADCL,
+            string dataatmozADCH,
+            string dataloopheatingPWML,
+            string dataloopheatingPWMH,
+            string dataloopheatingADCL,
+            string dataloopheatingADCH,
+            string dataloopheatingplatePWML,
+            string dataloopheatingplatePWMH,
+            string dataloopheatingplateADCL,
+            string dataloopheatingplateADCH,
+            string datamainmotordriveL,
+            string datamainmotordriveH,
+            string datamainmotorspeedL,
+            string datamainmotorspeedH,
+            string datapresssensorADCL,
+            string datapresssensorADCH,
+            string datawaterlevelsensorHADCL,
+            string datawaterlevelsensorHADCH,
+            string datawaterlevelsensorLADCL,
+            string datawaterlevelsensorLADCH,
+            string datafandriverL,
+            string datafandriverH,
+            string datafanspeedL,
+            string datafanspeedH
+        #endregion
+                )
+        {
+            #region
+            No =no;
+            tm=time;
+            set_mode=setmode;
+            set_tmp=settmp;
+            set_flow=setflow;
+            set_high_oxy_alarm=sethighoxyalarm;
+            set_low_oxy_alrm=setlowoxyalrm;
+            set_atomiz_level=setatomizlevel;
+            set_atomiz_time=setatomiztime;
+            set_adault_or_child=setadaultorchild;
+            data_patient_tmp=datapatienttmp;
+            data_air_outlet_tmp=dataairoutlettmp;
+            data_heating_plate_tmp=dataheatingplatetmp;
+            data_env_tmp=dataenvtmp;
+            data_driveboard_tmp=datadriveboardtmp;
+            data_flow=dataflow;
+            data_oxy_concentration=dataoxyconcentration;
+            data_air_pressure=dataairpressure;
+            data_loop_type=datalooptype;
+            data_faultstates_0=datafaultstates0;
+            data_faultstates_1=datafaultstates1;
+            data_faultstates_2=datafaultstates2;
+            data_faultstates_3=datafaultstates3;
+            data_faultstates_4=datafaultstates4;
+            data_faultstates_5=datafaultstates5;
+            data_faultstates_6=datafaultstates6;
+            data_faultstates_7=datafaultstates7;
+            data_faultstates_8=datafaultstates8;
+            data_faultstates_9=datafaultstates9;
+            data_faultstates_10=datafaultstates10;
+            data_faultstates_11=datafaultstates11;
+
+            data_atmoz_DAC_L=dataatmozDACL;
+            data_atmoz_DAC_H=dataatmozDACH;
+            data_atmoz_ADC_L=dataatmozADCL;
+            data_atmoz_ADC_H=dataatmozADCH;
+            data_loop_heating_PWM_L=dataloopheatingPWML;
+            data_loop_heating_PWM_H=dataloopheatingPWMH;
+            data_loop_heating_ADC_L = dataloopheatingADCL;
+            data_loop_heating_ADC_H = dataloopheatingADCH;
+            data_loop_heating_plate_PWM_L = dataloopheatingplatePWML;
+            data_loop_heating_plate_PWM_H = dataloopheatingplatePWMH;
+            data_loop_heating_plate_ADC_L = dataloopheatingplateADCL;
+            data_loop_heating_plate_ADC_H = dataloopheatingplateADCH;
+            data_main_motor_drive_L = datamainmotordriveL;
+            data_main_motor_drive_H = datamainmotordriveH;
+            data_main_motor_speed_L = datamainmotorspeedL;
+            data_main_motor_speed_H = datamainmotorspeedH;
+            data_press_sensor_ADC_L = datapresssensorADCL;
+            data_press_sensor_ADC_H = datapresssensorADCH;
+            data_waterlevel_sensor_HADC_L = datawaterlevelsensorHADCL;
+            data_waterlevel_sensor_HADC_H = datawaterlevelsensorHADCH;
+            data_waterlevel_sensor_LADC_L = datawaterlevelsensorLADCL;
+            data_waterlevel_sensor_LADC_H = datawaterlevelsensorLADCH;
+            data_fan_driver_L = datafandriverL;
+            data_fan_driver_H = datafandriverH;
+            data_fan_speed_L = datafanspeedL;
+            data_fan_speed_H = datafanspeedH;
+            #endregion
+        }
+
         #region
         public string No;
         public string tm;
@@ -74,6 +199,19 @@ namespace BreathingMachine
     //基本的工作信息
     public struct WorkData_Basic
     {
+        public WorkData_Basic(string no,string time,string setmode,string setAdaultOrChild,
+            string dataPatientTmp,string dataAirOutletTmp,string dataFlow,string dataOxyConcentration)
+        {
+            No=no;
+            tm=time;
+            set_mode = setmode;
+            set_adault_or_child = setAdaultOrChild;
+            data_patient_tmp = dataPatientTmp;
+            data_air_outlet_tmp = dataAirOutletTmp;
+            data_flow = dataFlow;
+            data_oxy_concentration = dataOxyConcentration; 
+        }
+            
         #region
         public string No;
         public string tm;
@@ -83,7 +221,6 @@ namespace BreathingMachine
         public string data_air_outlet_tmp;
         public string data_flow;
         public string data_oxy_concentration;
-        public string data_air_pressure;
         #endregion
     }
 
