@@ -29,6 +29,10 @@ namespace BreathingMachine
                 int i = 1;
                 foreach (KeyValuePair<WORK_INFO_HEAD, List<WORK_INFO_MESSAGE>> kv in FileMngr.m_workHead_Msg_Map)
                 {
+                    //if (kv.Value.Count == 0)
+                    //{
+                    //    return;
+                    //}
                     //先判断,减少不必要的foreach (var workDataMsg in list)
                     var list = kv.Value;
                     WORK_INFO_MESSAGE msg = list[0];
@@ -243,6 +247,10 @@ namespace BreathingMachine
                 {
                     //先判断,减少不必要的foreach (var workDataMsg in list)
                     var list = kv.Value;
+                    if (list.Count == 0)
+                    {
+                        return;
+                    }
                     WORK_INFO_MESSAGE msg = list[0];
                     DateTime msgTm = new DateTime(100 * Convert.ToInt32(msg.YEAR1) + Convert.ToInt32(msg.YEAR2),
                                                     Convert.ToInt32(msg.MONTH), Convert.ToInt32(msg.DAY), 23, 59, 59);

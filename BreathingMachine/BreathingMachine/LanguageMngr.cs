@@ -1898,6 +1898,209 @@ namespace BreathingMachine
                 return "";
             }
         }
+
+        public String overheat()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "患者端超温";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "Overheat";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        public String power_off()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "电源断开";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "Power off";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        //湿化罐(雾化罐)未安装
+        public String check_chamber()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "罐子未安装";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "Check chamber";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        //缺水
+        public String change_water_bag()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "缺水";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "Change water bag";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+
+        //温度数据线未安装好
+        public String check_temp_probe()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "连接数据";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "Check temp.probe";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        //加热回路未安装好
+        public String check_tube()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "连接发热线";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "Check tube";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        //堵塞
+        public String check_blockages()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "堵塞";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "Check blockages";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+         //高氧浓度
+        public String high_O2()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "高氧浓度";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "High O2";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        //低氧浓度
+        public String low_O2()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "低氧浓度";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "Low O2";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+         //达不到设定流量
+        public String flow_overrange()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "达不到设定流量";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "Flow overrange";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+         //达不到设定温度
+        public String temp_overrange()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "温度达不到设定值";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "Temp.overrange";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        public String system_failure()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "系统错误";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "System failure";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
         public String oxy_concentration_sensor_fault()
         {
             if (m_language == LANGUAGE.CHINA)

@@ -191,7 +191,7 @@ namespace BreathingMachine
             }
             int begin = NoOfField*FileMngr.WORKDATA_MSG_LEN;
             int len=Convert.ToInt32(bt[begin]);
-            len -= 48;  //第一个byte为二进制的36，十进制的54，减掉48才为6
+            //len -= 48;  //第一个byte为二进制的36，十进制的54，减掉48才为6
 
             string tmp = "";
             for (int i = 1; i <= len;i++ )
@@ -223,12 +223,13 @@ namespace BreathingMachine
             }
             int begin = NoOfField * FileMngr.WORKDATA_MSG_LEN;
             int len = Convert.ToInt32(bt[begin]);
-            len -= 48;
+            //len -= 48;
 
             string tmp = "";
             for (int i = 1; i <= len; i++)
             {
-                tmp += Convert.ToString((char)Convert.ToInt32(bt[begin + i]));
+                //tmp += Convert.ToString((char)Convert.ToInt32(bt[begin + i]));
+                tmp += Convert.ToString(Convert.ToInt32(bt[begin + i]));
                 if(i==len)
                 {
                     break;

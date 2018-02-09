@@ -162,7 +162,17 @@ namespace BreathingMachine
             ShowChartByType(tmEnd, duration, CHARTTYPE.FLOW);
             ShowChartByType(tmEnd, duration, CHARTTYPE.OXY_CONCENTRATION);
         }
-
+        public static byte Filte0xFF(byte bt)
+        {
+            if (bt == 0xFF)
+            {
+                return 0x00;
+            }
+            else
+            {
+                return bt;
+            }
+        }
 
         public void ShowChartByType(DateTime tmEnd, double duration, CHARTTYPE chartType)
         {
@@ -176,10 +186,18 @@ namespace BreathingMachine
                 DataMngr.m_listInfo.Clear();
             }
             //DataMngr.m_listInfo = new List<DETAIL_CHART_INFO>();
+            
             foreach (KeyValuePair<WORK_INFO_HEAD, List<WORK_INFO_MESSAGE>> kv in FileMngr.m_workHead_Msg_Map)
             {
                 //先判断,减少不必要的foreach (var workDataMsg in list)
                 var list = kv.Value;
+                ////新增，20180209
+                //if (list.Count == 0)
+                //{
+                //    no_message_cnt++;
+                //    continue;//如果链表为空，继续下一个list
+                //}
+
                 WORK_INFO_MESSAGE msg=list[0];
                 DateTime msgTm = new DateTime(100 * Convert.ToInt32(msg.YEAR1) + Convert.ToInt32(msg.YEAR2), 
                                                 Convert.ToInt32(msg.MONTH), Convert.ToInt32(msg.DAY),23,59,59);
@@ -190,6 +208,7 @@ namespace BreathingMachine
 
                 foreach (var workDataMsg in list)
                 {
+                   
                     DateTime tmFromMsg = new DateTime(100 * Convert.ToInt32(workDataMsg.YEAR1) + Convert.ToInt32(workDataMsg.YEAR2),
                                                         Convert.ToInt32(workDataMsg.MONTH),
                                                         Convert.ToInt32(workDataMsg.DAY),
@@ -202,10 +221,11 @@ namespace BreathingMachine
                         DETAIL_CHART_INFO info = new DETAIL_CHART_INFO(); 
                         
                         info.tm = tmFromMsg;
-                        info.patient_tmp = Convert.ToInt32(workDataMsg.DATA_PATIENT_TEMP);
-                        info.air_outlet_tmp = Convert.ToInt32(workDataMsg.DATA_AIR_OUTLET_TEMP);
-                        info.flow = Convert.ToInt32(workDataMsg.DATA_FLOW);
-                        info.oxy_concentration = Convert.ToInt32(workDataMsg.DATA_OXYGEN_CONCENTRATION);
+
+                        info.patient_tmp = Convert.ToInt32(Filte0xFF(workDataMsg.DATA_PATIENT_TEMP));
+                        info.air_outlet_tmp = Convert.ToInt32(Filte0xFF(workDataMsg.DATA_AIR_OUTLET_TEMP));
+                        info.flow = Convert.ToInt32(Filte0xFF(workDataMsg.DATA_FLOW));
+                        info.oxy_concentration = Convert.ToInt32(Filte0xFF(workDataMsg.DATA_OXYGEN_CONCENTRATION));
 
                         DataMngr.m_listInfo.Add(info);
                     }
@@ -213,6 +233,16 @@ namespace BreathingMachine
             }
             //MessageBox.Show(DataMngr.m_listInfo.Count.ToString());
             #endregion
+
+            //新增，20180209，貌似有问题
+            //if (no_message_cnt == FileMngr.m_workFileNameList.Count)
+            //{
+            //    return;
+            //}
+            //if (FileMngr.m_workHead_Msg_Map.Count == 0)
+            //{
+            //    return;
+            //}
             
             DateTime tmFirstDay = DateTime.FromOADate(0); //获取系统默认的第一天，1899/12/30
             //用来生成x轴坐标
@@ -559,7 +589,7 @@ namespace BreathingMachine
                                 {
                                     faultStates[j] = 0;
                                 }
-                                bt1 = (byte)(bt1 >> 1);
+                                bt1 = (byte)(bt1 >> 1);    
                             }
 
                             for (int j = 0; j < 3; j++)
@@ -717,6 +747,46 @@ namespace BreathingMachine
             //this.listView_workData.EndUpdate();
         }
 
+        public static String ChangeAlarmCode2ASC(Byte bt)
+        {
+            if (bt == 0x00)  //错误0
+            {
+                return "H001";   //0000,0001
+            }
+            else if (bt == 0x01) //错误1
+            {
+                return "H002";  //0000,0010
+            }
+            else if (bt == 0x02) //错误2
+            {
+                return "H004";  //0000,0100
+            }
+            else if (bt == 0x03) //错误3
+            {
+                return "H008";  //0000,1000
+            }
+            else if (bt == 0x04) //错误4
+            {
+                return "H010";  //0001,0000
+            }
+            else if (bt == 0x05) //错误5
+            {
+                return "H020";  //0010,0000
+            }
+            else if (bt == 0x06) //错误6
+            {
+                return "H040";  //0100,0000
+            }
+            else if (bt == 0x07) //错误7
+            {
+                return "H080";  //1000,0000
+            }
+            else
+            {
+                return Convert.ToString(bt);
+            }
+        }
+
         public void ShowAlarmList(DateTime TmLow, DateTime TmHigh)
         {
             this.listView_alarmInfo.Items.Clear();
@@ -752,7 +822,9 @@ namespace BreathingMachine
                             lvi.SubItems.Add(Convert.ToBoolean(alarmMsg.RUNNIN_MODE) ? lang.atomization() : lang.humidification());
                         }
                         //lvi.SubItems.Add(Convert.ToString(Convert.ToBoolean(alarmMsg.RUNNIN_MODE) ? "雾化" : "湿化"));  //第三列，运行模式
-                        lvi.SubItems.Add(Convert.ToString(alarmMsg.ALARM_CODE));                      //第四列，错误码
+                        
+                        //lvi.SubItems.Add(Convert.ToString(alarmMsg.ALARM_CODE));                      //第四列，错误码
+                        lvi.SubItems.Add(ChangeAlarmCode2ASC(alarmMsg.ALARM_CODE));
                         lvi.SubItems.Add(Convert.ToString(FileMngr.AlarmCode2Str(alarmMsg.ALARM_CODE)));            //第五列，错误描述
                         lvi.SubItems.Add(Convert.ToString(alarmMsg.ALARM_DATA_L));                                      //第六列，数据值
                         lvi.SubItems.Add(Convert.ToString(alarmMsg.ALARM_DATA_H));                                      //第7列，数据值
@@ -1153,6 +1225,18 @@ namespace BreathingMachine
 
         }
 
+        public static String IsByteOxFF(byte bt)
+        {
+            if (bt == 0xFF)
+            {
+                return @"/";
+            }
+            else
+            {
+                return Convert.ToString(bt);
+            }
+        }
+
         private void 导出数据ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (FileMngr.m_dirPath == null)
@@ -1231,7 +1315,8 @@ namespace BreathingMachine
                             line = i.ToString() + ","
                             + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
                             + Convert.ToString(Convert.ToBoolean(alarmMsg.RUNNIN_MODE) ?  lang.atomization(): lang.humidification()) + ","
-                            + Convert.ToString(Convert.ToString(alarmMsg.ALARM_CODE)) + ","
+                           // + Convert.ToString(Convert.ToString(alarmMsg.ALARM_CODE)) + ","
+                           + Convert.ToString(ChangeAlarmCode2ASC(alarmMsg.ALARM_CODE)) + ","
                             + Convert.ToString(FileMngr.AlarmCode2Str(alarmMsg.ALARM_CODE)) + ","
                             + Convert.ToString(alarmMsg.ALARM_DATA_L) + ","
                             + Convert.ToString(alarmMsg.ALARM_DATA_H);
@@ -1240,7 +1325,8 @@ namespace BreathingMachine
                         {
                             line = i.ToString() + ","
                             + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
-                            + Convert.ToString(Convert.ToString(alarmMsg.ALARM_CODE)) + ","
+                            //+ Convert.ToString(Convert.ToString(alarmMsg.ALARM_CODE)) + ","
+                            + Convert.ToString(ChangeAlarmCode2ASC(alarmMsg.ALARM_CODE)) + ","
                             + Convert.ToString(FileMngr.AlarmCode2Str(alarmMsg.ALARM_CODE)) + ","
                             + Convert.ToString(alarmMsg.ALARM_DATA_L) + ","
                             + Convert.ToString(alarmMsg.ALARM_DATA_H);
@@ -1757,10 +1843,10 @@ namespace BreathingMachine
                                         + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
                                         + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_MODE) ? lang.atomization() : lang.humidification()) + ","
                                         + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? lang.child() : lang.adault()) + ","
-                                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_PATIENT_TEMP)) + ","
-                                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
-                                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_FLOW)) + ","
-                                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION));     
+                                        + Convert.ToString(IsByteOxFF(workDataMsg.DATA_PATIENT_TEMP)) + ","
+                                        + Convert.ToString(IsByteOxFF(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
+                                        + Convert.ToString(IsByteOxFF(workDataMsg.DATA_FLOW)) + ","
+                                        + Convert.ToString(IsByteOxFF(workDataMsg.DATA_OXYGEN_CONCENTRATION));     
                                 #endregion
                             }
                             else
@@ -1770,10 +1856,10 @@ namespace BreathingMachine
                                         + tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss") + ","
                                         //+ Convert.ToString(Convert.ToBoolean(workDataMsg.SET_MODE) ? "雾化" : "湿化") + ","
                                         + Convert.ToString(Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? lang.child() : lang.adault()) + ","
-                                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_PATIENT_TEMP)) + ","
-                                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
-                                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_FLOW)) + ","
-                                        + Convert.ToString(Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION));
+                                        + Convert.ToString(IsByteOxFF(workDataMsg.DATA_PATIENT_TEMP)) + ","
+                                        + Convert.ToString(IsByteOxFF(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
+                                        + Convert.ToString(IsByteOxFF(workDataMsg.DATA_FLOW)) + ","
+                                        + Convert.ToString(IsByteOxFF(workDataMsg.DATA_OXYGEN_CONCENTRATION));
                                 #endregion
                             }
                         }
@@ -2236,7 +2322,7 @@ namespace BreathingMachine
         {
             //debug,产生测试文档
             #region
-            FileMngr.m_bCreateTestFiles = false;
+            FileMngr.m_bCreateTestFiles = true;
             if (FileMngr.m_bCreateTestFiles)
             {
                 if (Directory.Exists("C:/Users/Administrator/Desktop/SD_TEST/170000000001"))
@@ -2275,7 +2361,11 @@ namespace BreathingMachine
             //初始化，默认用户模式按钮不能点
             this.用户模式ToolStripMenuItem.Enabled = false;
             //初始化语言
-            LanguageMngr.m_language = LANGUAGE.CHINA;
+            LanguageMngr.m_language = LANGUAGE.ENGLISH;
+            #region
+            //初始化为英文
+            ShowLabelNameByLanguageType(LANGUAGE.ENGLISH);
+            #endregion
 
             //初始化基本信息中的各个参数值,都为空
             #region
@@ -2537,13 +2627,49 @@ namespace BreathingMachine
                     lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].set_atomiz_level);
                     lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].set_atomiz_time);
                     lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].set_adault_or_child);
-                    lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_patient_tmp);
-                    lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_air_outlet_tmp);
+
+                    //患者端温度
+                    if (WorkDataList.m_WorkData_List[i].data_patient_tmp == Convert.ToString(255))
+                    {
+                        lvi.SubItems.Add(@"/");
+                    }
+                    else
+                    {
+                        lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_patient_tmp);
+                    }
+                    //出气口温度
+                    if (WorkDataList.m_WorkData_List[i].data_air_outlet_tmp == Convert.ToString(255))
+                    {
+                        lvi.SubItems.Add(@"/");
+                    }
+                    else
+                    {
+                        lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_air_outlet_tmp);
+                    }
+
                     lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_heating_plate_tmp);
                     lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_env_tmp);
                     lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_driveboard_tmp);
-                    lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_flow);
-                    lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_oxy_concentration);
+
+                    //流量
+                    if (WorkDataList.m_WorkData_List[i].data_flow == Convert.ToString(255))
+                    {
+                        lvi.SubItems.Add(@"/");
+                    }
+                    else
+                    {
+                        lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_flow);
+                    }
+                    //氧浓度
+                    if (WorkDataList.m_WorkData_List[i].data_oxy_concentration == Convert.ToString(255))
+                    {
+                        lvi.SubItems.Add(@"/");
+                    }
+                    else
+                    {
+                        lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_oxy_concentration);
+                    }
+
                     lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_air_pressure);
                     lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_loop_type);
                     lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_faultstates_0);
@@ -2596,10 +2722,46 @@ namespace BreathingMachine
                         lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].set_mode);
                     }
                     lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].set_adault_or_child);
-                    lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].data_patient_tmp);
-                    lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].data_air_outlet_tmp);
-                    lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].data_flow);
-                    lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].data_oxy_concentration);
+                    //患者端温度
+                    if (WorkDataList.m_WorkData_Basic_List[i].data_patient_tmp == "255")
+                    {
+                        lvi.SubItems.Add(@"/");
+                    }
+                    else
+                    {
+                        lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].data_patient_tmp);
+                    }
+                    //lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].data_patient_tmp);
+                    //出气口温度
+                    if (WorkDataList.m_WorkData_Basic_List[i].data_air_outlet_tmp == "255")
+                    {
+                        lvi.SubItems.Add(@"/");
+                    }
+                    else
+                    {
+                        lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].data_air_outlet_tmp);
+                    }
+                    //lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].data_air_outlet_tmp);
+                    //流量
+                    if (WorkDataList.m_WorkData_Basic_List[i].data_flow == "255")
+                    {
+                        lvi.SubItems.Add(@"/");
+                    }
+                    else
+                    {
+                        lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].data_flow);
+                    }
+                    //lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].data_flow);
+                    //氧浓度
+                    if (WorkDataList.m_WorkData_Basic_List[i].data_oxy_concentration == "255")
+                    {
+                        lvi.SubItems.Add(@"/");
+                    }
+                    else
+                    {
+                        lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].data_oxy_concentration);
+                    }
+                    //lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].data_oxy_concentration);
                     #endregion
                 }
 
@@ -2683,7 +2845,7 @@ namespace BreathingMachine
 
                 //将工作列表存入m_WorkData_List中，不会显示，需要点首页来触发
                 //为了实现分页功能
-                if (WorkDataList.m_WorkData_List == null)
+                if (WorkDataList.m_WorkData_List == null )
                 {
                     WorkDataList.InitWorkDataList(TmLow, TmHight);
                 }
@@ -3335,90 +3497,94 @@ namespace BreathingMachine
 
                 Random rnd = new Random();
                 //写入信息体
-                int m = 0;
-                for (int j = 0; j < 1000 + rnd.Next(0, 360); j++)
-                {
-                    int runMode = 0;
-                    m++;
-                    if (m == 30)
-                    {
-                        runMode = 1;
-                        m = 0;
-                    }
-                    DateTime tmp1 = tmp.AddMinutes(j);
+            //    int m = 0;
+            //    bool bflag_runMode = false;
+            //    for (int j = 0; j < 1000 + rnd.Next(0, 360); j++)
+            //    {
+            //        //int runMode = 0;
+            //        m++;
+            //        if (m == 30)
+            //        {
+            //            //runMode = 1;
+            //            m = 0;
+            //            bflag_runMode = !bflag_runMode;
+            //        }
+            //        DateTime tmp1 = tmp.AddMinutes(j);
 
-                    byte[] bt = new byte[64]{
-                    #region
-                        Convert.ToByte(tmp1.Year/100),
-                        Convert.ToByte(tmp1.Year%100),
-                        Convert.ToByte(tmp1.Month),
-                        Convert.ToByte(tmp1.Day),
-                        Convert.ToByte(tmp1.Hour),
-                        Convert.ToByte(tmp1.Minute),
-                        Convert.ToByte(tmp1.Second),
-                        Convert.ToByte(runMode), //运行模式
-                        Convert.ToByte(30),   //设定温度
-                        Convert.ToByte(60),   //设定流量
-                        Convert.ToByte(95),   //设定高氧浓度报警
-                        Convert.ToByte(21),   //设定低氧浓度报警
-                        Convert.ToByte(5),   //设定雾化量档位
-                        Convert.ToByte(30),   //设定雾化时间
-				        Convert.ToByte(rnd.Next(0,1)), //成人儿童
-                        Convert.ToByte(rnd.Next(0,5)+32), //患者端温度
-                        Convert.ToByte(rnd.Next(0,5)+30), //出气口温度
-                        Convert.ToByte(100), //加热盘温度
-                        Convert.ToByte(26), //环境温度
-                        Convert.ToByte(41), //驱动板温度
-                        Convert.ToByte(rnd.Next(0,5)+60), //流量
-                        Convert.ToByte(rnd.Next(0,5)+30), //氧浓度
-                        Convert.ToByte(2), //气道压力
-                        Convert.ToByte(rnd.Next(0,5)), //回路类型
-                        Convert.ToByte(161), //故障状态位 A1
-                        Convert.ToByte(162), //故障状态位 A2
-                        Convert.ToByte(0), //雾化DAC数值L
-                        Convert.ToByte(0), //雾化DAC数值H
-                        Convert.ToByte(0), //雾化ADC数值L
-                        Convert.ToByte(0), //雾化ADC数值H
-                        Convert.ToByte(0), //回路加热PWM数值L
-                        Convert.ToByte(0), //回路加热PWM数值H
-                        Convert.ToByte(0), //回路加热ADC数值L
-                        Convert.ToByte(0), //回路加热ADC数值H
-                        Convert.ToByte(0), //加热盘加热PWM数值L
-                        Convert.ToByte(0), //加热盘加热PWM数值H
-                        Convert.ToByte(0), //加热盘加热ADC数值L
-                        Convert.ToByte(0), //加热盘加热ADC数值H
-                        Convert.ToByte(0), //主马达驱动数值L
-                        Convert.ToByte(0), //主马达驱动数值H
-                        Convert.ToByte(0), //主马达转数数值L
-                        Convert.ToByte(0), //主马达转数数值H
-                        Convert.ToByte(0), //压力传感器ADC值L
-                        Convert.ToByte(0), //压力传感器ADC值H
-                        Convert.ToByte(0), //水位传感器HADC值L
-                        Convert.ToByte(0), //水位传感器HADC值H
-                        Convert.ToByte(0), //水位传感器LADC值L
-                        Convert.ToByte(0), //水位传感器LADC值H
-                        Convert.ToByte(0), //散热风扇驱动数值L
-                        Convert.ToByte(0), //散热风扇驱动数值H
-                        Convert.ToByte(0), //散热风扇转速数值L
-                        Convert.ToByte(0), //散热风扇转速数值H
-                        Convert.ToByte(0), //保留0
-                        Convert.ToByte(0), //保留1
-                        Convert.ToByte(0), //保留2
-                        Convert.ToByte(0), //保留3
-                        Convert.ToByte(0), //保留4
-                        Convert.ToByte(0), //保留5
-                        Convert.ToByte(0), //保留6
-                        Convert.ToByte(0), //保留7
-                        Convert.ToByte(0), //保留8
-                        Convert.ToByte(0), //保留9
-                        Convert.ToByte(30), //
-                        Convert.ToByte(89), //
-                        #endregion
-                    };
-                    bw.Write(bt, 0, 64);
-                }
-                bw.Close();
-                fs.Close();
+            //        byte[] bt = new byte[64]{
+            //        #region
+            //            Convert.ToByte(tmp1.Year/100),
+            //            Convert.ToByte(tmp1.Year%100),
+            //            Convert.ToByte(tmp1.Month),
+            //            Convert.ToByte(tmp1.Day),
+            //            Convert.ToByte(tmp1.Hour),
+            //            Convert.ToByte(tmp1.Minute),
+            //            Convert.ToByte(tmp1.Second),
+            //            Convert.ToByte(Convert.ToInt32(bflag_runMode)), //运行模式
+            //            Convert.ToByte(30),   //设定温度
+            //            Convert.ToByte(60),   //设定流量
+            //            Convert.ToByte(95),   //设定高氧浓度报警
+            //            Convert.ToByte(21),   //设定低氧浓度报警
+            //            Convert.ToByte(5),   //设定雾化量档位
+            //            Convert.ToByte(30),   //设定雾化时间
+            //            Convert.ToByte(rnd.Next(0,1)), //成人儿童
+            //            //Convert.ToByte(rnd.Next(0,5)+32), //患者端温度
+            //            //Convert.ToByte(rnd.Next(0,5)+30), //出气口温度
+            //            Convert.ToByte(255), //患者端温度
+            //            Convert.ToByte(255), //出气口温度
+            //            Convert.ToByte(100), //加热盘温度
+            //            Convert.ToByte(26), //环境温度
+            //            Convert.ToByte(41), //驱动板温度
+            //            Convert.ToByte(rnd.Next(0,5)+60), //流量
+            //            Convert.ToByte(rnd.Next(0,5)+30), //氧浓度
+            //            Convert.ToByte(2), //气道压力
+            //            Convert.ToByte(rnd.Next(0,5)), //回路类型
+            //            Convert.ToByte(161), //故障状态位 A1
+            //            Convert.ToByte(162), //故障状态位 A2
+            //            Convert.ToByte(0), //雾化DAC数值L
+            //            Convert.ToByte(0), //雾化DAC数值H
+            //            Convert.ToByte(0), //雾化ADC数值L
+            //            Convert.ToByte(0), //雾化ADC数值H
+            //            Convert.ToByte(0), //回路加热PWM数值L
+            //            Convert.ToByte(0), //回路加热PWM数值H
+            //            Convert.ToByte(0), //回路加热ADC数值L
+            //            Convert.ToByte(0), //回路加热ADC数值H
+            //            Convert.ToByte(0), //加热盘加热PWM数值L
+            //            Convert.ToByte(0), //加热盘加热PWM数值H
+            //            Convert.ToByte(0), //加热盘加热ADC数值L
+            //            Convert.ToByte(0), //加热盘加热ADC数值H
+            //            Convert.ToByte(0), //主马达驱动数值L
+            //            Convert.ToByte(0), //主马达驱动数值H
+            //            Convert.ToByte(0), //主马达转数数值L
+            //            Convert.ToByte(0), //主马达转数数值H
+            //            Convert.ToByte(0), //压力传感器ADC值L
+            //            Convert.ToByte(0), //压力传感器ADC值H
+            //            Convert.ToByte(0), //水位传感器HADC值L
+            //            Convert.ToByte(0), //水位传感器HADC值H
+            //            Convert.ToByte(0), //水位传感器LADC值L
+            //            Convert.ToByte(0), //水位传感器LADC值H
+            //            Convert.ToByte(0), //散热风扇驱动数值L
+            //            Convert.ToByte(0), //散热风扇驱动数值H
+            //            Convert.ToByte(0), //散热风扇转速数值L
+            //            Convert.ToByte(0), //散热风扇转速数值H
+            //            Convert.ToByte(0), //保留0
+            //            Convert.ToByte(0), //保留1
+            //            Convert.ToByte(0), //保留2
+            //            Convert.ToByte(0), //保留3
+            //            Convert.ToByte(0), //保留4
+            //            Convert.ToByte(0), //保留5
+            //            Convert.ToByte(0), //保留6
+            //            Convert.ToByte(0), //保留7
+            //            Convert.ToByte(0), //保留8
+            //            Convert.ToByte(0), //保留9
+            //            Convert.ToByte(30), //
+            //            Convert.ToByte(89), //
+            //            #endregion
+            //        };
+            //        bw.Write(bt, 0, 64);
+            //    }
+            //    bw.Close();
+            //    fs.Close();
             }
             #endregion
         }
@@ -3460,14 +3626,16 @@ namespace BreathingMachine
                 Random rnd = new Random();
                 //写入信息体
                 int m = 0;
+                bool bflag_runMode = false;
                 for (int j = 0; j < 100000; j++)
                 {
-                    int runMode = 0;
+                    //int runMode = 0;
                     m++;
                     if (m == 30)
                     {
-                        runMode = 1;
+                        //runMode = 1;
                         m = 0;
+                        bflag_runMode = !bflag_runMode;
                     }
                     DateTime tmp = tmBegin.AddMinutes(10 * j);
 
@@ -3480,8 +3648,8 @@ namespace BreathingMachine
                         Convert.ToByte(tmp.Hour),
                         Convert.ToByte(tmp.Minute),
                         Convert.ToByte(tmp.Second),
-                        Convert.ToByte(runMode),
-                        Convert.ToByte(rnd.Next(0,6)), //报警代码
+                        Convert.ToByte(Convert.ToInt32(bflag_runMode)),
+                        Convert.ToByte(rnd.Next(0,30)), //报警代码
                         Convert.ToByte(rnd.Next(0,100)), //报警数据L
                         Convert.ToByte(rnd.Next(0,100)), //报警数据H
                         Convert.ToByte(0), //保留1
@@ -3579,6 +3747,18 @@ namespace BreathingMachine
             }
         }
 
+        public static bool IsErrCodeInRange(ref byte[] buffer_msg)
+        {
+            if (buffer_msg[8] < 8 || (buffer_msg[8] >= 20 && buffer_msg[8] <= 30))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public static bool GetAlarmMsg()
         {
             FileStream fs = new FileStream(m_dirPath + @"\" + m_alarmFileName, FileMode.Open);
@@ -3616,8 +3796,11 @@ namespace BreathingMachine
                 {
                     //if (VerifyAlarmMsg(buffer_msg))         //这里为了能读取字段，屏蔽条件
                     {
-                        alarmMsg = GetObject<ALARM_INFO_MESSAGE>(buffer_msg, len_msg);
-                        m_alarmMsgList.Add(alarmMsg);
+                        if (IsErrCodeInRange(ref buffer_msg))
+                        {
+                            alarmMsg = GetObject<ALARM_INFO_MESSAGE>(buffer_msg, len_msg);
+                            m_alarmMsgList.Add(alarmMsg);
+                        }
                     }
 
                 }
@@ -3670,6 +3853,18 @@ namespace BreathingMachine
             }
         }
 
+        public static bool IsByte0x00(byte[] buffer_msg)
+        {
+            if (buffer_msg[15] == 0x00 || buffer_msg[16] == 0x00 || buffer_msg[20] == 0x00 || buffer_msg[21] == 0x00)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public static bool GetWorkMsg()
         {
             //m_workHead_Msg_Map = new Dictionary<WORK_INFO_HEAD, List<WORK_INFO_MESSAGE>>();
@@ -3678,7 +3873,6 @@ namespace BreathingMachine
             //MessageBox.Show(m_workFileNameList.Count.ToString());
             foreach (var workFile in m_workFileNameList)
             {
-
                 List<WORK_INFO_MESSAGE> list = new List<WORK_INFO_MESSAGE>();
                 FileStream fs = new FileStream(m_dirPath + @"\" + workFile, FileMode.Open);
                 BinaryReader br = new BinaryReader(fs, Encoding.ASCII);
@@ -3715,11 +3909,23 @@ namespace BreathingMachine
                     int len_msg = Marshal.SizeOf(workDataMsg);
                     byte[] buffer_msg = new byte[len_msg];
 
+                    ////20180209新增，如果只有头没有message信息
+                    //if (br.Read(buffer_msg, 0, len_msg) == 0)
+                    //{
+                    //    continue; //继续读取下一份文件
+                    //}
+
                     while (br.Read(buffer_msg, 0, len_msg) > 0)
                     {
                         //校验每一个字段 
                         //if (VerifyWorkDataMsg(buffer_msg))           //这里为了能读取字段，将校验屏蔽掉
                         {
+                            //CheckEachByte(buffer_msg);
+                            //下位机会出现0，0，0，0，下位机尚未修复这个问题，在这里先过滤掉
+                            if (IsByte0x00(buffer_msg))
+                            {
+                                continue;
+                            }
                             workDataMsg = GetObject<WORK_INFO_MESSAGE>(buffer_msg, len_msg);
                             list.Add(workDataMsg);
                             m_lastWorkMsg = workDataMsg;//保留最后一个工作信息，作为最新的信息，刷新到app基本信息中
@@ -3729,7 +3935,6 @@ namespace BreathingMachine
                     //m_workHead_Msg_Map.Add(alarmHead,list);
                     fs.Close();
                     br.Close();
-                    
                 }
                 //else
                 //{
@@ -3742,6 +3947,22 @@ namespace BreathingMachine
 
             return true;
         }
+
+        //检查每一个对应的字节数据是否在规定的范围内
+        //public static void CheckEachByte(ref byte[] buffer_msg)
+        //{
+        //    if (buffer_msg[15] == 0xFF)
+        //    {
+        //        buffer_msg[15] = 0x47;
+        //    }
+        //    for (int i = 26; i <= 61; i++)
+        //    {
+        //        if (buffer_msg[i] == 0xFF)
+        //        {
+                    
+        //        }
+        //    }
+        //}
 
         public static bool VerifyField(byte[] buffer)
         {
@@ -3792,6 +4013,7 @@ namespace BreathingMachine
             }
         }
 
+        //检测每条工作信息，使用checksum来校验
         public static bool VerifyWorkDataMsg(byte[] buffer)
         {
             int len = buffer.Length;
@@ -3820,49 +4042,121 @@ namespace BreathingMachine
             int nCode = Convert.ToInt32(code);
             string str = "";
             LanguageMngr lang=new LanguageMngr();
+            #region
+            //switch (nCode)
+            //{
+            //    case 0:
+            //        //str = "氧浓度传感器故障";
+            //        str = lang.oxy_concentration_sensor_fault();
+            //        break;
+            //    case 1:
+            //        //str = "流量传感器故障";
+            //        str = lang.flow_sensor_fault();
+            //        break;
+            //    case 2:
+            //        //str = "环境温度传感器故障";
+            //        str = lang.enviroment_tmp_sensor_fault();
+            //        break;
+            //    case 3:
+            //        //str = "驱动板温度传感器故障";
+            //        str = lang.driverBoard_tmp_sensor_fault();
+            //        break;
+            //    case 4:
+            //        //str = "加热盘温度传感器故障";
+            //        str = lang.heating_plate_tmp_sensor_fault();
+            //        break;
+            //    case 5:
+            //        //str = "散热风扇故障";
+            //        str = lang.fan_fault();
+            //        break;
+            //    case 6:
+            //        //str = "EEPROM校验失败";
+            //        str = lang.EEPROM_verify_fail();
+            //        break;
+            //    case 7:
+            //        //str = "出气口温度传感器故障";
+            //        str = lang.air_outlet_sensor_fault();
+            //        break;
+            //    case 8:
+            //        //str = "患者端温度传感器故障";
+            //        str = lang.patient_tmp_sensor_fault();
+            //        break;
+            //    default:
+            //        //str = "未识别的错误";
+            //        str = lang.unknow_err();
+            //        break;
+            //}
+            #endregion
+
+
             switch (nCode)
             {
                 case 0:
-                    //str = "氧浓度传感器故障";
-                    str = lang.oxy_concentration_sensor_fault();
+                    str = lang.system_failure();
                     break;
                 case 1:
-                    //str = "流量传感器故障";
-                    str = lang.flow_sensor_fault();
+                    str = lang.system_failure();
                     break;
                 case 2:
-                    //str = "环境温度传感器故障";
-                    str = lang.enviroment_tmp_sensor_fault();
+                    str = lang.system_failure();
                     break;
                 case 3:
-                    //str = "驱动板温度传感器故障";
-                    str = lang.driverBoard_tmp_sensor_fault();
+                    str = lang.system_failure();
                     break;
                 case 4:
-                    //str = "加热盘温度传感器故障";
-                    str = lang.heating_plate_tmp_sensor_fault();
+                    str = lang.system_failure();
                     break;
                 case 5:
-                    //str = "散热风扇故障";
-                    str = lang.fan_fault();
+                    str = lang.system_failure();
                     break;
                 case 6:
-                    //str = "EEPROM校验失败";
-                    str = lang.EEPROM_verify_fail();
+                    str = lang.system_failure();
                     break;
                 case 7:
-                    //str = "出气口温度传感器故障";
-                    str = lang.air_outlet_sensor_fault();
+                    str = lang.system_failure();
                     break;
                 case 8:
-                    //str = "患者端温度传感器故障";
-                    str = lang.patient_tmp_sensor_fault();
+                    str = lang.system_failure();
+                    break;
+                case 20:  //超温
+                    str = lang.overheat();
+                    break;
+                case 21://运行中电源断开
+                    str = lang.power_off();
+                    break;
+                case 22://湿化罐(雾化罐)未安装
+                    str = lang.check_chamber();
+                    break;
+                case 23://缺水
+                    str = lang.change_water_bag();
+                    break;
+                case 24://温度数据线未安装好
+                    str = lang.check_temp_probe();
+                    break;
+                case 25://加热回路未安装好
+                    str = lang.check_tube();
+                    break;
+                case 26://堵塞
+                    str = lang.check_blockages();
+                    break;
+                case 27://高氧浓度
+                    str = lang.high_O2();
+                    break;
+                case 28://低氧浓度
+                    str = lang.low_O2();
+                    break;
+                case 29://达不到设定流量
+                    str = lang.flow_overrange();
+                    break;
+                case 30://达不到设定温度
+                    str = lang.temp_overrange();
                     break;
                 default:
                     //str = "未识别的错误";
                     str = lang.unknow_err();
                     break;
             }
+
             return str;
         }
     }
