@@ -2322,7 +2322,7 @@ namespace BreathingMachine
         {
             //debug,产生测试文档
             #region
-            FileMngr.m_bCreateTestFiles = true;
+            FileMngr.m_bCreateTestFiles = false;
             if (FileMngr.m_bCreateTestFiles)
             {
                 if (Directory.Exists("C:/Users/Administrator/Desktop/SD_TEST/170000000001"))

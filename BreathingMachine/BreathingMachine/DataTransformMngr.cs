@@ -33,11 +33,11 @@ namespace BreathingMachine
         {
             byte[] head = FileMngr.GetData(FileMngr.m_lastWorkHead);
             var machineType = DataMngr.GetMachineType(head, 1);
-            if(machineType=="VNU001")
+            if(machineType=="VUN001")
             {
                 m_machineType = 1;
             }
-            else if (machineType=="VNU002")
+            else if (machineType=="VUN002")
             {
                 m_machineType = 2;
             }
