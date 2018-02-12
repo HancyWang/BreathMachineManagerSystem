@@ -185,20 +185,31 @@ namespace BreathingMachine
             //机型号  解析这个字段，先要偏移64字节,也就是FileMngr.WORKDATA_MSG_LEN
             //SN
             //软件版本
-            if(FileMngr.m_dirPath==null)
+            int begin;
+            if (FileMngr.m_dirPath == null)
             {
                 return "";
             }
-            int begin = NoOfField*FileMngr.WORKDATA_MSG_LEN;
-            int len=Convert.ToInt32(bt[begin]);
+            if (FileMngr.m_workFileNameList.Count != 0)
+            {
+                begin = NoOfField * FileMngr.WORKDATA_MSG_LEN;
+            }
+            else
+            {
+                begin = NoOfField * FileMngr.ALARM_MSG_LEN;
+            }
+                
+            int len = Convert.ToInt32(bt[begin]);
             //len -= 48;  //第一个byte为二进制的36，十进制的54，减掉48才为6
 
             string tmp = "";
-            for (int i = 1; i <= len;i++ )
+            for (int i = 1; i <= len; i++)
             {
                 tmp += Convert.ToString((char)Convert.ToInt32(bt[begin + i]));
             }
             return tmp;
+            
+            
         }
 
         public static string GetSN(byte[] bt,int NoOfField)
@@ -217,11 +228,20 @@ namespace BreathingMachine
             //机型号  
             //SN        
             //软件版本      解析这个字段，先要偏移2*64字节,也就是FileMngr.WORKDATA_MSG_LEN
+            int begin;
             if (FileMngr.m_dirPath == null)
             {
                 return "";
             }
-            int begin = NoOfField * FileMngr.WORKDATA_MSG_LEN;
+            //int begin = NoOfField * FileMngr.WORKDATA_MSG_LEN;
+            if (FileMngr.m_workFileNameList.Count != 0)
+            {
+                begin = NoOfField * FileMngr.WORKDATA_MSG_LEN;
+            }
+            else
+            {
+                begin = NoOfField * FileMngr.ALARM_MSG_LEN;
+            }
             int len = Convert.ToInt32(bt[begin]);
             //len -= 48;
 

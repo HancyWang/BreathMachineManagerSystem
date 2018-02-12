@@ -2488,5 +2488,38 @@ namespace BreathingMachine
                 return "";
             }
         }
+
+        //"Lack of work information file!"
+        public static String lack_of_work_file()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "缺少工作信息文件！";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "Lack of work information file!";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        public static String lack_of_alarm_file()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "缺少报警信息文件！";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "Lack of alarm information file!";
+            }
+            else
+            {
+                return "";
+            }
+        }
     }
 }

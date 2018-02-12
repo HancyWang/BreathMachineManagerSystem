@@ -551,221 +551,244 @@ namespace BreathingMachine
             this.label_setAtmoizLevel_Value.Text = DataMngr.GetSetting2Str(FileMngr.m_lastWorkMsg.SET_ATOMIZATION_LEVEL);
             this.label_setAtomizTime_Value.Text = DataMngr.GetSetting2Str(FileMngr.m_lastWorkMsg.SET_ATOMIZATION_TIME);
 
-            byte[] head = FileMngr.GetData(FileMngr.m_lastWorkHead);
-            this.label_equipType_Value.Text = DataMngr.GetMachineType(head, 1);
-            this.label_SN_Value.Text = DataMngr.GetSN(head, 2);
-            this.label_softwarVer_Value.Text = DataMngr.GetSoftwareVer(head, 3);
+            if (FileMngr.m_workFileNameList.Count != 0)
+            {
+                //优先使用工作信息的
+                byte[] head = FileMngr.GetData(FileMngr.m_lastWorkHead);
+                this.label_equipType_Value.Text = DataMngr.GetMachineType(head, 1);
+                this.label_SN_Value.Text = DataMngr.GetSN(head, 2);
+                this.label_softwarVer_Value.Text = DataMngr.GetSoftwareVer(head, 3);
+            }
+            else
+            {
+                //如果工作信息文件没有，则使用报警文件的
+                FileStream fs = new FileStream(FileMngr.m_dirPath + @"\" + FileMngr.m_alarmFileName, FileMode.Open);
+                BinaryReader br = new BinaryReader(fs, Encoding.ASCII);
+
+                //读信息头
+                ALARM_INFO_HEAD alarmHead = new ALARM_INFO_HEAD();
+                int len_head = Marshal.SizeOf(alarmHead);
+                byte[] head = new byte[len_head];
+                br.Read(head, 0, len_head);
+
+                this.label_equipType_Value.Text = DataMngr.GetMachineType(head, 1);
+                this.label_SN_Value.Text = DataMngr.GetSN(head, 2);
+                this.label_softwarVer_Value.Text = DataMngr.GetSoftwareVer(head, 3);
+
+                br.Close();
+                fs.Close();
+            }
 
         }
 
         //这个函数废弃了
-        public void ShowWorkDataList(DateTime TmLow, DateTime TmHigh)
-        {
-            LanguageMngr lang = new LanguageMngr();
-            this.listView_workData.Items.Clear();
-            //this.listView_workData.BeginUpdate();
-            DateTime tmBegin = new DateTime(TmLow.Year, TmLow.Month, TmLow.Day, 0, 0, 0);
-            DateTime tmEnd = new DateTime(TmHigh.Year, TmHigh.Month, TmHigh.Day, 23, 59, 59);
-            #region
-            int i = 1;
-            foreach (KeyValuePair<WORK_INFO_HEAD, List<WORK_INFO_MESSAGE>> kv in FileMngr.m_workHead_Msg_Map)
-            {
-                //先判断,减少不必要的foreach (var workDataMsg in list)
-                var list = kv.Value;
-                WORK_INFO_MESSAGE msg = list[0];
-                DateTime msgTm = new DateTime(100 * Convert.ToInt32(msg.YEAR1) + Convert.ToInt32(msg.YEAR2),
-                                                Convert.ToInt32(msg.MONTH), Convert.ToInt32(msg.DAY), 23, 59, 59);
-                if (msgTm < tmBegin || msgTm > tmEnd)
-                {
-                    continue;
-                }
+        //public void ShowWorkDataList(DateTime TmLow, DateTime TmHigh)
+        //{
+        //    LanguageMngr lang = new LanguageMngr();
+        //    this.listView_workData.Items.Clear();
+        //    //this.listView_workData.BeginUpdate();
+        //    DateTime tmBegin = new DateTime(TmLow.Year, TmLow.Month, TmLow.Day, 0, 0, 0);
+        //    DateTime tmEnd = new DateTime(TmHigh.Year, TmHigh.Month, TmHigh.Day, 23, 59, 59);
+        //    #region
+        //    int i = 1;
+        //    foreach (KeyValuePair<WORK_INFO_HEAD, List<WORK_INFO_MESSAGE>> kv in FileMngr.m_workHead_Msg_Map)
+        //    {
+        //        //先判断,减少不必要的foreach (var workDataMsg in list)
+        //        var list = kv.Value;
+        //        WORK_INFO_MESSAGE msg = list[0];
+        //        DateTime msgTm = new DateTime(100 * Convert.ToInt32(msg.YEAR1) + Convert.ToInt32(msg.YEAR2),
+        //                                        Convert.ToInt32(msg.MONTH), Convert.ToInt32(msg.DAY), 23, 59, 59);
+        //        if (msgTm < tmBegin || msgTm > tmEnd)
+        //        {
+        //            continue;
+        //        }
 
-                #region
-                foreach (var workDataMsg in list)
-                {
-                    //if(FileMngr.VerifyWorkDataMsg(FileMngr.GetData(workDataMsg)))
-                    {
-                        DateTime tmFromMsg = new DateTime(100 * Convert.ToInt32(workDataMsg.YEAR1) + Convert.ToInt32(workDataMsg.YEAR2),
-                                                         Convert.ToInt32(workDataMsg.MONTH),
-                                                         Convert.ToInt32(workDataMsg.DAY),
-                                                         Convert.ToInt32(workDataMsg.HOUR),
-                                                         Convert.ToInt32(workDataMsg.MINUTE),
-                                                         Convert.ToInt32(workDataMsg.SECOND));
-                        //if (tmFromMsg > TmLow && tmFromMsg < TmHigh)
-                        {
-                            //解析故障状态位,一共12位
-                            int[] faultStates = new int[12];
-                            #region
-                            byte bt1 = workDataMsg.DATA_FAULT_STATUS_1;
-                            byte bt2 = workDataMsg.DATA_FAULT_STATUS_2;
+        //        #region
+        //        foreach (var workDataMsg in list)
+        //        {
+        //            //if(FileMngr.VerifyWorkDataMsg(FileMngr.GetData(workDataMsg)))
+        //            {
+        //                DateTime tmFromMsg = new DateTime(100 * Convert.ToInt32(workDataMsg.YEAR1) + Convert.ToInt32(workDataMsg.YEAR2),
+        //                                                 Convert.ToInt32(workDataMsg.MONTH),
+        //                                                 Convert.ToInt32(workDataMsg.DAY),
+        //                                                 Convert.ToInt32(workDataMsg.HOUR),
+        //                                                 Convert.ToInt32(workDataMsg.MINUTE),
+        //                                                 Convert.ToInt32(workDataMsg.SECOND));
+        //                //if (tmFromMsg > TmLow && tmFromMsg < TmHigh)
+        //                {
+        //                    //解析故障状态位,一共12位
+        //                    int[] faultStates = new int[12];
+        //                    #region
+        //                    byte bt1 = workDataMsg.DATA_FAULT_STATUS_1;
+        //                    byte bt2 = workDataMsg.DATA_FAULT_STATUS_2;
 
-                            for (int j = 0; j < 8; j++)
-                            {
-                                if (Convert.ToInt32(bt1) % 2 == 1)
-                                {
-                                    faultStates[j] = 1;
-                                }
-                                else
-                                {
-                                    faultStates[j] = 0;
-                                }
-                                bt1 = (byte)(bt1 >> 1);    
-                            }
+        //                    for (int j = 0; j < 8; j++)
+        //                    {
+        //                        if (Convert.ToInt32(bt1) % 2 == 1)
+        //                        {
+        //                            faultStates[j] = 1;
+        //                        }
+        //                        else
+        //                        {
+        //                            faultStates[j] = 0;
+        //                        }
+        //                        bt1 = (byte)(bt1 >> 1);    
+        //                    }
 
-                            for (int j = 0; j < 3; j++)
-                            {
-                                if (Convert.ToInt32(bt2) % 2 == 1)
-                                {
-                                    faultStates[j + 8] = 1;
-                                }
-                                else
-                                {
-                                    faultStates[j + 8] = 0;
-                                }
-                                bt1 = (byte)(bt2 >> 1);
-                            }
-                            #endregion
+        //                    for (int j = 0; j < 3; j++)
+        //                    {
+        //                        if (Convert.ToInt32(bt2) % 2 == 1)
+        //                        {
+        //                            faultStates[j + 8] = 1;
+        //                        }
+        //                        else
+        //                        {
+        //                            faultStates[j + 8] = 0;
+        //                        }
+        //                        bt1 = (byte)(bt2 >> 1);
+        //                    }
+        //                    #endregion
 
-                            //添加一行数据，废弃了，不要这个代码
-                            #region
-                            //ListViewItem lvi = new ListViewItem();
-                            //lvi.Text = i.ToString();  //第一列,No.
-                            //lvi.SubItems.Add(tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss")); //第二列，时间
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToBoolean(workDataMsg.SET_MODE) ? "雾化" : "湿化"));  //第三列，运行模式
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.SET_TEMP)));                      //第四列，设定温度
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.SET_FLOW)));                      //第五列，设定流量
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.SET_HIGH_OXYGEN_ALARM)));                      //第六列，设定高氧浓度报警
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.SET_LOW_OXYGEN_ALARM)));                      //第七列，设定低氧浓度报警
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_LEVEL)));                      //第8列，设定雾化量档位
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_TIME)));                      //第9列，设定雾化时间
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.SET_ADULT_OR_CHILDE)));                      //第10列，设定成人儿童模式
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_PATIENT_TEMP)));                      //第11列，患者端温度
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)));                      //第12列，出气口温度
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_H)));                      //第13列，加热盘温度
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_ENVIRONMENT_TMP)));                      //第14列，环境温度
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_DRIVERBOARD_TMP)));                      //第15列，驱动板温度
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_FLOW)));                      //第16列，流量
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION)));                      //第17列，氧浓度
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_PRESSURE)));                      //第18列，气道压力
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_TYPE)));                      //第19列，回路类型
-                            //lvi.SubItems.Add(Convert.ToBoolean(faultStates[0]) ? "yes" : "no");                         //第20列，状态位
-                            //lvi.SubItems.Add(Convert.ToBoolean(faultStates[1]) ? "yes" : "no");
-                            //lvi.SubItems.Add(Convert.ToBoolean(faultStates[2]) ? "yes" : "no");
-                            //lvi.SubItems.Add(Convert.ToBoolean(faultStates[3]) ? "yes" : "no");
-                            //lvi.SubItems.Add(Convert.ToBoolean(faultStates[4]) ? "yes" : "no");
-                            //lvi.SubItems.Add(Convert.ToBoolean(faultStates[5]) ? "yes" : "no");
-                            //lvi.SubItems.Add(Convert.ToBoolean(faultStates[6]) ? "yes" : "no");
-                            //lvi.SubItems.Add(Convert.ToBoolean(faultStates[7]) ? "yes" : "no");
-                            //lvi.SubItems.Add(Convert.ToBoolean(faultStates[8]) ? "yes" : "no");
-                            //lvi.SubItems.Add(Convert.ToBoolean(faultStates[9]) ? "yes" : "no");
-                            //lvi.SubItems.Add(Convert.ToBoolean(faultStates[10]) ? "yes" : "no");
-                            //lvi.SubItems.Add(Convert.ToBoolean(faultStates[11]) ? "yes" : "no");                      //第31列，状态位
+        //                    //添加一行数据，废弃了，不要这个代码
+        //                    #region
+        //                    //ListViewItem lvi = new ListViewItem();
+        //                    //lvi.Text = i.ToString();  //第一列,No.
+        //                    //lvi.SubItems.Add(tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss")); //第二列，时间
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToBoolean(workDataMsg.SET_MODE) ? "雾化" : "湿化"));  //第三列，运行模式
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.SET_TEMP)));                      //第四列，设定温度
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.SET_FLOW)));                      //第五列，设定流量
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.SET_HIGH_OXYGEN_ALARM)));                      //第六列，设定高氧浓度报警
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.SET_LOW_OXYGEN_ALARM)));                      //第七列，设定低氧浓度报警
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_LEVEL)));                      //第8列，设定雾化量档位
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.SET_ATOMIZATION_TIME)));                      //第9列，设定雾化时间
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.SET_ADULT_OR_CHILDE)));                      //第10列，设定成人儿童模式
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_PATIENT_TEMP)));                      //第11列，患者端温度
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)));                      //第12列，出气口温度
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_H)));                      //第13列，加热盘温度
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_ENVIRONMENT_TMP)));                      //第14列，环境温度
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_DRIVERBOARD_TMP)));                      //第15列，驱动板温度
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_FLOW)));                      //第16列，流量
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION)));                      //第17列，氧浓度
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_PRESSURE)));                      //第18列，气道压力
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_TYPE)));                      //第19列，回路类型
+        //                    //lvi.SubItems.Add(Convert.ToBoolean(faultStates[0]) ? "yes" : "no");                         //第20列，状态位
+        //                    //lvi.SubItems.Add(Convert.ToBoolean(faultStates[1]) ? "yes" : "no");
+        //                    //lvi.SubItems.Add(Convert.ToBoolean(faultStates[2]) ? "yes" : "no");
+        //                    //lvi.SubItems.Add(Convert.ToBoolean(faultStates[3]) ? "yes" : "no");
+        //                    //lvi.SubItems.Add(Convert.ToBoolean(faultStates[4]) ? "yes" : "no");
+        //                    //lvi.SubItems.Add(Convert.ToBoolean(faultStates[5]) ? "yes" : "no");
+        //                    //lvi.SubItems.Add(Convert.ToBoolean(faultStates[6]) ? "yes" : "no");
+        //                    //lvi.SubItems.Add(Convert.ToBoolean(faultStates[7]) ? "yes" : "no");
+        //                    //lvi.SubItems.Add(Convert.ToBoolean(faultStates[8]) ? "yes" : "no");
+        //                    //lvi.SubItems.Add(Convert.ToBoolean(faultStates[9]) ? "yes" : "no");
+        //                    //lvi.SubItems.Add(Convert.ToBoolean(faultStates[10]) ? "yes" : "no");
+        //                    //lvi.SubItems.Add(Convert.ToBoolean(faultStates[11]) ? "yes" : "no");                      //第31列，状态位
 
 
-                            ////新加的
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_DACVALUE_L)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_DACVALUE_H)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_ADCVALUE_L)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_ADCVALUE_H)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_PWM_L)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_PWM_H)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_ADC_L)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_ADC_H)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_PWM_L)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_PWM_H)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_L)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_H)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_DRIVER_L)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_DRIVER_H)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_SPEED_L)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_SPEED_H)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_PRESS_SENSOR_ADC_L)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_PRESS_SENSOR_ADC_H)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_HADC_L)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_HADC_H)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_LADC_L)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_LADC_H)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_DRIVER_L)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_DRIVER_H)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_SPEED_L)));
-                            //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_SPEED_H)));
-                            #endregion
+        //                    ////新加的
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_DACVALUE_L)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_DACVALUE_H)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_ADCVALUE_L)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_ATOMIZ_ADCVALUE_H)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_PWM_L)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_PWM_H)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_ADC_L)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_HEATING_ADC_H)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_PWM_L)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_PWM_H)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_L)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_H)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_DRIVER_L)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_DRIVER_H)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_SPEED_L)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_SPEED_H)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_PRESS_SENSOR_ADC_L)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_PRESS_SENSOR_ADC_H)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_HADC_L)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_HADC_H)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_LADC_L)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_LADC_H)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_DRIVER_L)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_DRIVER_H)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_SPEED_L)));
+        //                    //lvi.SubItems.Add(Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_SPEED_H)));
+        //                    #endregion
 
-                            //添加到链表中
-                            WorkData wd = new WorkData(); //实例化一个WorkData
-                            //填充信息
-                            #region
-                            wd.No = i.ToString();
-                            wd.tm=tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss");
-                            wd.set_mode=Convert.ToBoolean(workDataMsg.SET_MODE) ? lang.atomization() : lang.humidification();
-                            wd.set_tmp=Convert.ToString(workDataMsg.SET_TEMP);
-                            wd.set_flow=Convert.ToString(workDataMsg.SET_FLOW);
-                            wd.set_high_oxy_alarm=Convert.ToString(workDataMsg.SET_HIGH_OXYGEN_ALARM);
-                            wd.set_low_oxy_alrm=Convert.ToString(workDataMsg.SET_LOW_OXYGEN_ALARM);
-                            wd.set_atomiz_level=Convert.ToString(workDataMsg.SET_ATOMIZATION_LEVEL);
-                            wd.set_atomiz_time=Convert.ToString(workDataMsg.SET_ATOMIZATION_TIME);
-                            wd.set_adault_or_child = Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? lang.child() : lang.adault();
-                            wd.data_patient_tmp = Convert.ToString(workDataMsg.DATA_PATIENT_TEMP);
-                            wd.data_air_outlet_tmp=Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP);
-                            wd.data_heating_plate_tmp=Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_H);
-                            wd.data_env_tmp=Convert.ToString(workDataMsg.DATA_ENVIRONMENT_TMP);
-                            wd.data_driveboard_tmp=Convert.ToString(workDataMsg.DATA_DRIVERBOARD_TMP);
-                            wd.data_flow=Convert.ToString(workDataMsg.DATA_FLOW);
-                            wd.data_oxy_concentration=Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION);
-                            wd.data_air_pressure=Convert.ToString(workDataMsg.DATA_AIR_PRESSURE);
-                            wd.data_loop_type=Convert.ToString(workDataMsg.DATA_LOOP_TYPE);
-                            wd.data_faultstates_0=Convert.ToBoolean(faultStates[0]) ? "yes" : "no";
-                            wd.data_faultstates_1=Convert.ToBoolean(faultStates[1]) ? "yes" : "no";
-                            wd.data_faultstates_2=Convert.ToBoolean(faultStates[2]) ? "yes" : "no";
-                            wd.data_faultstates_3=Convert.ToBoolean(faultStates[3]) ? "yes" : "no";
-                            wd.data_faultstates_4=Convert.ToBoolean(faultStates[4]) ? "yes" : "no";
-                            wd.data_faultstates_5=Convert.ToBoolean(faultStates[5]) ? "yes" : "no";
-                            wd.data_faultstates_6=Convert.ToBoolean(faultStates[6]) ? "yes" : "no";
-                            wd.data_faultstates_7=Convert.ToBoolean(faultStates[7]) ? "yes" : "no";
-                            wd.data_faultstates_8=Convert.ToBoolean(faultStates[8]) ? "yes" : "no";
-                            wd.data_faultstates_9=Convert.ToBoolean(faultStates[9]) ? "yes" : "no";
-                            wd.data_faultstates_10=Convert.ToBoolean(faultStates[10]) ? "yes" : "no";
-                            wd.data_faultstates_11=Convert.ToBoolean(faultStates[11]) ? "yes" : "no";
-                            wd.data_atmoz_DAC_L = Convert.ToString(workDataMsg.DATA_ATOMIZ_DACVALUE_L);
-                            wd.data_atmoz_DAC_H = Convert.ToString(workDataMsg.DATA_ATOMIZ_DACVALUE_H);
-                            wd.data_atmoz_ADC_L = Convert.ToString(workDataMsg.DATA_ATOMIZ_ADCVALUE_L);
-                            wd.data_atmoz_ADC_H = Convert.ToString(workDataMsg.DATA_ATOMIZ_ADCVALUE_H);
-                            wd.data_loop_heating_PWM_L = Convert.ToString(workDataMsg.DATA_LOOP_HEATING_PWM_L);
-                            wd.data_loop_heating_PWM_H = Convert.ToString(workDataMsg.DATA_LOOP_HEATING_PWM_H);
-                            wd.data_loop_heating_ADC_L = Convert.ToString(workDataMsg.DATA_LOOP_HEATING_ADC_L);
-                            wd.data_loop_heating_ADC_H = Convert.ToString(workDataMsg.DATA_LOOP_HEATING_ADC_H);
-                            wd.data_loop_heating_plate_PWM_L = Convert.ToString(workDataMsg.DATA_HEATING_PLATE_PWM_L);
-                            wd.data_loop_heating_plate_PWM_H = Convert.ToString(workDataMsg.DATA_HEATING_PLATE_PWM_H);
-                            wd.data_loop_heating_plate_ADC_L = Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_L);
-                            wd.data_loop_heating_plate_ADC_H = Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_H);
-                            wd.data_main_motor_drive_L = Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_DRIVER_L);
-                            wd.data_main_motor_drive_H = Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_DRIVER_H);
-                            wd.data_main_motor_speed_L = Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_SPEED_L);
-                            wd.data_main_motor_speed_H = Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_SPEED_H);
-                            wd.data_press_sensor_ADC_L = Convert.ToString(workDataMsg.DATA_PRESS_SENSOR_ADC_L);
-                            wd.data_press_sensor_ADC_H = Convert.ToString(workDataMsg.DATA_PRESS_SENSOR_ADC_H);
-                            wd.data_waterlevel_sensor_HADC_L = Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_HADC_L);
-                            wd.data_waterlevel_sensor_HADC_H = Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_HADC_H);
-                            wd.data_waterlevel_sensor_LADC_L = Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_LADC_L);
-                            wd.data_waterlevel_sensor_LADC_H = Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_LADC_H);
-                            wd.data_fan_driver_L = Convert.ToString(workDataMsg.DATA_FAN_DRIVER_L);
-                            wd.data_fan_driver_H = Convert.ToString(workDataMsg.DATA_FAN_DRIVER_H);
-                            wd.data_fan_speed_L = Convert.ToString(workDataMsg.DATA_FAN_SPEED_L);
-                            wd.data_fan_speed_H = Convert.ToString(workDataMsg.DATA_FAN_SPEED_H);
-                            #endregion
+        //                    //添加到链表中
+        //                    WorkData wd = new WorkData(); //实例化一个WorkData
+        //                    //填充信息
+        //                    #region
+        //                    wd.No = i.ToString();
+        //                    wd.tm=tmFromMsg.ToString("yyyy-MM-dd HH:mm:ss");
+        //                    wd.set_mode=Convert.ToBoolean(workDataMsg.SET_MODE) ? lang.atomization() : lang.humidification();
+        //                    wd.set_tmp=Convert.ToString(workDataMsg.SET_TEMP);
+        //                    wd.set_flow=Convert.ToString(workDataMsg.SET_FLOW);
+        //                    wd.set_high_oxy_alarm=Convert.ToString(workDataMsg.SET_HIGH_OXYGEN_ALARM);
+        //                    wd.set_low_oxy_alrm=Convert.ToString(workDataMsg.SET_LOW_OXYGEN_ALARM);
+        //                    wd.set_atomiz_level=Convert.ToString(workDataMsg.SET_ATOMIZATION_LEVEL);
+        //                    wd.set_atomiz_time=Convert.ToString(workDataMsg.SET_ATOMIZATION_TIME);
+        //                    wd.set_adault_or_child = Convert.ToBoolean(workDataMsg.SET_ADULT_OR_CHILDE) ? lang.child() : lang.adault();
+        //                    wd.data_patient_tmp = Convert.ToString(workDataMsg.DATA_PATIENT_TEMP);
+        //                    wd.data_air_outlet_tmp=Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP);
+        //                    wd.data_heating_plate_tmp=Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_H);
+        //                    wd.data_env_tmp=Convert.ToString(workDataMsg.DATA_ENVIRONMENT_TMP);
+        //                    wd.data_driveboard_tmp=Convert.ToString(workDataMsg.DATA_DRIVERBOARD_TMP);
+        //                    wd.data_flow=Convert.ToString(workDataMsg.DATA_FLOW);
+        //                    wd.data_oxy_concentration=Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION);
+        //                    wd.data_air_pressure=Convert.ToString(workDataMsg.DATA_AIR_PRESSURE);
+        //                    wd.data_loop_type=Convert.ToString(workDataMsg.DATA_LOOP_TYPE);
+        //                    wd.data_faultstates_0=Convert.ToBoolean(faultStates[0]) ? "yes" : "no";
+        //                    wd.data_faultstates_1=Convert.ToBoolean(faultStates[1]) ? "yes" : "no";
+        //                    wd.data_faultstates_2=Convert.ToBoolean(faultStates[2]) ? "yes" : "no";
+        //                    wd.data_faultstates_3=Convert.ToBoolean(faultStates[3]) ? "yes" : "no";
+        //                    wd.data_faultstates_4=Convert.ToBoolean(faultStates[4]) ? "yes" : "no";
+        //                    wd.data_faultstates_5=Convert.ToBoolean(faultStates[5]) ? "yes" : "no";
+        //                    wd.data_faultstates_6=Convert.ToBoolean(faultStates[6]) ? "yes" : "no";
+        //                    wd.data_faultstates_7=Convert.ToBoolean(faultStates[7]) ? "yes" : "no";
+        //                    wd.data_faultstates_8=Convert.ToBoolean(faultStates[8]) ? "yes" : "no";
+        //                    wd.data_faultstates_9=Convert.ToBoolean(faultStates[9]) ? "yes" : "no";
+        //                    wd.data_faultstates_10=Convert.ToBoolean(faultStates[10]) ? "yes" : "no";
+        //                    wd.data_faultstates_11=Convert.ToBoolean(faultStates[11]) ? "yes" : "no";
+        //                    wd.data_atmoz_DAC_L = Convert.ToString(workDataMsg.DATA_ATOMIZ_DACVALUE_L);
+        //                    wd.data_atmoz_DAC_H = Convert.ToString(workDataMsg.DATA_ATOMIZ_DACVALUE_H);
+        //                    wd.data_atmoz_ADC_L = Convert.ToString(workDataMsg.DATA_ATOMIZ_ADCVALUE_L);
+        //                    wd.data_atmoz_ADC_H = Convert.ToString(workDataMsg.DATA_ATOMIZ_ADCVALUE_H);
+        //                    wd.data_loop_heating_PWM_L = Convert.ToString(workDataMsg.DATA_LOOP_HEATING_PWM_L);
+        //                    wd.data_loop_heating_PWM_H = Convert.ToString(workDataMsg.DATA_LOOP_HEATING_PWM_H);
+        //                    wd.data_loop_heating_ADC_L = Convert.ToString(workDataMsg.DATA_LOOP_HEATING_ADC_L);
+        //                    wd.data_loop_heating_ADC_H = Convert.ToString(workDataMsg.DATA_LOOP_HEATING_ADC_H);
+        //                    wd.data_loop_heating_plate_PWM_L = Convert.ToString(workDataMsg.DATA_HEATING_PLATE_PWM_L);
+        //                    wd.data_loop_heating_plate_PWM_H = Convert.ToString(workDataMsg.DATA_HEATING_PLATE_PWM_H);
+        //                    wd.data_loop_heating_plate_ADC_L = Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_L);
+        //                    wd.data_loop_heating_plate_ADC_H = Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_H);
+        //                    wd.data_main_motor_drive_L = Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_DRIVER_L);
+        //                    wd.data_main_motor_drive_H = Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_DRIVER_H);
+        //                    wd.data_main_motor_speed_L = Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_SPEED_L);
+        //                    wd.data_main_motor_speed_H = Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_SPEED_H);
+        //                    wd.data_press_sensor_ADC_L = Convert.ToString(workDataMsg.DATA_PRESS_SENSOR_ADC_L);
+        //                    wd.data_press_sensor_ADC_H = Convert.ToString(workDataMsg.DATA_PRESS_SENSOR_ADC_H);
+        //                    wd.data_waterlevel_sensor_HADC_L = Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_HADC_L);
+        //                    wd.data_waterlevel_sensor_HADC_H = Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_HADC_H);
+        //                    wd.data_waterlevel_sensor_LADC_L = Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_LADC_L);
+        //                    wd.data_waterlevel_sensor_LADC_H = Convert.ToString(workDataMsg.DATA_WATERLEVEL_SENSOR_LADC_H);
+        //                    wd.data_fan_driver_L = Convert.ToString(workDataMsg.DATA_FAN_DRIVER_L);
+        //                    wd.data_fan_driver_H = Convert.ToString(workDataMsg.DATA_FAN_DRIVER_H);
+        //                    wd.data_fan_speed_L = Convert.ToString(workDataMsg.DATA_FAN_SPEED_L);
+        //                    wd.data_fan_speed_H = Convert.ToString(workDataMsg.DATA_FAN_SPEED_H);
+        //                    #endregion
 
-                            WorkDataList.m_WorkData_List.Add(wd);
-                            //myCache1.Add(lvi);
-                            i++;
-                        }
-                    }
-                }
-                #endregion
-            }
-            #endregion
-            //this.listView_workData.VirtualListSize = myCache1.Count;
-            //this.listView_workData.EndUpdate();
-        }
+        //                    WorkDataList.m_WorkData_List.Add(wd);
+        //                    //myCache1.Add(lvi);
+        //                    i++;
+        //                }
+        //            }
+        //        }
+        //        #endregion
+        //    }
+        //    #endregion
+        //    //this.listView_workData.VirtualListSize = myCache1.Count;
+        //    //this.listView_workData.EndUpdate();
+        //}
 
         public static String ChangeAlarmCode2ASC(Byte bt)
         {
@@ -1189,17 +1212,30 @@ namespace BreathingMachine
                 FileMngr.GetMinMaxDateTime();
 
                 //3.校验文件，并且得到信息头和信息体链表
-                if(FileMngr.m_alarmFileName!=null)
+                if (FileMngr.m_alarmFileName != null)
                 {
                     if (!FileMngr.GetAlarmMsg())
                     {
                         MessageBox.Show(LanguageMngr.fail_to_get_alarmFile_info());
-                    } 
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(LanguageMngr.lack_of_alarm_file());
                 }
 
-                if (!FileMngr.GetWorkMsg())
+                if (FileMngr.m_workFileNameList.Count != 0)
                 {
-                    //MessageBox.Show("这里填什么好呢？");
+                    if (!FileMngr.GetWorkMsg())
+                    {
+                        //MessageBox.Show("这里填什么好呢？");
+                    }
+                }
+                else
+                {
+                    //FileMngr.m_dirPath = null; //丢弃得到的m_dirPath
+                    MessageBox.Show(LanguageMngr.lack_of_work_file());
+                    //return;
                 }
 
                 InitDateTimePicer();
@@ -3623,13 +3659,13 @@ namespace BreathingMachine
                 FileStream fs = new FileStream(strFilePath, FileMode.Create);
                 BinaryWriter bw = new BinaryWriter(fs, Encoding.ASCII);
 
-                //填充工作信息头
+                //填充报警信息头
                 #region
                 ALARM_INFO_HEAD alarmHead = new ALARM_INFO_HEAD();
-                alarmHead.ALARM_FLAG = "5ALARM89".PadRight(16, '0');
-                alarmHead.MACHINETYPE = (Convert.ToChar(0x06)+"VNU001").PadRight(16, '0');
+                alarmHead.ALARM_FLAG = (Convert.ToChar(0x05)+"ALARM89").PadRight(16, '0');
+                alarmHead.MACHINETYPE = (Convert.ToChar(0x06)+"VUN001").PadRight(16, '0');
                 alarmHead.SN = (Convert.ToChar(0x09)+"1700002342").PadRight(16, '0');
-                alarmHead.SOFTWAR_VER = (Convert.ToChar(0x03)+"1110000").PadRight(16, '0');
+                alarmHead.SOFTWAR_VER = ("" + Convert.ToChar(0x03) + Convert.ToChar(0x01) + Convert.ToChar(0x01) + Convert.ToChar(0x01)).PadRight(16, '0');
                 alarmHead.RESERVE_0 = "".PadRight(16, '0');
                 alarmHead.RESERVE_1 = "".PadRight(16, '0');
                 alarmHead.RESERVE_2 = "".PadRight(16, '0');
@@ -3649,42 +3685,44 @@ namespace BreathingMachine
 
                 Random rnd = new Random();
                 //写入信息体
-                int m = 0;
-                bool bflag_runMode = false;
-                for (int j = 0; j < 100000; j++)
-                {
-                    //int runMode = 0;
-                    m++;
-                    if (m == 30)
-                    {
-                        //runMode = 1;
-                        m = 0;
-                        bflag_runMode = !bflag_runMode;
-                    }
-                    DateTime tmp = tmBegin.AddMinutes(10 * j);
+                #region
+                //int m = 0;
+                //bool bflag_runMode = false;
+                //for (int j = 0; j < 100000; j++)
+                //{
+                //    //int runMode = 0;
+                //    m++;
+                //    if (m == 30)
+                //    {
+                //        //runMode = 1;
+                //        m = 0;
+                //        bflag_runMode = !bflag_runMode;
+                //    }
+                //    DateTime tmp = tmBegin.AddMinutes(10 * j);
 
-                    byte[] bt = new byte[16]{
-                    #region
-                        Convert.ToByte(tmp.Year/100),
-                        Convert.ToByte(tmp.Year%100),
-                        Convert.ToByte(tmp.Month),
-                        Convert.ToByte(tmp.Day),
-                        Convert.ToByte(tmp.Hour),
-                        Convert.ToByte(tmp.Minute),
-                        Convert.ToByte(tmp.Second),
-                        Convert.ToByte(Convert.ToInt32(bflag_runMode)),
-                        Convert.ToByte(rnd.Next(0,30)), //报警代码
-                        Convert.ToByte(rnd.Next(0,100)), //报警数据L
-                        Convert.ToByte(rnd.Next(0,100)), //报警数据H
-                        Convert.ToByte(0), //保留1
-                        Convert.ToByte(0), //保留2
-                        Convert.ToByte(0), //保留3
-                        Convert.ToByte(12), //checksum1
-                        Convert.ToByte(23), //checksum2
-                        #endregion
-                    };
-                    bw.Write(bt, 0, 16);
-                }
+                //    byte[] bt = new byte[16]{
+                //    #region
+                //        Convert.ToByte(tmp.Year/100),
+                //        Convert.ToByte(tmp.Year%100),
+                //        Convert.ToByte(tmp.Month),
+                //        Convert.ToByte(tmp.Day),
+                //        Convert.ToByte(tmp.Hour),
+                //        Convert.ToByte(tmp.Minute),
+                //        Convert.ToByte(tmp.Second),
+                //        Convert.ToByte(Convert.ToInt32(bflag_runMode)),
+                //        Convert.ToByte(rnd.Next(0,30)), //报警代码
+                //        Convert.ToByte(rnd.Next(0,100)), //报警数据L
+                //        Convert.ToByte(rnd.Next(0,100)), //报警数据H
+                //        Convert.ToByte(0), //保留1
+                //        Convert.ToByte(0), //保留2
+                //        Convert.ToByte(0), //保留3
+                //        Convert.ToByte(12), //checksum1
+                //        Convert.ToByte(23), //checksum2
+                //        #endregion
+                //    };
+                //    bw.Write(bt, 0, 16);
+                //}
+                #endregion
                 bw.Close();
                 fs.Close();
           
@@ -3705,33 +3743,86 @@ namespace BreathingMachine
             FileMngr.m_DateTime_max = new DateTime(1900, 1, 1, 0, 0, 0);
             #region
             int n = 1;
-            foreach(var fileName in m_workFileNameList)
+            if (FileMngr.m_workFileNameList.Count != 0)
             {
-                //MessageBox.Show(fileName);
-                int begin = fileName.IndexOf("DATA")+4;
-                int end = fileName.IndexOf(".vmf");
-                string strDate = fileName.Substring(begin, end-begin);
-
-                Int32 year = Convert.ToInt32(strDate.Substring(0, 4));
-                Int32 month = Convert.ToInt32(strDate.Substring(4, 2));
-                Int32 day = Convert.ToInt32(strDate.Substring(6, 2));
-                DateTime tm = new DateTime(year,month,day,0,0,0);
-                if (n == 1)
+                //工作信息文件不缺失时，优先使用工作信息的
+                #region
+                foreach (var fileName in m_workFileNameList)
                 {
-                    FileMngr.m_DateTime_min = tm; //给FileMngr.m_DateTime_min赋初值
-                    //MessageBox.Show(FileMngr.m_DateTime_min.ToString());
-                    n++;
-                }
+                    //MessageBox.Show(fileName);
+                    int begin = fileName.IndexOf("DATA") + 4;
+                    int end = fileName.IndexOf(".vmf");
+                    string strDate = fileName.Substring(begin, end - begin);
 
-                if (tm < FileMngr.m_DateTime_min)
-                {
-                    FileMngr.m_DateTime_min = tm;
-                }
+                    Int32 year = Convert.ToInt32(strDate.Substring(0, 4));
+                    Int32 month = Convert.ToInt32(strDate.Substring(4, 2));
+                    Int32 day = Convert.ToInt32(strDate.Substring(6, 2));
+                    DateTime tm = new DateTime(year, month, day, 0, 0, 0);
+                    if (n == 1)
+                    {
+                        FileMngr.m_DateTime_min = tm; //给FileMngr.m_DateTime_min赋初值
+                        //MessageBox.Show(FileMngr.m_DateTime_min.ToString());
+                        n++;
+                    }
 
-                if(tm>FileMngr.m_DateTime_max)
-                {
-                    FileMngr.m_DateTime_max = tm;
+                    if (tm < FileMngr.m_DateTime_min)
+                    {
+                        FileMngr.m_DateTime_min = tm;
+                    }
+
+                    if (tm > FileMngr.m_DateTime_max)
+                    {
+                        FileMngr.m_DateTime_max = tm;
+                    }
                 }
+                #endregion
+            }
+            else
+            {
+                //工作信息文件缺失时，使用报警文件的
+                #region
+                FileStream fs = new FileStream(m_dirPath + @"\" + m_alarmFileName, FileMode.Open);
+                BinaryReader br = new BinaryReader(fs, Encoding.ASCII);
+
+                //读信息头
+                 ALARM_INFO_HEAD alarmHead = new ALARM_INFO_HEAD();
+                int len_head = Marshal.SizeOf(alarmHead);
+                byte[] buffer = new byte[len_head];
+                br.Read(buffer, 0, len_head);
+
+                //准备一个buffer_msg
+                ALARM_INFO_MESSAGE alarmMsg = new ALARM_INFO_MESSAGE();
+                int len_msg = Marshal.SizeOf(alarmMsg);
+                byte[] buffer_msg = new byte[len_msg];
+
+                if (br.Read(buffer_msg, 0, len_msg) == 0)
+                {
+                    //如果只有报警信息头
+                    FileMngr.m_DateTime_min = DateTime.Now;
+                    FileMngr.m_DateTime_max = DateTime.Now;
+                    MessageBox.Show("No alarm information in alarm file!");
+                }
+                else
+                {
+                    while (br.Read(buffer_msg, 0, len_msg) > 0)
+                    {
+                        DateTime tmp = new DateTime(Convert.ToInt32(buffer_msg[0] * 100 + buffer_msg[1]), Convert.ToInt32(buffer_msg[2]),
+                            buffer_msg[3], 0, 0, 0);
+
+                        if (FileMngr.m_DateTime_min >= tmp)
+                        {
+                            FileMngr.m_DateTime_min = tmp;
+                        }
+                        if (FileMngr.m_DateTime_max <= tmp)
+                        {
+                            FileMngr.m_DateTime_max = tmp;
+                        }
+                    }
+                }
+                
+                fs.Close();
+                br.Close();
+                #endregion
             }
             #endregion
         }
