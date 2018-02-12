@@ -809,6 +809,9 @@ namespace BreathingMachine
 
         public void ShowAlarmList(DateTime TmLow, DateTime TmHigh)
         {
+            if (!DataMngr.m_bDateTimePicker_ValueChanged)
+                return;
+
             this.listView_alarmInfo.Items.Clear();
             this.listView_alarmInfo.BeginUpdate();
             LanguageMngr lang = new LanguageMngr();
