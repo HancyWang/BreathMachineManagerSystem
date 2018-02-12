@@ -1,6 +1,5 @@
-D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Release\Data_analyser.exe.config
 D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Release\Data_analyser.exe
-D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Release\Data_analyser.pdb
+D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Release\Data_analyser.exe.config
 D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Release\itextsharp.dll
 D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.Form1.resources
 D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.Form_About.resources
@@ -11,3 +10,4 @@ D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Release\Data_analyser.Prope
 D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.csproj.GenerateResource.Cache
 D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Release\Data_analyser.exe
 D:\VS_Practice\BreathingMachine\BreathingMachine\obj\Release\Data_analyser.pdb
+D:\VS_Practice\BreathingMachine\BreathingMachine\bin\Release\Data_analyser.pdb

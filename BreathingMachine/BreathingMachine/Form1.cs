@@ -136,6 +136,7 @@ namespace BreathingMachine
             //MessageBox.Show(this.dateTimePicker_Begin.Location.X.ToString() + "," + this.dateTimePicker_Begin.Location.Y.ToString());
             //.Series["usage"].Points.DataBindXY(DataMngr.m_usageTable_xAxis_list, DataMngr.m_usageTable_beginTime_list, DataMngr.m_usageTable_endTime_list);
             #endregion
+           
             usage.Points.DataBindXY(DataMngr.m_usageTable_xAxis_list, DataMngr.m_usageTable_beginTime_list, DataMngr.m_usageTable_endTime_list);
             #region
             //动态增加控件
@@ -156,8 +157,8 @@ namespace BreathingMachine
         {
             //一共4张图；病人温度，出气口温度，流量，氧浓度
             //先规定每张图的大小
-            
-            ShowChartByType(tmEnd, duration,CHARTTYPE.PATIENT_TMP);
+
+            ShowChartByType(tmEnd, duration, CHARTTYPE.PATIENT_TMP);
             ShowChartByType(tmEnd, duration, CHARTTYPE.AIR_OUTLET_TMP);
             ShowChartByType(tmEnd, duration, CHARTTYPE.FLOW);
             ShowChartByType(tmEnd, duration, CHARTTYPE.OXY_CONCENTRATION);
@@ -191,12 +192,6 @@ namespace BreathingMachine
             {
                 //先判断,减少不必要的foreach (var workDataMsg in list)
                 var list = kv.Value;
-                ////新增，20180209
-                //if (list.Count == 0)
-                //{
-                //    no_message_cnt++;
-                //    continue;//如果链表为空，继续下一个list
-                //}
 
                 WORK_INFO_MESSAGE msg=list[0];
                 DateTime msgTm = new DateTime(100 * Convert.ToInt32(msg.YEAR1) + Convert.ToInt32(msg.YEAR2), 
@@ -208,7 +203,6 @@ namespace BreathingMachine
 
                 foreach (var workDataMsg in list)
                 {
-                   
                     DateTime tmFromMsg = new DateTime(100 * Convert.ToInt32(workDataMsg.YEAR1) + Convert.ToInt32(workDataMsg.YEAR2),
                                                         Convert.ToInt32(workDataMsg.MONTH),
                                                         Convert.ToInt32(workDataMsg.DAY),
@@ -217,7 +211,6 @@ namespace BreathingMachine
                                                         Convert.ToInt32(workDataMsg.SECOND));
                     if (tmFromMsg >= tmBeginOfDay && tmFromMsg <= tmEndOfDay)
                     {
-
                         DETAIL_CHART_INFO info = new DETAIL_CHART_INFO(); 
                         
                         info.tm = tmFromMsg;
@@ -234,16 +227,7 @@ namespace BreathingMachine
             //MessageBox.Show(DataMngr.m_listInfo.Count.ToString());
             #endregion
 
-            //新增，20180209，貌似有问题
-            //if (no_message_cnt == FileMngr.m_workFileNameList.Count)
-            //{
-            //    return;
-            //}
-            //if (FileMngr.m_workHead_Msg_Map.Count == 0)
-            //{
-            //    return;
-            //}
-            
+            #region
             DateTime tmFirstDay = DateTime.FromOADate(0); //获取系统默认的第一天，1899/12/30
             //用来生成x轴坐标
             DateTime tm_end = new DateTime(tmEnd.Year, tmEnd.Month, tmEnd.Day, 0, 0, 0);
@@ -256,57 +240,89 @@ namespace BreathingMachine
             table1.Columns.Add("数据", typeof(int));
             //获取最后一天的时间
             //MessageBox.Show(WorkDataList.m_WorkData_List.Count.ToString());
-            
-            DateTime tmp = Convert.ToDateTime(DataMngr.m_listInfo[DataMngr.m_listInfo.Count - 1].tm);
-            DateTime tm_endOfDay = new DateTime(tmp.Year, tmp.Month, tmp.Day, 23, 59, 59);
 
+            DateTime tm_endOfDay=DateTime.Now;
+            if (DataMngr.m_listInfo.Count == 0)
+            {
+                //do nothing
+            }
+            else
+            {
+                DateTime tmp = Convert.ToDateTime(DataMngr.m_listInfo[DataMngr.m_listInfo.Count - 1].tm);
+                tm_endOfDay = new DateTime(tmp.Year, tmp.Month, tmp.Day, 23, 59, 59);
+            }
+
+            DateTime tm_start = tm_endOfDay.AddDays(0 - duration);
+            DateTime tm_prev = tm_start;
             //将数据插入DataTable
             #region
-            
-            DateTime tm_start = tm_endOfDay.AddDays(0 - duration);
-
-            #region
-            
-            #endregion
-            DateTime tm_prev = tm_start;
-
-            for (int i = 0; i < DataMngr.m_listInfo.Count; i++)
-            //for(int i=ndex;i<WorkDataList.m_WorkData_List.Count;i++)
+            if (DataMngr.m_listInfo.Count == 0)
             {
-                //int temperature = Convert.ToInt32(DataMngr.m_listInfo[i].patient_tmp);
-                while ((Convert.ToDateTime(DataMngr.m_listInfo[i].tm) - tm_prev).TotalMinutes >= 2)
-                {
-                    table1.Rows.Add(tm_prev, 0);
-                    tm_prev = tm_prev.AddMinutes(1);
-                }
-
+                //如果m_listInfo为空，表示工作文件只有头，没有具体数据，这个时候给table1添加一个数据0即可
+                #region
                 switch (chartType)
                 {
                     case CHARTTYPE.PATIENT_TMP:
-                        table1.Rows.Add(Convert.ToDateTime(tm_prev), Convert.ToInt32(DataMngr.m_listInfo[i].patient_tmp));
+                        table1.Rows.Add(Convert.ToDateTime(tm_prev), 0);
                         break;
                     case CHARTTYPE.AIR_OUTLET_TMP:
-                        table1.Rows.Add(Convert.ToDateTime(tm_prev), Convert.ToInt32(DataMngr.m_listInfo[i].air_outlet_tmp));
+                        table1.Rows.Add(Convert.ToDateTime(tm_prev), 0);
                         break;
                     case CHARTTYPE.FLOW:
-                        table1.Rows.Add(Convert.ToDateTime(tm_prev), Convert.ToInt32(DataMngr.m_listInfo[i].flow));
+                        table1.Rows.Add(Convert.ToDateTime(tm_prev), 0);
                         break;
                     case CHARTTYPE.OXY_CONCENTRATION:
-                        table1.Rows.Add(Convert.ToDateTime(tm_prev), Convert.ToInt32(DataMngr.m_listInfo[i].oxy_concentration));
+                        table1.Rows.Add(Convert.ToDateTime(tm_prev), 0);
                         break;
                     default:
                         //MessageBox.Show("Unkonw chart type in common_series!");
                         break;
                 }
-                
-
-                tm_prev = Convert.ToDateTime(DataMngr.m_listInfo[i].tm);
-
-                if(i==DataMngr.m_listInfo.Count-1)
-                {
-                    table1.Rows.Add(tm_prev, 0);
-                }
+                #endregion
             }
+            else
+            {
+                #region
+                for (int i = 0; i < DataMngr.m_listInfo.Count; i++)
+                //for(int i=ndex;i<WorkDataList.m_WorkData_List.Count;i++)
+                {
+                    //int temperature = Convert.ToInt32(DataMngr.m_listInfo[i].patient_tmp);
+                    while ((Convert.ToDateTime(DataMngr.m_listInfo[i].tm) - tm_prev).TotalMinutes >= 2)
+                    {
+                        table1.Rows.Add(tm_prev, 0);
+                        tm_prev = tm_prev.AddMinutes(1);
+                    }
+
+                    switch (chartType)
+                    {
+                        case CHARTTYPE.PATIENT_TMP:
+                            table1.Rows.Add(Convert.ToDateTime(tm_prev), Convert.ToInt32(DataMngr.m_listInfo[i].patient_tmp));
+                            break;
+                        case CHARTTYPE.AIR_OUTLET_TMP:
+                            table1.Rows.Add(Convert.ToDateTime(tm_prev), Convert.ToInt32(DataMngr.m_listInfo[i].air_outlet_tmp));
+                            break;
+                        case CHARTTYPE.FLOW:
+                            table1.Rows.Add(Convert.ToDateTime(tm_prev), Convert.ToInt32(DataMngr.m_listInfo[i].flow));
+                            break;
+                        case CHARTTYPE.OXY_CONCENTRATION:
+                            table1.Rows.Add(Convert.ToDateTime(tm_prev), Convert.ToInt32(DataMngr.m_listInfo[i].oxy_concentration));
+                            break;
+                        default:
+                            //MessageBox.Show("Unkonw chart type in common_series!");
+                            break;
+                    }
+
+
+                    tm_prev = Convert.ToDateTime(DataMngr.m_listInfo[i].tm);
+
+                    if (i == DataMngr.m_listInfo.Count - 1)
+                    {
+                        table1.Rows.Add(tm_prev, 0);
+                    }
+                }
+                #endregion
+            }
+            
             #endregion
 
             //table1.Rows.Add(new object[] { tm, rd, rd });
@@ -326,14 +342,14 @@ namespace BreathingMachine
             //http://bbs.csdn.net/topics/390179469
             this.panel_detailCharts.VerticalScroll.Value = this.panel_detailCharts.VerticalScroll.Minimum;
             LanguageMngr lang = new LanguageMngr();
-            switch(chartType)
+            switch (chartType)
             {
                 case CHARTTYPE.PATIENT_TMP:
                     this.chart_patientTmp.Series.Clear();
                     this.chart_patientTmp.ChartAreas.Clear();
                     this.chart_patientTmp.Titles.Clear();
 
-                    this.chart_patientTmp.Location = new Point(0,0);
+                    this.chart_patientTmp.Location = new Point(0, 0);
                     this.chart_patientTmp.Titles.Add(lang.data_patient_tmp());
 
                     this.chart_patientTmp.Width = Convert.ToInt32(duration) * DataMngr.m_chartSize.Width;    //按照显示天数的比例来调整图表的宽度
@@ -459,9 +475,9 @@ namespace BreathingMachine
 
             //chartarea中设置y轴显示范围，以及步长
             chartArea_common.AxisY.Minimum = 0;
-            if(chartType==CHARTTYPE.FLOW)
+            if (chartType == CHARTTYPE.FLOW)
             {
-                chartArea_common.AxisY.Maximum = 100;
+                chartArea_common.AxisY.Maximum = 90;
                 chartArea_common.AxisY.Interval = 10;
             }
             else
@@ -469,8 +485,8 @@ namespace BreathingMachine
                 chartArea_common.AxisY.Maximum = 50;
                 chartArea_common.AxisY.Interval = 5;
             }
-            
-            
+
+
 
             switch (chartType)
             {
@@ -504,6 +520,10 @@ namespace BreathingMachine
             }
             #endregion
             table1 = null;
+
+            #endregion
+          
+            
         }
 
         public void ShowUsageChart(DateTime tmBegin,DateTime tmEnd)
@@ -2323,6 +2343,7 @@ namespace BreathingMachine
             //debug,产生测试文档
             #region
             FileMngr.m_bCreateTestFiles = false;
+            //FileMngr.m_bCreateTestFiles = true;
             if (FileMngr.m_bCreateTestFiles)
             {
                 if (Directory.Exists("C:/Users/Administrator/Desktop/SD_TEST/170000000001"))
@@ -3475,9 +3496,9 @@ namespace BreathingMachine
                 WORK_INFO_HEAD workHead = new WORK_INFO_HEAD();
                 workHead.WORK_FLAG = "8DATA" + strData;//没加校验
                 workHead.WORK_FLAG.PadRight(64, '0');
-                workHead.MACHINETYPE = "6VNU001000".PadRight(64, '0');
-                workHead.SN = "91700002342".PadRight(64, '0');
-                workHead.SOFTWAR_VER = "31110000".PadRight(64, '0');
+                workHead.MACHINETYPE = (Convert.ToChar(0x06)+"VUN001000").PadRight(64, '0');
+                workHead.SN = (Convert.ToChar(0x09)+"1700002342").PadRight(64, '0');
+                workHead.SOFTWAR_VER = (""+Convert.ToChar(0x03)+Convert.ToChar(0x01)+Convert.ToChar(0x01)+Convert.ToChar(0x01)).PadRight(64, '0');
                 workHead.RESERVE_0 = "".PadRight(64, '0');
                 workHead.RESERVE_1 = "".PadRight(64, '0');
                 workHead.RESERVE_2 = "".PadRight(64, '0');
@@ -3497,94 +3518,94 @@ namespace BreathingMachine
 
                 Random rnd = new Random();
                 //写入信息体
-            //    int m = 0;
-            //    bool bflag_runMode = false;
-            //    for (int j = 0; j < 1000 + rnd.Next(0, 360); j++)
-            //    {
-            //        //int runMode = 0;
-            //        m++;
-            //        if (m == 30)
-            //        {
-            //            //runMode = 1;
-            //            m = 0;
-            //            bflag_runMode = !bflag_runMode;
-            //        }
-            //        DateTime tmp1 = tmp.AddMinutes(j);
+                //int m = 0;
+                //bool bflag_runMode = false;
+                //for (int j = 0; j < 1000 + rnd.Next(0, 360); j++)
+                //{
+                //    //int runMode = 0;
+                //    m++;
+                //    if (m == 30)
+                //    {
+                //        //runMode = 1;
+                //        m = 0;
+                //        bflag_runMode = !bflag_runMode;
+                //    }
+                //    DateTime tmp1 = tmp.AddMinutes(j);
 
-            //        byte[] bt = new byte[64]{
-            //        #region
-            //            Convert.ToByte(tmp1.Year/100),
-            //            Convert.ToByte(tmp1.Year%100),
-            //            Convert.ToByte(tmp1.Month),
-            //            Convert.ToByte(tmp1.Day),
-            //            Convert.ToByte(tmp1.Hour),
-            //            Convert.ToByte(tmp1.Minute),
-            //            Convert.ToByte(tmp1.Second),
-            //            Convert.ToByte(Convert.ToInt32(bflag_runMode)), //运行模式
-            //            Convert.ToByte(30),   //设定温度
-            //            Convert.ToByte(60),   //设定流量
-            //            Convert.ToByte(95),   //设定高氧浓度报警
-            //            Convert.ToByte(21),   //设定低氧浓度报警
-            //            Convert.ToByte(5),   //设定雾化量档位
-            //            Convert.ToByte(30),   //设定雾化时间
-            //            Convert.ToByte(rnd.Next(0,1)), //成人儿童
-            //            //Convert.ToByte(rnd.Next(0,5)+32), //患者端温度
-            //            //Convert.ToByte(rnd.Next(0,5)+30), //出气口温度
-            //            Convert.ToByte(255), //患者端温度
-            //            Convert.ToByte(255), //出气口温度
-            //            Convert.ToByte(100), //加热盘温度
-            //            Convert.ToByte(26), //环境温度
-            //            Convert.ToByte(41), //驱动板温度
-            //            Convert.ToByte(rnd.Next(0,5)+60), //流量
-            //            Convert.ToByte(rnd.Next(0,5)+30), //氧浓度
-            //            Convert.ToByte(2), //气道压力
-            //            Convert.ToByte(rnd.Next(0,5)), //回路类型
-            //            Convert.ToByte(161), //故障状态位 A1
-            //            Convert.ToByte(162), //故障状态位 A2
-            //            Convert.ToByte(0), //雾化DAC数值L
-            //            Convert.ToByte(0), //雾化DAC数值H
-            //            Convert.ToByte(0), //雾化ADC数值L
-            //            Convert.ToByte(0), //雾化ADC数值H
-            //            Convert.ToByte(0), //回路加热PWM数值L
-            //            Convert.ToByte(0), //回路加热PWM数值H
-            //            Convert.ToByte(0), //回路加热ADC数值L
-            //            Convert.ToByte(0), //回路加热ADC数值H
-            //            Convert.ToByte(0), //加热盘加热PWM数值L
-            //            Convert.ToByte(0), //加热盘加热PWM数值H
-            //            Convert.ToByte(0), //加热盘加热ADC数值L
-            //            Convert.ToByte(0), //加热盘加热ADC数值H
-            //            Convert.ToByte(0), //主马达驱动数值L
-            //            Convert.ToByte(0), //主马达驱动数值H
-            //            Convert.ToByte(0), //主马达转数数值L
-            //            Convert.ToByte(0), //主马达转数数值H
-            //            Convert.ToByte(0), //压力传感器ADC值L
-            //            Convert.ToByte(0), //压力传感器ADC值H
-            //            Convert.ToByte(0), //水位传感器HADC值L
-            //            Convert.ToByte(0), //水位传感器HADC值H
-            //            Convert.ToByte(0), //水位传感器LADC值L
-            //            Convert.ToByte(0), //水位传感器LADC值H
-            //            Convert.ToByte(0), //散热风扇驱动数值L
-            //            Convert.ToByte(0), //散热风扇驱动数值H
-            //            Convert.ToByte(0), //散热风扇转速数值L
-            //            Convert.ToByte(0), //散热风扇转速数值H
-            //            Convert.ToByte(0), //保留0
-            //            Convert.ToByte(0), //保留1
-            //            Convert.ToByte(0), //保留2
-            //            Convert.ToByte(0), //保留3
-            //            Convert.ToByte(0), //保留4
-            //            Convert.ToByte(0), //保留5
-            //            Convert.ToByte(0), //保留6
-            //            Convert.ToByte(0), //保留7
-            //            Convert.ToByte(0), //保留8
-            //            Convert.ToByte(0), //保留9
-            //            Convert.ToByte(30), //
-            //            Convert.ToByte(89), //
-            //            #endregion
-            //        };
-            //        bw.Write(bt, 0, 64);
-            //    }
-            //    bw.Close();
-            //    fs.Close();
+                //    byte[] bt = new byte[64]{
+                //    #region
+                //        Convert.ToByte(tmp1.Year/100),
+                //        Convert.ToByte(tmp1.Year%100),
+                //        Convert.ToByte(tmp1.Month),
+                //        Convert.ToByte(tmp1.Day),
+                //        Convert.ToByte(tmp1.Hour),
+                //        Convert.ToByte(tmp1.Minute),
+                //        Convert.ToByte(tmp1.Second),
+                //        Convert.ToByte(Convert.ToInt32(bflag_runMode)), //运行模式
+                //        Convert.ToByte(30),   //设定温度
+                //        Convert.ToByte(60),   //设定流量
+                //        Convert.ToByte(95),   //设定高氧浓度报警
+                //        Convert.ToByte(21),   //设定低氧浓度报警
+                //        Convert.ToByte(5),   //设定雾化量档位
+                //        Convert.ToByte(30),   //设定雾化时间
+                //        Convert.ToByte(rnd.Next(0,1)), //成人儿童
+                //        //Convert.ToByte(rnd.Next(0,5)+32), //患者端温度
+                //        //Convert.ToByte(rnd.Next(0,5)+30), //出气口温度
+                //        Convert.ToByte(255), //患者端温度
+                //        Convert.ToByte(255), //出气口温度
+                //        Convert.ToByte(100), //加热盘温度
+                //        Convert.ToByte(26), //环境温度
+                //        Convert.ToByte(41), //驱动板温度
+                //        Convert.ToByte(rnd.Next(0,5)+60), //流量
+                //        Convert.ToByte(rnd.Next(0,5)+30), //氧浓度
+                //        Convert.ToByte(2), //气道压力
+                //        Convert.ToByte(rnd.Next(0,5)), //回路类型
+                //        Convert.ToByte(161), //故障状态位 A1
+                //        Convert.ToByte(162), //故障状态位 A2
+                //        Convert.ToByte(0), //雾化DAC数值L
+                //        Convert.ToByte(0), //雾化DAC数值H
+                //        Convert.ToByte(0), //雾化ADC数值L
+                //        Convert.ToByte(0), //雾化ADC数值H
+                //        Convert.ToByte(0), //回路加热PWM数值L
+                //        Convert.ToByte(0), //回路加热PWM数值H
+                //        Convert.ToByte(0), //回路加热ADC数值L
+                //        Convert.ToByte(0), //回路加热ADC数值H
+                //        Convert.ToByte(0), //加热盘加热PWM数值L
+                //        Convert.ToByte(0), //加热盘加热PWM数值H
+                //        Convert.ToByte(0), //加热盘加热ADC数值L
+                //        Convert.ToByte(0), //加热盘加热ADC数值H
+                //        Convert.ToByte(0), //主马达驱动数值L
+                //        Convert.ToByte(0), //主马达驱动数值H
+                //        Convert.ToByte(0), //主马达转数数值L
+                //        Convert.ToByte(0), //主马达转数数值H
+                //        Convert.ToByte(0), //压力传感器ADC值L
+                //        Convert.ToByte(0), //压力传感器ADC值H
+                //        Convert.ToByte(0), //水位传感器HADC值L
+                //        Convert.ToByte(0), //水位传感器HADC值H
+                //        Convert.ToByte(0), //水位传感器LADC值L
+                //        Convert.ToByte(0), //水位传感器LADC值H
+                //        Convert.ToByte(0), //散热风扇驱动数值L
+                //        Convert.ToByte(0), //散热风扇驱动数值H
+                //        Convert.ToByte(0), //散热风扇转速数值L
+                //        Convert.ToByte(0), //散热风扇转速数值H
+                //        Convert.ToByte(0), //保留0
+                //        Convert.ToByte(0), //保留1
+                //        Convert.ToByte(0), //保留2
+                //        Convert.ToByte(0), //保留3
+                //        Convert.ToByte(0), //保留4
+                //        Convert.ToByte(0), //保留5
+                //        Convert.ToByte(0), //保留6
+                //        Convert.ToByte(0), //保留7
+                //        Convert.ToByte(0), //保留8
+                //        Convert.ToByte(0), //保留9
+                //        Convert.ToByte(30), //
+                //        Convert.ToByte(89), //
+                //        #endregion
+                //    };
+                //    bw.Write(bt, 0, 64);
+                //}
+                bw.Close();
+                fs.Close();
             }
             #endregion
         }
@@ -3603,9 +3624,9 @@ namespace BreathingMachine
                 #region
                 ALARM_INFO_HEAD alarmHead = new ALARM_INFO_HEAD();
                 alarmHead.ALARM_FLAG = "5ALARM89".PadRight(16, '0');
-                alarmHead.MACHINETYPE = "6VNU001".PadRight(16, '0');
-                alarmHead.SN = "91700002342".PadRight(16, '0');
-                alarmHead.SOFTWAR_VER = "31110000".PadRight(16, '0');
+                alarmHead.MACHINETYPE = (Convert.ToChar(0x06)+"VNU001").PadRight(16, '0');
+                alarmHead.SN = (Convert.ToChar(0x09)+"1700002342").PadRight(16, '0');
+                alarmHead.SOFTWAR_VER = (Convert.ToChar(0x03)+"1110000").PadRight(16, '0');
                 alarmHead.RESERVE_0 = "".PadRight(16, '0');
                 alarmHead.RESERVE_1 = "".PadRight(16, '0');
                 alarmHead.RESERVE_2 = "".PadRight(16, '0');
@@ -3672,7 +3693,7 @@ namespace BreathingMachine
             //定义产生测试文件的时间范围
             CreateAlarmFile(tmBegin, duration);
             CreateWorkDataFiles(tmBegin, duration);
-           
+
         }
 
         public static void GetMinMaxDateTime()
@@ -3867,8 +3888,6 @@ namespace BreathingMachine
 
         public static bool GetWorkMsg()
         {
-            //m_workHead_Msg_Map = new Dictionary<WORK_INFO_HEAD, List<WORK_INFO_MESSAGE>>();
-
             #region
             //MessageBox.Show(m_workFileNameList.Count.ToString());
             foreach (var workFile in m_workFileNameList)
@@ -3892,6 +3911,7 @@ namespace BreathingMachine
                 //if (VerifyField(buffer))   //暂时屏蔽
                 if (true)
                 {
+                    
                     m_workFileName_CanBeOpened_List.Add(workFile);
                     br.Read(buffer, 0, len_head);
                     alarmHead = GetObject<WORK_INFO_HEAD>(buffer, len_head);
@@ -3909,39 +3929,44 @@ namespace BreathingMachine
                     int len_msg = Marshal.SizeOf(workDataMsg);
                     byte[] buffer_msg = new byte[len_msg];
 
-                    ////20180209新增，如果只有头没有message信息
-                    //if (br.Read(buffer_msg, 0, len_msg) == 0)
-                    //{
-                    //    continue; //继续读取下一份文件
-                    //}
 
-                    while (br.Read(buffer_msg, 0, len_msg) > 0)
+                    if (br.Read(buffer_msg, 0, len_msg) == 0)
                     {
-                        //校验每一个字段 
-                        //if (VerifyWorkDataMsg(buffer_msg))           //这里为了能读取字段，将校验屏蔽掉
-                        {
-                            //CheckEachByte(buffer_msg);
-                            //下位机会出现0，0，0，0，下位机尚未修复这个问题，在这里先过滤掉
-                            if (IsByte0x00(buffer_msg))
-                            {
-                                continue;
-                            }
-                            workDataMsg = GetObject<WORK_INFO_MESSAGE>(buffer_msg, len_msg);
-                            list.Add(workDataMsg);
-                            m_lastWorkMsg = workDataMsg;//保留最后一个工作信息，作为最新的信息，刷新到app基本信息中
-                        }
+                        //do nothing
+                        fs.Close();
+                        br.Close();
                     }
-                    m_workHead_Msg_Map[alarmHead] = list;
-                    //m_workHead_Msg_Map.Add(alarmHead,list);
+                    else
+                    {
+                        while (br.Read(buffer_msg, 0, len_msg) > 0)
+                        {
+                            //校验每一个字段 
+                            //if (VerifyWorkDataMsg(buffer_msg))           //这里为了能读取字段，将校验屏蔽掉
+                            {
+                                //CheckEachByte(buffer_msg);
+                                //下位机会出现0，0，0，0，下位机尚未修复这个问题，在这里先过滤掉
+                                if (IsByte0x00(buffer_msg))
+                                {
+                                    continue;
+                                }
+                                workDataMsg = GetObject<WORK_INFO_MESSAGE>(buffer_msg, len_msg);
+                                list.Add(workDataMsg);
+                                m_lastWorkMsg = workDataMsg;//保留最后一个工作信息，作为最新的信息，刷新到app基本信息中
+                            }
+                        }
+                        m_workHead_Msg_Map[alarmHead] = list;
+                        //m_workHead_Msg_Map.Add(alarmHead,list);
+                        fs.Close();
+                        br.Close();
+                    }
+                    
+                }
+                else
+                {
                     fs.Close();
                     br.Close();
+
                 }
-                //else
-                //{
-                //    fs.Close();
-                //    br.Close();
-                //    
-                //}
             }
             #endregion
 

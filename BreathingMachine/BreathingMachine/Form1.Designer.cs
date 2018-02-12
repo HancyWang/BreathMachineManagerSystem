@@ -202,7 +202,7 @@
             this.中文ToolStripMenuItem,
             this.英文ToolStripMenuItem});
             this.语言设置ToolStripMenuItem.Name = "语言设置ToolStripMenuItem";
-            this.语言设置ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.语言设置ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.语言设置ToolStripMenuItem.Text = "语言设置";
             this.语言设置ToolStripMenuItem.Click += new System.EventHandler(this.语言ToolStripMenuItem_Click);
             // 
@@ -223,14 +223,14 @@
             // 导入数据ToolStripMenuItem
             // 
             this.导入数据ToolStripMenuItem.Name = "导入数据ToolStripMenuItem";
-            this.导入数据ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.导入数据ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.导入数据ToolStripMenuItem.Text = "导入数据";
             this.导入数据ToolStripMenuItem.Click += new System.EventHandler(this.导入数据ToolStripMenuItem_Click);
             // 
             // 导出数据ToolStripMenuItem
             // 
             this.导出数据ToolStripMenuItem.Name = "导出数据ToolStripMenuItem";
-            this.导出数据ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.导出数据ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.导出数据ToolStripMenuItem.Text = "导出数据";
             this.导出数据ToolStripMenuItem.Click += new System.EventHandler(this.导出数据ToolStripMenuItem_Click);
             // 
@@ -886,7 +886,7 @@
             this.chart_oxy_concentration.BorderlineColor = System.Drawing.Color.Black;
             chartArea2.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
             chartArea2.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            chartArea2.Name = "ChartArea1";
+            chartArea2.Name = "chartArea_oxyConcentration";
             this.chart_oxy_concentration.ChartAreas.Add(chartArea2);
             legend2.Name = "Legend1";
             this.chart_oxy_concentration.Legends.Add(legend2);
@@ -901,7 +901,7 @@
             this.chart_flow.BorderlineColor = System.Drawing.Color.Black;
             chartArea3.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
             chartArea3.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            chartArea3.Name = "ChartArea1";
+            chartArea3.Name = "chartArea_flow";
             this.chart_flow.ChartAreas.Add(chartArea3);
             legend3.Name = "Legend1";
             this.chart_flow.Legends.Add(legend3);
@@ -916,7 +916,7 @@
             this.chart_air_outlet_tmp.BorderlineColor = System.Drawing.Color.Black;
             chartArea4.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
             chartArea4.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            chartArea4.Name = "ChartArea1";
+            chartArea4.Name = "chartArea_airOutLetTmp";
             this.chart_air_outlet_tmp.ChartAreas.Add(chartArea4);
             legend4.Name = "Legend1";
             this.chart_air_outlet_tmp.Legends.Add(legend4);
@@ -931,7 +931,7 @@
             this.chart_patientTmp.BorderlineColor = System.Drawing.Color.Black;
             chartArea5.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
             chartArea5.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            chartArea5.Name = "ChartArea1";
+            chartArea5.Name = "chartArea_patientTmp";
             this.chart_patientTmp.ChartAreas.Add(chartArea5);
             legend5.Name = "Legend1";
             this.chart_patientTmp.Legends.Add(legend5);
