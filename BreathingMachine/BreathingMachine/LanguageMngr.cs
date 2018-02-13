@@ -2521,5 +2521,21 @@ namespace BreathingMachine
                 return "";
             }
         }
+        //No alarm information in alarm file
+        public static String no_data_info_in_alarm_file()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "报警信息文件中没有数据！";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "No data in alarm file!";
+            }
+            else
+            {
+                return "";
+            }
+        }
     }
 }

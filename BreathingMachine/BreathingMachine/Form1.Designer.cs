@@ -202,7 +202,7 @@
             this.中文ToolStripMenuItem,
             this.英文ToolStripMenuItem});
             this.语言设置ToolStripMenuItem.Name = "语言设置ToolStripMenuItem";
-            this.语言设置ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.语言设置ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.语言设置ToolStripMenuItem.Text = "语言设置";
             this.语言设置ToolStripMenuItem.Click += new System.EventHandler(this.语言ToolStripMenuItem_Click);
             // 
@@ -223,14 +223,14 @@
             // 导入数据ToolStripMenuItem
             // 
             this.导入数据ToolStripMenuItem.Name = "导入数据ToolStripMenuItem";
-            this.导入数据ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.导入数据ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.导入数据ToolStripMenuItem.Text = "导入数据";
             this.导入数据ToolStripMenuItem.Click += new System.EventHandler(this.导入数据ToolStripMenuItem_Click);
             // 
             // 导出数据ToolStripMenuItem
             // 
             this.导出数据ToolStripMenuItem.Name = "导出数据ToolStripMenuItem";
-            this.导出数据ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.导出数据ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.导出数据ToolStripMenuItem.Text = "导出数据";
             this.导出数据ToolStripMenuItem.Click += new System.EventHandler(this.导出数据ToolStripMenuItem_Click);
             // 
@@ -306,6 +306,7 @@
             this.dateTimePicker_End.Size = new System.Drawing.Size(164, 21);
             this.dateTimePicker_End.TabIndex = 3;
             this.dateTimePicker_End.CloseUp += new System.EventHandler(this.dateTimePicker_End_CloseUp);
+          
             // 
             // label_endTime
             // 
@@ -370,7 +371,7 @@
             // 
             this.button_generateReport.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.button_generateReport.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_generateReport.Location = new System.Drawing.Point(339, 349);
+            this.button_generateReport.Location = new System.Drawing.Point(323, 349);
             this.button_generateReport.Name = "button_generateReport";
             this.button_generateReport.Size = new System.Drawing.Size(153, 27);
             this.button_generateReport.TabIndex = 18;

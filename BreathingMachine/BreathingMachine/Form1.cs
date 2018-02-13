@@ -40,6 +40,12 @@ namespace BreathingMachine
             FOURTEEN_DAYS=14
         }
 
+        enum BEGIN_END
+        {
+            BEGIN,
+            END
+        };
+
         public void PaintUsageChart(DateTime tmBegin, DateTime tmEnd)
         {
             DateTime tmFirstDay = DateTime.FromOADate(0); //获取系统默认的第一天，1899/12/30
@@ -1156,7 +1162,7 @@ namespace BreathingMachine
                 //规避方法：先导入文件，触发时间控件后，才能操作tabpage
                 DataMngr.m_bDateTimePicker_ValueChanged = false;
                 this.tabControl1.SelectedIndex = 0;
-                
+
                 this.label_dateFrom_Value.Text = "NA";
                 this.label_dateTo_Value.Text = "NA";
                 //如果重复点击按钮，要先清除之前Msg链表的资源
@@ -1165,7 +1171,7 @@ namespace BreathingMachine
                 {
                     FileMngr.m_workFileNameList.Clear();
                 }
-                if(FileMngr.m_workFileName_CanBeOpened_List!=null)
+                if (FileMngr.m_workFileName_CanBeOpened_List != null)
                 {
                     FileMngr.m_workFileName_CanBeOpened_List.Clear();
                 }
@@ -1195,7 +1201,7 @@ namespace BreathingMachine
                 }
                 //清除图表信息
                 ClearChartInfo();
-                
+
                 #endregion
                 string strPath = folderBrowserDialog_selectFolder.SelectedPath;//获取打开的文件路径名
                 //判断打开的文件夹是否有效
@@ -1254,8 +1260,7 @@ namespace BreathingMachine
 
                 //5.显示app面板上基本信息的各个数据,显示最新的数据
                 ShowBasicInfo();
-                #region
-                #endregion
+
             }
             else
             {
@@ -1282,6 +1287,13 @@ namespace BreathingMachine
             this.dateTimePicker_Begin.Enabled = true;
             this.dateTimePicker_End.Enabled = true;
 
+            //自动点一下datetimepicker控件？，加不加这个功能呢？
+            //这段代码直接从datetimepicker 控件的close_up事件中复制过来的
+            if(true)
+            //if(false)
+            {
+                dateTimePicker_BeginOrEnd_CloseUp(BEGIN_END.BEGIN);
+            }
         }
 
         public static String IsByteOxFF(byte bt)
@@ -2397,7 +2409,7 @@ namespace BreathingMachine
 
                 DateTime tmBegin=new DateTime(2017,1,1,0,0,0);
                 //产生多少天数据
-                Int32 duration = 365;
+                Int32 duration = 365*2;
                 FileMngr.CreateTestFiles(tmBegin, duration);
             }
             #endregion
@@ -2843,8 +2855,11 @@ namespace BreathingMachine
             ShowCurrentPage(1);   
         }
 
-        private void dateTimePicker_Begin_CloseUp(object sender, EventArgs e)
+        
+
+        private void dateTimePicker_BeginOrEnd_CloseUp(BEGIN_END begin_end)
         {
+            #region
             //校验开始时间，结束时间的正确性
             DateTime tmp1 = this.dateTimePicker_Begin.Value;
             DateTime tmp2 = this.dateTimePicker_End.Value;
@@ -2870,10 +2885,20 @@ namespace BreathingMachine
             }
 
             //设置时间范围，最多跨度为3个月
-            if ((this.dateTimePicker_End.Value - this.dateTimePicker_Begin.Value).TotalDays>=DataMngr.m_DateTimePicker_Range_Limit)
+            if ((this.dateTimePicker_End.Value - this.dateTimePicker_Begin.Value).TotalDays >= DataMngr.m_DateTimePicker_Range_Limit)
             {
-                this.dateTimePicker_End.Value = this.dateTimePicker_Begin.Value.AddDays(DataMngr.m_DateTimePicker_Range_Limit);
-                
+                if (begin_end == BEGIN_END.BEGIN)
+                {
+                    this.dateTimePicker_End.Value = this.dateTimePicker_Begin.Value.AddDays(DataMngr.m_DateTimePicker_Range_Limit);
+                }
+                else if (begin_end == BEGIN_END.END)
+                {
+                    this.dateTimePicker_Begin.Value = this.dateTimePicker_End.Value.AddDays(0 - DataMngr.m_DateTimePicker_Range_Limit);
+                }
+                else
+                {
+                    //do nothing
+                }
             }
 
             //规避bug
@@ -2905,7 +2930,7 @@ namespace BreathingMachine
 
                 //将工作列表存入m_WorkData_List中，不会显示，需要点首页来触发
                 //为了实现分页功能
-                if (WorkDataList.m_WorkData_List == null )
+                if (WorkDataList.m_WorkData_List == null)
                 {
                     WorkDataList.InitWorkDataList(TmLow, TmHight);
                 }
@@ -2918,7 +2943,89 @@ namespace BreathingMachine
             ShowUsageChart(this.dateTimePicker_Begin.Value, this.dateTimePicker_End.Value);
 
             //将工作信息的内容填充，相当于点了一下首页
-            ShowCurrentPage(1);  
+            ShowCurrentPage(1);
+            #endregion
+        }
+
+        private void dateTimePicker_Begin_CloseUp(object sender, EventArgs e)
+        {
+            #region
+            ////校验开始时间，结束时间的正确性
+            //DateTime tmp1 = this.dateTimePicker_Begin.Value;
+            //DateTime tmp2 = this.dateTimePicker_End.Value;
+            //#region
+            ////if (tmp1 < FileMngr.m_DateTime_min)
+            ////{
+            ////    this.dateTimePicker_Begin.Value = FileMngr.m_DateTime_min;
+            ////    MessageBox.Show("当前最小日期为:" + this.dateTimePicker_Begin.Value.ToString("yyyy-MM-dd"));
+            ////}
+            //#endregion
+
+            //if (tmp1 > tmp2)
+            //{
+            //    this.dateTimePicker_Begin.Value = FileMngr.m_dateTime_begin;
+            //    this.dateTimePicker_End.Value = FileMngr.m_dateTime_end;
+            //    MessageBox.Show(LanguageMngr.startTime_begyond_endTime());
+            //    return;
+            //}
+            //else
+            //{
+            //    FileMngr.m_dateTime_begin = tmp1;
+            //    FileMngr.m_dateTime_end = tmp2;
+            //}
+
+            ////设置时间范围，最多跨度为3个月
+            //if ((this.dateTimePicker_End.Value - this.dateTimePicker_Begin.Value).TotalDays>=DataMngr.m_DateTimePicker_Range_Limit)
+            //{
+            //    this.dateTimePicker_End.Value = this.dateTimePicker_Begin.Value.AddDays(DataMngr.m_DateTimePicker_Range_Limit);
+                
+            //}
+
+            ////规避bug
+            //DataMngr.m_bDateTimePicker_ValueChanged = true;
+
+            //////初始化treeView
+            ////InitTree();
+
+            //if (myCache != null)
+            //{
+            //    myCache.Clear();
+            //}
+            //myCache = new List<ListViewItem>();
+
+
+            ////初始化app面板上，基本信息中的时间
+            //this.label_dateTo_Value.Text = this.dateTimePicker_End.Value.ToString("yyyy/MM/dd");
+            //this.label_dateFrom_Value.Text = this.dateTimePicker_Begin.Value.ToString("yyyy/MM/dd");
+
+            //tmp1 = this.dateTimePicker_Begin.Value;
+            //tmp2 = this.dateTimePicker_End.Value;
+            //DateTime TmLow = new DateTime(tmp1.Year, tmp1.Month, tmp1.Day, 0, 0, 0);
+            //DateTime TmHight = new DateTime(tmp2.Year, tmp2.Month, tmp2.Day, 23, 59, 59);
+
+            ////if (g_bEngineerMode)
+            //{
+            //    //显示报警列表
+            //    ShowAlarmList(TmLow, TmHight);
+
+            //    //将工作列表存入m_WorkData_List中，不会显示，需要点首页来触发
+            //    //为了实现分页功能
+            //    if (WorkDataList.m_WorkData_List == null )
+            //    {
+            //        WorkDataList.InitWorkDataList(TmLow, TmHight);
+            //    }
+            //    else
+            //    {
+            //        WorkDataList.m_WorkData_List.Clear();
+            //        WorkDataList.InitWorkDataList(TmLow, TmHight);
+            //    }
+            //}
+            //ShowUsageChart(this.dateTimePicker_Begin.Value, this.dateTimePicker_End.Value);
+
+            ////将工作信息的内容填充，相当于点了一下首页
+            //ShowCurrentPage(1);
+            #endregion
+            dateTimePicker_BeginOrEnd_CloseUp(BEGIN_END.BEGIN);
         }
 
         private void button_listview_prev_Click(object sender, EventArgs e)
@@ -2995,70 +3102,73 @@ namespace BreathingMachine
 
         private void dateTimePicker_End_CloseUp(object sender, EventArgs e)
         {
-            //校验开始时间，结束时间的正确性
-            DateTime tmp1 = this.dateTimePicker_Begin.Value;
-            DateTime tmp2 = this.dateTimePicker_End.Value;
-
             #region
-            if (tmp1 > tmp2)
-            {
-                this.dateTimePicker_Begin.Value = FileMngr.m_dateTime_begin;
-                this.dateTimePicker_End.Value = FileMngr.m_dateTime_end;
-                MessageBox.Show(LanguageMngr.startTime_begyond_endTime());
-                return;
-            }
-            else
-            {
-                FileMngr.m_dateTime_begin = tmp1;
-                FileMngr.m_dateTime_end = tmp2;
-            }
+            ////校验开始时间，结束时间的正确性
+            //DateTime tmp1 = this.dateTimePicker_Begin.Value;
+            //DateTime tmp2 = this.dateTimePicker_End.Value;
 
-            //设置时间范围，最多跨度为3个月
-            if ((this.dateTimePicker_End.Value - this.dateTimePicker_Begin.Value).TotalDays >= DataMngr.m_DateTimePicker_Range_Limit)
-            {
-                this.dateTimePicker_Begin.Value = this.dateTimePicker_End.Value.AddDays(0-DataMngr.m_DateTimePicker_Range_Limit);
-            }
+            //#region
+            //if (tmp1 > tmp2)
+            //{
+            //    this.dateTimePicker_Begin.Value = FileMngr.m_dateTime_begin;
+            //    this.dateTimePicker_End.Value = FileMngr.m_dateTime_end;
+            //    MessageBox.Show(LanguageMngr.startTime_begyond_endTime());
+            //    return;
+            //}
+            //else
+            //{
+            //    FileMngr.m_dateTime_begin = tmp1;
+            //    FileMngr.m_dateTime_end = tmp2;
+            //}
+
+            ////设置时间范围，最多跨度为3个月
+            //if ((this.dateTimePicker_End.Value - this.dateTimePicker_Begin.Value).TotalDays >= DataMngr.m_DateTimePicker_Range_Limit)
+            //{
+            //    this.dateTimePicker_Begin.Value = this.dateTimePicker_End.Value.AddDays(0-DataMngr.m_DateTimePicker_Range_Limit);
+            //}
+            //#endregion
+
+            ////规避bug,虚模式问题
+            //DataMngr.m_bDateTimePicker_ValueChanged = true;
+
+            //////初始化treeView
+            ////InitTree();
+
+            //if (myCache != null)
+            //{
+            //    myCache.Clear();
+            //}
+            //myCache = new List<ListViewItem>();
+
+
+            ////初始化app面板上，基本信息中的时间
+            //this.label_dateFrom_Value.Text = this.dateTimePicker_Begin.Value.ToString("yyyy/MM/dd");
+            //this.label_dateTo_Value.Text = this.dateTimePicker_End.Value.ToString("yyyy/MM/dd");
+            //tmp1 = this.dateTimePicker_Begin.Value;
+            //tmp2 = this.dateTimePicker_End.Value;
+            //DateTime TmLow = new DateTime(tmp1.Year, tmp1.Month, tmp1.Day, 0, 0, 0);
+            //DateTime TmHight = new DateTime(tmp2.Year, tmp2.Month, tmp2.Day, 23, 59, 59);
+
+            ////if (g_bEngineerMode)
+            //{
+            //    ShowAlarmList(TmLow, TmHight);
+
+            //    //将工作列表存入m_WorkData_List中，不会显示，需要点首页来触发
+            //    if (WorkDataList.m_WorkData_List == null)
+            //    {
+            //        WorkDataList.InitWorkDataList(TmLow, TmHight);
+            //    }
+            //    else
+            //    {
+            //        WorkDataList.m_WorkData_List.Clear();
+            //        WorkDataList.InitWorkDataList(TmLow, TmHight);
+            //    }
+            //}
+            //ShowUsageChart(this.dateTimePicker_Begin.Value, this.dateTimePicker_End.Value);
+            ////将工作信息的内容填充，相当于点了一下首页
+            //ShowCurrentPage(1);
             #endregion
-
-            //规避bug,虚模式问题
-            DataMngr.m_bDateTimePicker_ValueChanged = true;
-
-            ////初始化treeView
-            //InitTree();
-
-            if (myCache != null)
-            {
-                myCache.Clear();
-            }
-            myCache = new List<ListViewItem>();
-
-
-            //初始化app面板上，基本信息中的时间
-            this.label_dateFrom_Value.Text = this.dateTimePicker_Begin.Value.ToString("yyyy/MM/dd");
-            this.label_dateTo_Value.Text = this.dateTimePicker_End.Value.ToString("yyyy/MM/dd");
-            tmp1 = this.dateTimePicker_Begin.Value;
-            tmp2 = this.dateTimePicker_End.Value;
-            DateTime TmLow = new DateTime(tmp1.Year, tmp1.Month, tmp1.Day, 0, 0, 0);
-            DateTime TmHight = new DateTime(tmp2.Year, tmp2.Month, tmp2.Day, 23, 59, 59);
-
-            //if (g_bEngineerMode)
-            {
-                ShowAlarmList(TmLow, TmHight);
-
-                //将工作列表存入m_WorkData_List中，不会显示，需要点首页来触发
-                if (WorkDataList.m_WorkData_List == null)
-                {
-                    WorkDataList.InitWorkDataList(TmLow, TmHight);
-                }
-                else
-                {
-                    WorkDataList.m_WorkData_List.Clear();
-                    WorkDataList.InitWorkDataList(TmLow, TmHight);
-                }
-            }
-            ShowUsageChart(this.dateTimePicker_Begin.Value, this.dateTimePicker_End.Value);
-            //将工作信息的内容填充，相当于点了一下首页
-            ShowCurrentPage(1);
+            dateTimePicker_BeginOrEnd_CloseUp(BEGIN_END.END);
         }
 
         private void button_add_patientInfo_Click(object sender, EventArgs e)
@@ -3090,8 +3200,8 @@ namespace BreathingMachine
             label_value_added_phoneNum.Text = info.phoneNum;
             label_value_patient_phoneNum.Text = info.phoneNum;
 
-            label_value_patient_height.Text = info.height;
-            label_value_patient_weight.Text = info.weight;
+            label_value_patient_height.Text = info.height+" cm";
+            label_value_patient_weight.Text = info.weight+" kg";
             label_value_patient_adress.Text = info.adress;
         }
 
@@ -3491,7 +3601,8 @@ namespace BreathingMachine
             }
 
         }
- 
+
+      
     }
     public class FileMngr
     {
@@ -3538,6 +3649,7 @@ namespace BreathingMachine
                 workHead.MACHINETYPE = (Convert.ToChar(0x06)+"VUN001000").PadRight(64, '0');
                 workHead.SN = (Convert.ToChar(0x09)+"1700002342").PadRight(64, '0');
                 workHead.SOFTWAR_VER = (""+Convert.ToChar(0x03)+Convert.ToChar(0x01)+Convert.ToChar(0x01)+Convert.ToChar(0x01)).PadRight(64, '0');
+                //workHead.SOFTWAR_VER = ("" + Convert.ToChar(0x03) + "111").PadRight(64, '0');
                 workHead.RESERVE_0 = "".PadRight(64, '0');
                 workHead.RESERVE_1 = "".PadRight(64, '0');
                 workHead.RESERVE_2 = "".PadRight(64, '0');
@@ -3557,92 +3669,94 @@ namespace BreathingMachine
 
                 Random rnd = new Random();
                 //写入信息体
-                //int m = 0;
-                //bool bflag_runMode = false;
-                //for (int j = 0; j < 1000 + rnd.Next(0, 360); j++)
-                //{
-                //    //int runMode = 0;
-                //    m++;
-                //    if (m == 30)
-                //    {
-                //        //runMode = 1;
-                //        m = 0;
-                //        bflag_runMode = !bflag_runMode;
-                //    }
-                //    DateTime tmp1 = tmp.AddMinutes(j);
+                int m = 0;
+                bool bflag_runMode = false;
+                for (int j = 0; j < 1000 + rnd.Next(0, 360); j++)
+                {
+                    //int runMode = 0;
+                    m++;
+                    if (m == 30)
+                    {
+                        //runMode = 1;
+                        m = 0;
+                        bflag_runMode = !bflag_runMode;
+                    }
+                    DateTime tmp1 = tmp.AddMinutes(j);
 
-                //    byte[] bt = new byte[64]{
-                //    #region
-                //        Convert.ToByte(tmp1.Year/100),
-                //        Convert.ToByte(tmp1.Year%100),
-                //        Convert.ToByte(tmp1.Month),
-                //        Convert.ToByte(tmp1.Day),
-                //        Convert.ToByte(tmp1.Hour),
-                //        Convert.ToByte(tmp1.Minute),
-                //        Convert.ToByte(tmp1.Second),
-                //        Convert.ToByte(Convert.ToInt32(bflag_runMode)), //运行模式
-                //        Convert.ToByte(30),   //设定温度
-                //        Convert.ToByte(60),   //设定流量
-                //        Convert.ToByte(95),   //设定高氧浓度报警
-                //        Convert.ToByte(21),   //设定低氧浓度报警
-                //        Convert.ToByte(5),   //设定雾化量档位
-                //        Convert.ToByte(30),   //设定雾化时间
-                //        Convert.ToByte(rnd.Next(0,1)), //成人儿童
-                //        //Convert.ToByte(rnd.Next(0,5)+32), //患者端温度
-                //        //Convert.ToByte(rnd.Next(0,5)+30), //出气口温度
-                //        Convert.ToByte(255), //患者端温度
-                //        Convert.ToByte(255), //出气口温度
-                //        Convert.ToByte(100), //加热盘温度
-                //        Convert.ToByte(26), //环境温度
-                //        Convert.ToByte(41), //驱动板温度
-                //        Convert.ToByte(rnd.Next(0,5)+60), //流量
-                //        Convert.ToByte(rnd.Next(0,5)+30), //氧浓度
-                //        Convert.ToByte(2), //气道压力
-                //        Convert.ToByte(rnd.Next(0,5)), //回路类型
-                //        Convert.ToByte(161), //故障状态位 A1
-                //        Convert.ToByte(162), //故障状态位 A2
-                //        Convert.ToByte(0), //雾化DAC数值L
-                //        Convert.ToByte(0), //雾化DAC数值H
-                //        Convert.ToByte(0), //雾化ADC数值L
-                //        Convert.ToByte(0), //雾化ADC数值H
-                //        Convert.ToByte(0), //回路加热PWM数值L
-                //        Convert.ToByte(0), //回路加热PWM数值H
-                //        Convert.ToByte(0), //回路加热ADC数值L
-                //        Convert.ToByte(0), //回路加热ADC数值H
-                //        Convert.ToByte(0), //加热盘加热PWM数值L
-                //        Convert.ToByte(0), //加热盘加热PWM数值H
-                //        Convert.ToByte(0), //加热盘加热ADC数值L
-                //        Convert.ToByte(0), //加热盘加热ADC数值H
-                //        Convert.ToByte(0), //主马达驱动数值L
-                //        Convert.ToByte(0), //主马达驱动数值H
-                //        Convert.ToByte(0), //主马达转数数值L
-                //        Convert.ToByte(0), //主马达转数数值H
-                //        Convert.ToByte(0), //压力传感器ADC值L
-                //        Convert.ToByte(0), //压力传感器ADC值H
-                //        Convert.ToByte(0), //水位传感器HADC值L
-                //        Convert.ToByte(0), //水位传感器HADC值H
-                //        Convert.ToByte(0), //水位传感器LADC值L
-                //        Convert.ToByte(0), //水位传感器LADC值H
-                //        Convert.ToByte(0), //散热风扇驱动数值L
-                //        Convert.ToByte(0), //散热风扇驱动数值H
-                //        Convert.ToByte(0), //散热风扇转速数值L
-                //        Convert.ToByte(0), //散热风扇转速数值H
-                //        Convert.ToByte(0), //保留0
-                //        Convert.ToByte(0), //保留1
-                //        Convert.ToByte(0), //保留2
-                //        Convert.ToByte(0), //保留3
-                //        Convert.ToByte(0), //保留4
-                //        Convert.ToByte(0), //保留5
-                //        Convert.ToByte(0), //保留6
-                //        Convert.ToByte(0), //保留7
-                //        Convert.ToByte(0), //保留8
-                //        Convert.ToByte(0), //保留9
-                //        Convert.ToByte(30), //
-                //        Convert.ToByte(89), //
-                //        #endregion
-                //    };
-                //    bw.Write(bt, 0, 64);
-                //}
+                    byte[] bt = new byte[64]{
+                    #region
+                        Convert.ToByte(tmp1.Year/100),
+                        Convert.ToByte(tmp1.Year%100),
+                        Convert.ToByte(tmp1.Month),
+                        Convert.ToByte(tmp1.Day),
+                        Convert.ToByte(tmp1.Hour),
+                        Convert.ToByte(tmp1.Minute),
+                        Convert.ToByte(tmp1.Second),
+                        Convert.ToByte(Convert.ToInt32(bflag_runMode)), //运行模式
+                        Convert.ToByte(30),   //设定温度
+                        Convert.ToByte(60),   //设定流量
+                        Convert.ToByte(95),   //设定高氧浓度报警
+                        Convert.ToByte(21),   //设定低氧浓度报警
+                        Convert.ToByte(5),   //设定雾化量档位
+                        Convert.ToByte(30),   //设定雾化时间
+                        rnd.Next(0,2)==1?Convert.ToByte(0x01):Convert.ToByte(0x00), //成人儿童
+                        //Convert.ToByte(SetAdaultOrChild(rnd.Next(0,2))),
+                        //Convert.ToByte(0x01),
+                        //Convert.ToByte(rnd.Next(0,5)+32), //患者端温度
+                        //Convert.ToByte(rnd.Next(0,5)+30), //出气口温度
+                        Convert.ToByte(255), //患者端温度
+                        Convert.ToByte(255), //出气口温度
+                        Convert.ToByte(100), //加热盘温度
+                        Convert.ToByte(26), //环境温度
+                        Convert.ToByte(41), //驱动板温度
+                        Convert.ToByte(rnd.Next(0,5)+60), //流量
+                        Convert.ToByte(rnd.Next(0,5)+30), //氧浓度
+                        Convert.ToByte(2), //气道压力
+                        Convert.ToByte(rnd.Next(0,5)), //回路类型
+                        Convert.ToByte(161), //故障状态位 A1
+                        Convert.ToByte(162), //故障状态位 A2
+                        Convert.ToByte(0), //雾化DAC数值L
+                        Convert.ToByte(0), //雾化DAC数值H
+                        Convert.ToByte(0), //雾化ADC数值L
+                        Convert.ToByte(0), //雾化ADC数值H
+                        Convert.ToByte(0), //回路加热PWM数值L
+                        Convert.ToByte(0), //回路加热PWM数值H
+                        Convert.ToByte(0), //回路加热ADC数值L
+                        Convert.ToByte(0), //回路加热ADC数值H
+                        Convert.ToByte(0), //加热盘加热PWM数值L
+                        Convert.ToByte(0), //加热盘加热PWM数值H
+                        Convert.ToByte(0), //加热盘加热ADC数值L
+                        Convert.ToByte(0), //加热盘加热ADC数值H
+                        Convert.ToByte(0), //主马达驱动数值L
+                        Convert.ToByte(0), //主马达驱动数值H
+                        Convert.ToByte(0), //主马达转数数值L
+                        Convert.ToByte(0), //主马达转数数值H
+                        Convert.ToByte(0), //压力传感器ADC值L
+                        Convert.ToByte(0), //压力传感器ADC值H
+                        Convert.ToByte(0), //水位传感器HADC值L
+                        Convert.ToByte(0), //水位传感器HADC值H
+                        Convert.ToByte(0), //水位传感器LADC值L
+                        Convert.ToByte(0), //水位传感器LADC值H
+                        Convert.ToByte(0), //散热风扇驱动数值L
+                        Convert.ToByte(0), //散热风扇驱动数值H
+                        Convert.ToByte(0), //散热风扇转速数值L
+                        Convert.ToByte(0), //散热风扇转速数值H
+                        Convert.ToByte(0), //保留0
+                        Convert.ToByte(0), //保留1
+                        Convert.ToByte(0), //保留2
+                        Convert.ToByte(0), //保留3
+                        Convert.ToByte(0), //保留4
+                        Convert.ToByte(0), //保留5
+                        Convert.ToByte(0), //保留6
+                        Convert.ToByte(0), //保留7
+                        Convert.ToByte(0), //保留8
+                        Convert.ToByte(0), //保留9
+                        Convert.ToByte(30), //
+                        Convert.ToByte(89), //
+                        #endregion
+                    };
+                    bw.Write(bt, 0, 64);
+                }
                 bw.Close();
                 fs.Close();
             }
@@ -3666,6 +3780,7 @@ namespace BreathingMachine
                 alarmHead.MACHINETYPE = (Convert.ToChar(0x06)+"VUN001").PadRight(16, '0');
                 alarmHead.SN = (Convert.ToChar(0x09)+"1700002342").PadRight(16, '0');
                 alarmHead.SOFTWAR_VER = ("" + Convert.ToChar(0x03) + Convert.ToChar(0x01) + Convert.ToChar(0x01) + Convert.ToChar(0x01)).PadRight(16, '0');
+                //alarmHead.SOFTWAR_VER = ("" + Convert.ToChar(0x03) + "111").PadRight(16, '0');    
                 alarmHead.RESERVE_0 = "".PadRight(16, '0');
                 alarmHead.RESERVE_1 = "".PadRight(16, '0');
                 alarmHead.RESERVE_2 = "".PadRight(16, '0');
@@ -3686,42 +3801,42 @@ namespace BreathingMachine
                 Random rnd = new Random();
                 //写入信息体
                 #region
-                //int m = 0;
-                //bool bflag_runMode = false;
-                //for (int j = 0; j < 100000; j++)
-                //{
-                //    //int runMode = 0;
-                //    m++;
-                //    if (m == 30)
-                //    {
-                //        //runMode = 1;
-                //        m = 0;
-                //        bflag_runMode = !bflag_runMode;
-                //    }
-                //    DateTime tmp = tmBegin.AddMinutes(10 * j);
+                int m = 0;
+                bool bflag_runMode = false;
+                for (int j = 0; j < 100000; j++)
+                {
+                    //int runMode = 0;
+                    m++;
+                    if (m == 30)
+                    {
+                        //runMode = 1;
+                        m = 0;
+                        bflag_runMode = !bflag_runMode;
+                    }
+                    DateTime tmp = tmBegin.AddMinutes(10 * j);
 
-                //    byte[] bt = new byte[16]{
-                //    #region
-                //        Convert.ToByte(tmp.Year/100),
-                //        Convert.ToByte(tmp.Year%100),
-                //        Convert.ToByte(tmp.Month),
-                //        Convert.ToByte(tmp.Day),
-                //        Convert.ToByte(tmp.Hour),
-                //        Convert.ToByte(tmp.Minute),
-                //        Convert.ToByte(tmp.Second),
-                //        Convert.ToByte(Convert.ToInt32(bflag_runMode)),
-                //        Convert.ToByte(rnd.Next(0,30)), //报警代码
-                //        Convert.ToByte(rnd.Next(0,100)), //报警数据L
-                //        Convert.ToByte(rnd.Next(0,100)), //报警数据H
-                //        Convert.ToByte(0), //保留1
-                //        Convert.ToByte(0), //保留2
-                //        Convert.ToByte(0), //保留3
-                //        Convert.ToByte(12), //checksum1
-                //        Convert.ToByte(23), //checksum2
-                //        #endregion
-                //    };
-                //    bw.Write(bt, 0, 16);
-                //}
+                    byte[] bt = new byte[16]{
+                    #region
+                        Convert.ToByte(tmp.Year/100),
+                        Convert.ToByte(tmp.Year%100),
+                        Convert.ToByte(tmp.Month),
+                        Convert.ToByte(tmp.Day),
+                        Convert.ToByte(tmp.Hour),
+                        Convert.ToByte(tmp.Minute),
+                        Convert.ToByte(tmp.Second),
+                        Convert.ToByte(Convert.ToInt32(bflag_runMode)),
+                        Convert.ToByte(rnd.Next(0,30)), //报警代码
+                        Convert.ToByte(rnd.Next(0,100)), //报警数据L
+                        Convert.ToByte(rnd.Next(0,100)), //报警数据H
+                        Convert.ToByte(0), //保留1
+                        Convert.ToByte(0), //保留2
+                        Convert.ToByte(0), //保留3
+                        Convert.ToByte(12), //checksum1
+                        Convert.ToByte(23), //checksum2
+                        #endregion
+                    };
+                    bw.Write(bt, 0, 16);
+                }
                 #endregion
                 bw.Close();
                 fs.Close();
@@ -3800,7 +3915,7 @@ namespace BreathingMachine
                     //如果只有报警信息头
                     FileMngr.m_DateTime_min = DateTime.Now;
                     FileMngr.m_DateTime_max = DateTime.Now;
-                    MessageBox.Show("No alarm information in alarm file!");
+                    MessageBox.Show(LanguageMngr.no_data_info_in_alarm_file());
                 }
                 else
                 {
