@@ -157,6 +157,9 @@ namespace BreathingMachine
                             wd.data_fan_driver_H = Convert.ToString(workDataMsg.DATA_FAN_DRIVER_H);
                             wd.data_fan_speed_L = Convert.ToString(workDataMsg.DATA_FAN_SPEED_L);
                             wd.data_fan_speed_H = Convert.ToString(workDataMsg.DATA_FAN_SPEED_H);
+                            wd.data_main_motor_tmp_ADC_L = Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_TMP_ADC_L);  //新增
+                            wd.data_main_motor_tmp_ADC_H = Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_TMP_ADC_H);
+                            wd.data_dewpoint_tmp = Convert.ToString(workDataMsg.DATA_DEWPOINT_TMP);
                             #endregion
 
                             #endregion
@@ -292,7 +295,8 @@ namespace BreathingMachine
                                                         Convert.ToString(workDataMsg.DATA_PATIENT_TEMP),
                                                         Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP),
                                                         Convert.ToString(workDataMsg.DATA_FLOW),
-                                                        Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION));
+                                                        Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION),
+                                                        Convert.ToString(workDataMsg.DATA_DEWPOINT_TMP));
 
                             WorkDataList.m_WorkData_Basic_List.Add(wd);
                             i++;

@@ -1251,6 +1251,22 @@ namespace BreathingMachine
             }
         }
 
+        public String data_dewpoint_tmp()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "露点温度";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "Dewpoint Temperature";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
         public  String data_Oxy_concentration()
         {
             if (m_language == LANGUAGE.CHINA)
@@ -1868,6 +1884,39 @@ namespace BreathingMachine
                 return "";
             }
         }
+
+        public String data_main_motor_tmp_ADC_L()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "主马达温度ADC值L";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "Main motor tmp value L";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        public String data_main_motor_tmp_ADC_H()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "主马达温度ADC值H";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "Main motor tmp value H";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
         public String atomization()
         {
             if (m_language == LANGUAGE.CHINA)
@@ -1903,7 +1952,8 @@ namespace BreathingMachine
         {
             if (m_language == LANGUAGE.CHINA)
             {
-                return "患者端超温";
+                //return "患者端超温";
+                return "超温";
             }
             else if (m_language == LANGUAGE.ENGLISH)
             {
@@ -1923,7 +1973,8 @@ namespace BreathingMachine
             }
             else if (m_language == LANGUAGE.ENGLISH)
             {
-                return "Power off";
+               // return "Power off";
+                return "Power Out";
             }
             else
             {
@@ -1936,11 +1987,12 @@ namespace BreathingMachine
         {
             if (m_language == LANGUAGE.CHINA)
             {
-                return "罐子未安装";
+                //return "罐子未安装";
+                return "检查水罐"; 
             }
             else if (m_language == LANGUAGE.ENGLISH)
             {
-                return "Check chamber";
+                return "Check Chamber";
             }
             else
             {
@@ -1957,7 +2009,8 @@ namespace BreathingMachine
             }
             else if (m_language == LANGUAGE.ENGLISH)
             {
-                return "Change water bag";
+                //return "Change water bag";
+                return "Lack of water";
             }
             else
             {
@@ -1966,16 +2019,18 @@ namespace BreathingMachine
         }
 
 
-        //温度数据线未安装好
+        //温度探头未安装
         public String check_temp_probe()
         {
             if (m_language == LANGUAGE.CHINA)
             {
-                return "连接数据";
+                //return "连接数据";
+                return "温度探头未安装";
             }
             else if (m_language == LANGUAGE.ENGLISH)
             {
-                return "Check temp.probe";
+                //return "Check temp.probe";
+                return "Temp. Probe uninstalled";
             }
             else
             {
@@ -1983,16 +2038,18 @@ namespace BreathingMachine
             }
         }
 
-        //加热回路未安装好
+        //管路未安装
         public String check_tube()
         {
             if (m_language == LANGUAGE.CHINA)
             {
-                return "连接发热线";
+                //return "连接发热线";
+                return "管路未安装";
             }
             else if (m_language == LANGUAGE.ENGLISH)
             {
-                return "Check tube";
+                //return "Check tube";
+                return "Tube uninstalled";
             }
             else
             {
@@ -2000,16 +2057,34 @@ namespace BreathingMachine
             }
         }
 
+        //管路不匹配
+        public String tube_not_match()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "管路不匹配";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "CTube not match";
+            }
+            else
+            {
+                return "";
+            }
+        }
         //堵塞
         public String check_blockages()
         {
             if (m_language == LANGUAGE.CHINA)
             {
-                return "堵塞";
+                //return "堵塞";
+                return "检查堵塞";
             }
             else if (m_language == LANGUAGE.ENGLISH)
             {
-                return "Check blockages";
+                //return "Check blockages";
+                return "Check for blockages";
             }
             else
             {
@@ -2026,7 +2101,8 @@ namespace BreathingMachine
             }
             else if (m_language == LANGUAGE.ENGLISH)
             {
-                return "High O2";
+                //return "High O2";
+                return "Oxygen too high";
             }
             else
             {
@@ -2043,7 +2119,8 @@ namespace BreathingMachine
             }
             else if (m_language == LANGUAGE.ENGLISH)
             {
-                return "Low O2";
+                //return "Low O2";
+                return "Oxygen too low";
             }
             else
             {
@@ -2051,16 +2128,18 @@ namespace BreathingMachine
             }
         }
 
-         //达不到设定流量
+        //流量超范围
         public String flow_overrange()
         {
             if (m_language == LANGUAGE.CHINA)
             {
-                return "达不到设定流量";
+                //return "达不到设定流量";
+                return "流量超范围";
             }
             else if (m_language == LANGUAGE.ENGLISH)
             {
-                return "Flow overrange";
+                //return "Flow overrange";
+                return "Flow over range";
             }
             else
             {
@@ -2068,16 +2147,18 @@ namespace BreathingMachine
             }
         }
 
-         //达不到设定温度
+        //温度超范围
         public String temp_overrange()
         {
             if (m_language == LANGUAGE.CHINA)
             {
-                return "温度达不到设定值";
+                //return "温度达不到设定值";
+                return "温度超范围";
             }
             else if (m_language == LANGUAGE.ENGLISH)
             {
-                return "Temp.overrange";
+                //return "Temp.overrange";
+                return "Tempe. Over Range";
             }
             else
             {
@@ -2085,21 +2166,196 @@ namespace BreathingMachine
             }
         }
 
-        public String system_failure()
+        //温度探头脱落
+        public String prob_out()
         {
             if (m_language == LANGUAGE.CHINA)
             {
-                return "系统错误";
+                return "温度探头脱落";
             }
             else if (m_language == LANGUAGE.ENGLISH)
             {
-                return "System failure";
+                return "Tem.Probe Out";
             }
             else
             {
                 return "";
             }
         }
+
+        //SD卡未安装
+        public String sdCard_not_install()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "SD卡未安装";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "SD Card Uninstalled";
+            }
+            else
+            {
+                return "";
+            }
+        }
+   
+        //系统故障E1---氧浓度传感器故障
+        public String system_failure_E1()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "系统故障E1";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "System failure E1";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        //系统故障E2---流量传感器故障
+        public String system_failure_E2()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "系统故障E2";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "System failure E2";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+
+        //系统故障E3---环境温度传感器故障
+        public String system_failure_E3()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "系统故障E3";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "System failure E3";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+
+        //系统故障E4---加热盘温度传感器故障
+        public String system_failure_E4()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "系统故障E4";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "System failure E4";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        //系统故障E5---散热风扇故障
+        public String system_failure_E5()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "系统故障E5";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "System failure E5";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        //系统故障E6---主风机过热故障
+        public String system_failure_E6()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "系统故障E6";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "System failure E6";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        ////系统故障E7---散热器温度传感器故障(仅VUN-002)
+        //public String system_failure_E7()
+        //{
+        //    if (m_language == LANGUAGE.CHINA)
+        //    {
+        //        return "系统故障E7";
+        //    }
+        //    else if (m_language == LANGUAGE.ENGLISH)
+        //    {
+        //        return "System failure E7";
+        //    }
+        //    else
+        //    {
+        //        return "";
+        //    }
+        //}
+
+
+        //系统故障E7---温控开关开路
+        public String system_failure_E7()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "系统故障E7";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "System failure E7";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        //系统故障E8---发热盘开路
+        public String system_failure_E8()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "系统故障E8";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "System failure E8";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
 
         public String oxy_concentration_sensor_fault()
         {
@@ -2458,6 +2714,23 @@ namespace BreathingMachine
                 return "";
             }
         }
+
+        public String title_dewpoint_tmp()
+        {
+            if (m_language == LANGUAGE.CHINA)
+            {
+                return "露点温度：";
+            }
+            else if (m_language == LANGUAGE.ENGLISH)
+            {
+                return "Dewpoint Temperature:";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
         public String soft_ver_in_menu()
         {
             if (m_language == LANGUAGE.CHINA)

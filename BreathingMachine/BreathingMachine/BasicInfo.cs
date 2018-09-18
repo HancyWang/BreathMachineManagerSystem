@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace BreathingMachine
 {
     //全部的工作信息
+
     public struct WorkData
     {
         //构造函数
@@ -31,7 +32,7 @@ namespace BreathingMachine
             string dataoxyconcentration,
             string dataairpressure,
             string datalooptype,
-            string datafaultstates0,
+            string datafaultstates0,  //故障状态位bit0-bit7,bit0-bit3
             string datafaultstates1,
             string datafaultstates2,
             string datafaultstates3,
@@ -68,7 +69,10 @@ namespace BreathingMachine
             string datafandriverL,
             string datafandriverH,
             string datafanspeedL,
-            string datafanspeedH
+            string datafanspeedH,
+            string dataMainMotorTmpADCL,  //2018/7/20,这两个遗漏了，补上
+            string dataMainMotorTmpADCH,
+            string dataDewpointTmp       //2018/7/20，新增露点温度
         #endregion
                 )
         {
@@ -131,6 +135,9 @@ namespace BreathingMachine
             data_fan_driver_H = datafandriverH;
             data_fan_speed_L = datafanspeedL;
             data_fan_speed_H = datafanspeedH;
+            data_main_motor_tmp_ADC_L = dataMainMotorTmpADCL; //2018/7/20,这两个遗漏了，补上
+            data_main_motor_tmp_ADC_H = dataMainMotorTmpADCH;
+            data_dewpoint_tmp = dataDewpointTmp;  //2018/7/20，新增露点温度
             #endregion
         }
 
@@ -193,6 +200,9 @@ namespace BreathingMachine
         public string data_fan_driver_H;
         public string data_fan_speed_L;
         public string data_fan_speed_H;
+        public string data_main_motor_tmp_ADC_L;   //2018/7/20,这两个遗漏了，补上
+        public string data_main_motor_tmp_ADC_H;
+        public string data_dewpoint_tmp;           //2018/7/20，新增露点温度
         #endregion
     }
 
@@ -200,7 +210,7 @@ namespace BreathingMachine
     public struct WorkData_Basic
     {
         public WorkData_Basic(string no,string time,string setmode,string setAdaultOrChild,
-            string dataPatientTmp,string dataAirOutletTmp,string dataFlow,string dataOxyConcentration)
+            string dataPatientTmp,string dataAirOutletTmp,string dataFlow,string dataOxyConcentration,string dewpointTmp)
         {
             No=no;
             tm=time;
@@ -209,7 +219,9 @@ namespace BreathingMachine
             data_patient_tmp = dataPatientTmp;
             data_air_outlet_tmp = dataAirOutletTmp;
             data_flow = dataFlow;
-            data_oxy_concentration = dataOxyConcentration; 
+            data_oxy_concentration = dataOxyConcentration;
+            data_dewpoint_tmp = dewpointTmp;  //  2018/7/20新增露点温度
+
         }
             
         #region
@@ -221,6 +233,7 @@ namespace BreathingMachine
         public string data_air_outlet_tmp;
         public string data_flow;
         public string data_oxy_concentration;
+        public string data_dewpoint_tmp; //  2018/7/20新增露点温度
         #endregion
     }
 
@@ -231,6 +244,7 @@ namespace BreathingMachine
         public int air_outlet_tmp;
         public int flow;
         public int oxy_concentration;
+        public int dewpoint_tmp;  //  2018/7/20新增露点温度
     }
 
     public struct CHART_SIZE
@@ -244,7 +258,8 @@ namespace BreathingMachine
         PATIENT_TMP,
         AIR_OUTLET_TMP,
         FLOW,
-        OXY_CONCENTRATION
+        OXY_CONCENTRATION,
+        DEWPOINT_TMP
     }
 
     public class BasicInfo
@@ -257,7 +272,6 @@ namespace BreathingMachine
 
     public partial class NativeConstants
     {
-
         /// ALARM_MSG_LEN -> 16
         public const int ALARM_MSG_LEN = 16;
 
@@ -385,6 +399,7 @@ namespace BreathingMachine
         CHINA,
 
         ENGLISH,
+        
 
         JAPAN,
     }
@@ -741,6 +756,15 @@ namespace BreathingMachine
         public byte DATA_FAN_SPEED_H;
 
         /// char
+        public byte DATA_MAIN_MOTOR_TMP_ADC_L;   //  2018/7/20补上遗漏的
+
+        /// char
+        public byte DATA_MAIN_MOTOR_TMP_ADC_H;
+
+        /// char
+        public byte DATA_DEWPOINT_TMP;  //  2018/7/20新增露点温度
+
+        /// char
         public byte RESERVE_0;
 
         /// char
@@ -760,15 +784,6 @@ namespace BreathingMachine
 
         /// char
         public byte RESERVE_6;
-
-        /// char
-        public byte RESERVE_7;
-
-        /// char
-        public byte RESERVE_8;
-
-        /// char
-        public byte RESERVE_9;
 
         /// char
         public byte CHECKSUM_L;

@@ -168,6 +168,7 @@ namespace BreathingMachine
             ShowChartByType(tmEnd, duration, CHARTTYPE.AIR_OUTLET_TMP);
             ShowChartByType(tmEnd, duration, CHARTTYPE.FLOW);
             ShowChartByType(tmEnd, duration, CHARTTYPE.OXY_CONCENTRATION);
+            ShowChartByType(tmEnd, duration, CHARTTYPE.DEWPOINT_TMP);
         }
         public static byte Filte0xFF(byte bt)
         {
@@ -225,6 +226,7 @@ namespace BreathingMachine
                         info.air_outlet_tmp = Convert.ToInt32(Filte0xFF(workDataMsg.DATA_AIR_OUTLET_TEMP));
                         info.flow = Convert.ToInt32(Filte0xFF(workDataMsg.DATA_FLOW));
                         info.oxy_concentration = Convert.ToInt32(Filte0xFF(workDataMsg.DATA_OXYGEN_CONCENTRATION));
+                        info.dewpoint_tmp = Convert.ToInt32(Filte0xFF(workDataMsg.DATA_DEWPOINT_TMP));  // 2018/7/10新增
 
                         DataMngr.m_listInfo.Add(info);
                     }
@@ -280,6 +282,9 @@ namespace BreathingMachine
                     case CHARTTYPE.OXY_CONCENTRATION:
                         table1.Rows.Add(Convert.ToDateTime(tm_prev), 0);
                         break;
+                    case CHARTTYPE.DEWPOINT_TMP:                               // 2018/7/20新增
+                        table1.Rows.Add(Convert.ToDateTime(tm_prev), 0);
+                        break;
                     default:
                         //MessageBox.Show("Unkonw chart type in common_series!");
                         break;
@@ -312,6 +317,9 @@ namespace BreathingMachine
                             break;
                         case CHARTTYPE.OXY_CONCENTRATION:
                             table1.Rows.Add(Convert.ToDateTime(tm_prev), Convert.ToInt32(DataMngr.m_listInfo[i].oxy_concentration));
+                            break;
+                        case CHARTTYPE.DEWPOINT_TMP:                               // 2018/7/20新增
+                            table1.Rows.Add(Convert.ToDateTime(tm_prev), Convert.ToInt32(DataMngr.m_listInfo[i].dewpoint_tmp));
                             break;
                         default:
                             //MessageBox.Show("Unkonw chart type in common_series!");
@@ -426,6 +434,25 @@ namespace BreathingMachine
                     chartArea_common = new ChartArea("chartArea_oxyConcentration");
                     series_common.ChartArea = "chartArea_oxyConcentration";
                     break;
+                case CHARTTYPE.DEWPOINT_TMP:                                        //2018/7/20新增
+                    this.chart_dewpoint_tmp.Series.Clear();
+                    this.chart_dewpoint_tmp.ChartAreas.Clear();
+                    this.chart_dewpoint_tmp.Titles.Clear();
+
+                    this.chart_dewpoint_tmp.Location = new Point(0, DataMngr.m_chartSize.Height * 4);
+                    this.chart_dewpoint_tmp.Titles.Add(lang.data_dewpoint_tmp());
+
+                    this.chart_dewpoint_tmp.Width = Convert.ToInt32(duration) * DataMngr.m_chartSize.Width;
+                    this.chart_dewpoint_tmp.Height = DataMngr.m_chartSize.Height;
+                    this.chart_dewpoint_tmp.BorderlineColor = Color.Gray;
+                    this.chart_dewpoint_tmp.BorderlineWidth = 1;
+                    this.chart_dewpoint_tmp.BorderlineDashStyle = ChartDashStyle.Solid;
+
+                    series_common = new Series("dewpointTmp");
+                    chartArea_common = new ChartArea("chartArea_dewpointTmp");
+                    series_common.ChartArea = "chartArea_dewpointTmp";
+
+                    break;
                 default:
                     //MessageBox.Show("Unkonw chart type in common_series!");
                     break;
@@ -486,10 +513,15 @@ namespace BreathingMachine
                 chartArea_common.AxisY.Maximum = 90;
                 chartArea_common.AxisY.Interval = 10;
             }
+            else if(chartType==CHARTTYPE.DEWPOINT_TMP)  // 2018/7/20 新增
+            {
+                chartArea_common.AxisY.Maximum = 80;
+                chartArea_common.AxisY.Interval = 0;
+            }
             else
             {
                 chartArea_common.AxisY.Maximum = 50;
-                chartArea_common.AxisY.Interval = 5;
+                chartArea_common.AxisY.Interval = 0;
             }
 
 
@@ -519,6 +551,12 @@ namespace BreathingMachine
                     this.chart_oxy_concentration.ChartAreas.Add(chartArea_common);
                     this.chart_oxy_concentration.Series.Add(series_common);
                     this.chart_oxy_concentration.Series["oxyConcentration"].Points.DataBind(table1.AsEnumerable(), "时间", "数据", "");
+                    break;
+                case CHARTTYPE.DEWPOINT_TMP:                   // 2018/7/20新增
+                    this.chart_dewpoint_tmp.Legends.Clear();
+                    this.chart_dewpoint_tmp.ChartAreas.Add(chartArea_common);
+                    this.chart_dewpoint_tmp.Series.Add(series_common);
+                    this.chart_dewpoint_tmp.Series["dewpointTmp"].Points.DataBind(table1.AsEnumerable(), "时间", "数据", "");
                     break;
                 default:
                     //MessageBox.Show("Unkonw chart type in common_series!");
@@ -800,35 +838,43 @@ namespace BreathingMachine
         {
             if (bt == 0x00)  //错误0
             {
-                return "H001";   //0000,0001
+                //return "H001";   //0000,0001
+                return "E1";
             }
             else if (bt == 0x01) //错误1
             {
-                return "H002";  //0000,0010
+                //return "H002";  //0000,0010
+                return "E2";
             }
             else if (bt == 0x02) //错误2
             {
-                return "H004";  //0000,0100
+                //return "H004";  //0000,0100
+                return "E3";
             }
             else if (bt == 0x03) //错误3
             {
-                return "H008";  //0000,1000
+                //return "H008";  //0000,1000
+                return "E4";
             }
             else if (bt == 0x04) //错误4
             {
-                return "H010";  //0001,0000
+                //return "H010";  //0001,0000
+                return "E5";
             }
             else if (bt == 0x05) //错误5
             {
-                return "H020";  //0010,0000
+                //return "H020";  //0010,0000
+                return "E6";
             }
             else if (bt == 0x06) //错误6
             {
-                return "H040";  //0100,0000
+                //return "H040";  //0100,0000
+                return "E7";
             }
             else if (bt == 0x07) //错误7
             {
-                return "H080";  //1000,0000
+                //return "H080";  //1000,0000
+                return "E8";
             }
             else
             {
@@ -1145,6 +1191,21 @@ namespace BreathingMachine
             }
             this.chart_oxy_concentration.BorderlineColor = Color.White;
 
+            //露点温度
+            if (this.chart_dewpoint_tmp.Titles != null)     //2018/7/20新增
+            {
+                this.chart_dewpoint_tmp.Titles.Clear();
+            }
+            if (this.chart_dewpoint_tmp.Series != null)
+            {
+                this.chart_dewpoint_tmp.Series.Clear();
+            }
+            if (this.chart_dewpoint_tmp.ChartAreas != null)
+            {
+                this.chart_dewpoint_tmp.ChartAreas.Clear();
+            }
+            this.chart_dewpoint_tmp.BorderlineColor = Color.White;
+
             //this.chart_patientTmp.Location = new Point(0, 0);
             //this.chart_air_outlet_tmp.Location = new Point(0, DataMngr.m_chartSize.Height);
             //this.chart_flow.Location=new Point(0, DataMngr.m_chartSize.Height*2);
@@ -1436,7 +1497,7 @@ namespace BreathingMachine
                     //                + "出气口温度" + ","+ "流量" + ","+ "氧浓度");
                     sw_workData.WriteLine("No." + "," + lang.date() + "," + lang.running_mode()+ ","
                                     + lang.set_adault_or_child() + "," + lang.data_patient_tmp() + ","
-                                    + lang.data_air_outlet_tmp() + "," + lang.data_flow()+ "," + lang.data_Oxy_concentration());
+                                    + lang.data_air_outlet_tmp() + "," + lang.data_flow()+ "," + lang.data_Oxy_concentration()+","+lang.data_dewpoint_tmp());  //2018/7/20新增露点温度
                 }
                 else
                 {
@@ -1446,7 +1507,7 @@ namespace BreathingMachine
                     //                + "出气口温度" + ","+ "流量" + ","+ "氧浓度");
                     sw_workData.WriteLine("No." + "," + lang.date()  + ","
                                     + lang.set_adault_or_child() + "," + lang.data_patient_tmp() + ","
-                                    + lang.data_air_outlet_tmp() + "," + lang.data_flow() + "," + lang.data_Oxy_concentration());
+                                    + lang.data_air_outlet_tmp() + "," + lang.data_flow() + "," + lang.data_Oxy_concentration() +","+ lang.data_dewpoint_tmp()); //2018/7/20新增露点温度
                 }
                 #endregion
             }
@@ -1576,7 +1637,11 @@ namespace BreathingMachine
                                         + lang.data_fan_driver_L() + ","
                                         + lang.data_fan_driver_H() + ","
                                         + lang.data_fan_speed_L() + ","
-                                        + lang.data_fan_speed_H());
+                                        + lang.data_fan_speed_H()+","
+                                        + lang.data_main_motor_tmp_ADC_L() + ","     //2018/7/20补上遗漏的
+                                        + lang.data_main_motor_tmp_ADC_H() + ","
+                                        + lang.data_dewpoint_tmp()                   //2018/7/20新增露点温度
+                                        );
                         #endregion
                     }
                     else
@@ -1699,7 +1764,11 @@ namespace BreathingMachine
                                         + lang.data_fan_driver_L() + ","
                                         + lang.data_fan_driver_H() + ","
                                         + lang.data_fan_speed_L() + ","
-                                        + lang.data_fan_speed_H());
+                                        + lang.data_fan_speed_H()+","
+                                         + lang.data_main_motor_tmp_ADC_L() + ","     //2018/7/20补上遗漏的
+                                        + lang.data_main_motor_tmp_ADC_H() + ","
+                                        + lang.data_dewpoint_tmp()                   //2018/7/20新增露点温度
+                                        );
                         #endregion
                     }
                     
@@ -1774,7 +1843,8 @@ namespace BreathingMachine
                                         + lang.data_fault_statue9() + ","
                                         + lang.data_fault_statue10() + ","
                                         + lang.data_fault_statue11() + ","
-                                        + lang.data_fault_statue12());
+                                        + lang.data_fault_statue12()                 //2018/7/20新增露点温度
+                                        );
                         #endregion
                     }
                     else
@@ -1844,7 +1914,8 @@ namespace BreathingMachine
                                         + lang.data_fault_statue9() + ","
                                         + lang.data_fault_statue10() + ","
                                         + lang.data_fault_statue11() + ","
-                                        + lang.data_fault_statue12());
+                                        + lang.data_fault_statue12()   
+                                        );
                         #endregion
                     }
                 }
@@ -1998,7 +2069,11 @@ namespace BreathingMachine
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_DRIVER_L)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_DRIVER_H)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_SPEED_L)) + ","
-                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_SPEED_H));
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_SPEED_H)+","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_TMP_ADC_L)) + ","  //新增
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_TMP_ADC_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_DEWPOINT_TMP))
+                                             );
                                      #endregion
                                  }
                                  else
@@ -2021,7 +2096,7 @@ namespace BreathingMachine
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_DRIVERBOARD_TMP)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_FLOW)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_OXYGEN_CONCENTRATION)) + ","
-                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_OUTLET_TEMP)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_AIR_PRESSURE)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_LOOP_TYPE)) + ","
                                              + (Convert.ToBoolean(faultStates[0]) ? "yes" : "no") + ","
                                              + (Convert.ToBoolean(faultStates[1]) ? "yes" : "no") + ","
@@ -2060,7 +2135,11 @@ namespace BreathingMachine
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_DRIVER_L)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_DRIVER_H)) + ","
                                              + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_SPEED_L)) + ","
-                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_SPEED_H));
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_FAN_SPEED_H) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_TMP_ADC_L)) + ","  //新增
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_MAIN_MOTOR_TMP_ADC_H)) + ","
+                                             + Convert.ToString(Convert.ToString(workDataMsg.DATA_DEWPOINT_TMP))
+                                             );
                                      #endregion
                                  }
                              }
@@ -2299,41 +2378,42 @@ namespace BreathingMachine
             else  //高级模式，给工程师看
             {
                 #region
-                this.listView_workData.Columns.Add("No.", 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.date(), 180, HorizontalAlignment.Left);
+                //列头
+                this.listView_workData.Columns.Add("No.", 120, HorizontalAlignment.Left);                        //0
+                this.listView_workData.Columns.Add(lang.date(), 180, HorizontalAlignment.Left);                  //1
                 if (DataMngr.m_machineType == 2)
                 {
-                    this.listView_workData.Columns.Add(lang.running_mode(), 120, HorizontalAlignment.Left);
+                    this.listView_workData.Columns.Add(lang.running_mode(), 120, HorizontalAlignment.Left);      //2   
                 }
-                this.listView_workData.Columns.Add(lang.set_temp(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.set_flow(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.set_high_oxy_alarm(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.set_low_oxy_alarm(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.set_atomiz_level(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.set_atomiz_time(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.set_adault_or_child(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_patient_tmp(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_air_outlet_tmp(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_heating_plate_tmp(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_enviroment_tmp(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_driveboard_tmp(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_flow(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_Oxy_concentration(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_air_pressure(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_loop_type(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_fault_statue1(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_fault_statue2(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_fault_statue3(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_fault_statue4(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_fault_statue5(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_fault_statue6(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_fault_statue7(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_fault_statue8(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_fault_statue9(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_fault_statue10(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_fault_statue11(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_fault_statue12(), 120, HorizontalAlignment.Left);
-                this.listView_workData.Columns.Add(lang.data_atomiz_DAC_L(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.set_temp(), 120, HorizontalAlignment.Left);              //3
+                this.listView_workData.Columns.Add(lang.set_flow(), 120, HorizontalAlignment.Left);              //4
+                this.listView_workData.Columns.Add(lang.set_high_oxy_alarm(), 120, HorizontalAlignment.Left);    //5
+                this.listView_workData.Columns.Add(lang.set_low_oxy_alarm(), 120, HorizontalAlignment.Left);     //6
+                this.listView_workData.Columns.Add(lang.set_atomiz_level(), 120, HorizontalAlignment.Left);      //7
+                this.listView_workData.Columns.Add(lang.set_atomiz_time(), 120, HorizontalAlignment.Left);      //8
+                this.listView_workData.Columns.Add(lang.set_adault_or_child(), 120, HorizontalAlignment.Left);  //9
+                this.listView_workData.Columns.Add(lang.data_patient_tmp(), 120, HorizontalAlignment.Left);     //10
+                this.listView_workData.Columns.Add(lang.data_air_outlet_tmp(), 120, HorizontalAlignment.Left);  //11
+                this.listView_workData.Columns.Add(lang.data_heating_plate_tmp(), 120, HorizontalAlignment.Left);//12
+                this.listView_workData.Columns.Add(lang.data_enviroment_tmp(), 120, HorizontalAlignment.Left);  //13
+                this.listView_workData.Columns.Add(lang.data_driveboard_tmp(), 120, HorizontalAlignment.Left);  //14
+                this.listView_workData.Columns.Add(lang.data_flow(), 120, HorizontalAlignment.Left);            //15
+                this.listView_workData.Columns.Add(lang.data_Oxy_concentration(), 120, HorizontalAlignment.Left);//16
+                this.listView_workData.Columns.Add(lang.data_air_pressure(), 120, HorizontalAlignment.Left);    //17
+                this.listView_workData.Columns.Add(lang.data_loop_type(), 120, HorizontalAlignment.Left);       //18
+                this.listView_workData.Columns.Add(lang.data_fault_statue1(), 120, HorizontalAlignment.Left);   //19
+                this.listView_workData.Columns.Add(lang.data_fault_statue2(), 120, HorizontalAlignment.Left);   //20
+                this.listView_workData.Columns.Add(lang.data_fault_statue3(), 120, HorizontalAlignment.Left);   //21
+                this.listView_workData.Columns.Add(lang.data_fault_statue4(), 120, HorizontalAlignment.Left);   //22
+                this.listView_workData.Columns.Add(lang.data_fault_statue5(), 120, HorizontalAlignment.Left);   //23
+                this.listView_workData.Columns.Add(lang.data_fault_statue6(), 120, HorizontalAlignment.Left);   //24
+                this.listView_workData.Columns.Add(lang.data_fault_statue7(), 120, HorizontalAlignment.Left);   //25
+                this.listView_workData.Columns.Add(lang.data_fault_statue8(), 120, HorizontalAlignment.Left);   //26
+                this.listView_workData.Columns.Add(lang.data_fault_statue9(), 120, HorizontalAlignment.Left);   //27
+                this.listView_workData.Columns.Add(lang.data_fault_statue10(), 120, HorizontalAlignment.Left);  //28
+                this.listView_workData.Columns.Add(lang.data_fault_statue11(), 120, HorizontalAlignment.Left);  //29
+                this.listView_workData.Columns.Add(lang.data_fault_statue12(), 120, HorizontalAlignment.Left); //30
+                this.listView_workData.Columns.Add(lang.data_atomiz_DAC_L(), 120, HorizontalAlignment.Left);   //31
                 this.listView_workData.Columns.Add(lang.data_atomiz_DAC_H(), 120, HorizontalAlignment.Left);
                 this.listView_workData.Columns.Add(lang.data_atomiz_ADC_L(), 120, HorizontalAlignment.Left);
                 this.listView_workData.Columns.Add(lang.data_atomiz_ADC_L(), 120, HorizontalAlignment.Left);
@@ -2359,7 +2439,11 @@ namespace BreathingMachine
                 this.listView_workData.Columns.Add(lang.data_fan_driver_H(), 120, HorizontalAlignment.Left);
                 this.listView_workData.Columns.Add(lang.data_fan_speed_L(), 120, HorizontalAlignment.Left);
                 this.listView_workData.Columns.Add(lang.data_fan_speed_H(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_main_motor_tmp_ADC_L(), 120, HorizontalAlignment.Left);  //新增的3列
+                this.listView_workData.Columns.Add(lang.data_main_motor_tmp_ADC_H(), 120, HorizontalAlignment.Left);
+                this.listView_workData.Columns.Add(lang.data_dewpoint_tmp(), 120, HorizontalAlignment.Left);
                 #endregion
+                //控制列表显示多少项
                 if(DataMngr.m_advanceMode)
                 {
                     int start;
@@ -2367,12 +2451,12 @@ namespace BreathingMachine
                     if (DataMngr.m_machineType == 2)
                     {
                         start = 31;
-                        end = 56;
+                        end = 56+3;  //3，表示增加了3列
                     }
                     else 
                     {
                         start = 30;
-                        end = 55;
+                        end = 55+3;
                     }
                     for (int i = start; i <= end; i++)
                     {
@@ -2418,7 +2502,7 @@ namespace BreathingMachine
 
 
             //初始化高级模式！！！
-            DataMngr.m_advanceMode = false;  //默认开启高级模式，这里以后用户使用的话，改成false
+            DataMngr.m_advanceMode = true;  //默认开启高级模式，这里以后用户使用的话，改成false
             if (DataMngr.m_advanceMode==false)
             {
                 this.高级模式ToolStripMenuItem.Visible = false;
@@ -2432,12 +2516,16 @@ namespace BreathingMachine
             //this.g_flag_alreadyInEngMode = false;
             //初始化，默认用户模式按钮不能点
             this.用户模式ToolStripMenuItem.Enabled = false;
+
             //初始化语言
-            LanguageMngr.m_language = LANGUAGE.ENGLISH;
             #region
-            //初始化为英文
-            ShowLabelNameByLanguageType(LANGUAGE.ENGLISH);
+            ConfigurMngr mngr = new ConfigurMngr();
+            mngr.LoadCfg();
+            LanguageMngr.m_language = mngr.m_lang;
+            //初始化为客户保留的语言
+            ShowLabelNameByLanguageType(LanguageMngr.m_language);
             #endregion
+
 
             //初始化基本信息中的各个参数值,都为空
             #region
@@ -2782,6 +2870,17 @@ namespace BreathingMachine
                     lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_fan_driver_H);
                     lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_fan_speed_L);
                     lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_fan_speed_H);
+                    lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_main_motor_tmp_ADC_L);   //2018/7/20 补上遗漏的
+                    lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_main_motor_tmp_ADC_H);
+                    //露点温度
+                    if (WorkDataList.m_WorkData_List[i].data_dewpoint_tmp == Convert.ToString(255))
+                    {
+                        lvi.SubItems.Add(@"/");
+                    }
+                    else
+                    {
+                        lvi.SubItems.Add(WorkDataList.m_WorkData_List[i].data_dewpoint_tmp);     // 2018/7/20新增
+                    }
                     #endregion
                 }
                 else
@@ -2832,6 +2931,15 @@ namespace BreathingMachine
                     else
                     {
                         lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].data_oxy_concentration);
+                    }
+                    //露点温度
+                    if (WorkDataList.m_WorkData_Basic_List[i].data_dewpoint_tmp == "255")
+                    {
+                        lvi.SubItems.Add(@"/");
+                    }
+                    else
+                    {
+                        lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].data_dewpoint_tmp);   // 2018/7/20 新增
                     }
                     //lvi.SubItems.Add(WorkDataList.m_WorkData_Basic_List[i].data_oxy_concentration);
                     #endregion
@@ -3464,12 +3572,52 @@ namespace BreathingMachine
             this.chart_oxy_concentration.Height = old_height;
             #endregion
 
+            //增加空行，为了排版好看
+            document.Add(nullp);         // 2018/7/20新增
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+            document.Add(nullp);
+
+            //图表: 露点温度                  // 2018/7/20新增
+            #region
+            strContent = lang.title_dewpoint_tmp();
+            line = new Paragraph(strContent, fonttitle2);
+            document.Add(line);
+            document.Add(nullp);
+
+            string dewpointTmp_image = Environment.CurrentDirectory + "\\" + "dewpointTmp.png";
+            //先获取原图的宽和高
+            old_width = this.chart_dewpoint_tmp.Width;
+            old_height = this.chart_dewpoint_tmp.Height;
+            //设置保存成图片是的宽和高
+            this.chart_dewpoint_tmp.Width = chart_Width_inPDF;
+            this.chart_dewpoint_tmp.Height = chart_Height_inPDF;
+            this.chart_dewpoint_tmp.SaveImage(dewpointTmp_image, ChartImageFormat.Png);
+            png = iTextSharp.text.Image.GetInstance(dewpointTmp_image);
+            document.Add(png);
+            //还原chart的原来宽和高
+            this.chart_dewpoint_tmp.Width = old_width;
+            this.chart_dewpoint_tmp.Height = old_height;
+            #endregion
+
+
             //删除照片
             File.Delete(workDataChart_image);
             File.Delete(patientTmp_image);
             File.Delete(airOutLetTmp_image);
             File.Delete(flow_image);
             File.Delete(oxyConcentration_image);
+            File.Delete(dewpointTmp_image);              // 2018/7/20 新增
 
             document.Close();
             fs.Close();
@@ -3527,7 +3675,7 @@ namespace BreathingMachine
 
         private void 显示所有数据ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+         
             if (FileMngr.m_dirPath == null || !DataMngr.m_bDateTimePicker_ValueChanged)
             {
                 显示所有数据ToolStripMenuItem.CheckState = CheckState.Unchecked;
@@ -3540,7 +3688,7 @@ namespace BreathingMachine
                 if (DataMngr.m_machineType == 2)
                 {
                     //VNU002的时候有56列，这里将31~56列全部显示出来
-                    for (int i = 31; i <= 56; i++)
+                    for (int i = 31; i <= 56+3; i++)
                     {
                         this.listView_workData.Columns[i].Width = 150;
                     }
@@ -3548,7 +3696,7 @@ namespace BreathingMachine
                 else if (DataMngr.m_machineType == 1)
                 {
                     //VNU001的时候有55列，这里将30~56列全部显示出来
-                    for (int i = 30; i <= 55; i++)
+                    for (int i = 30; i <= 55+3; i++)
                     {
                         this.listView_workData.Columns[i].Width = 150;
                     }
@@ -3563,7 +3711,7 @@ namespace BreathingMachine
                 if (DataMngr.m_machineType == 2)
                 {
                     //VNU002的时候有56列，这里将31~56列全部显示出来
-                    for (int i = 31; i <= 56; i++)
+                    for (int i = 31; i <= 56+3; i++)
                     {
                         this.listView_workData.Columns[i].Width = 0;
                     }
@@ -3571,7 +3719,7 @@ namespace BreathingMachine
                 else if (DataMngr.m_machineType == 1)
                 {
                     //VNU001的时候有55列，这里将30~56列全部显示出来
-                    for (int i = 30; i <= 55; i++)
+                    for (int i = 30; i <= 55+3; i++)
                     {
                         this.listView_workData.Columns[i].Width = 0;
                     }
@@ -3602,7 +3750,76 @@ namespace BreathingMachine
 
         }
 
-      
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ConfigurMngr mngr = new ConfigurMngr();
+            mngr.SaveCfg(LanguageMngr.m_language);
+        }
+
+        private void Form1_FormClosing_1(object sender, FormClosingEventArgs e)
+        {
+            ConfigurMngr mngr = new ConfigurMngr();
+            mngr.SaveCfg(LanguageMngr.m_language);
+        }
+    }
+
+    public class ConfigurMngr 
+    {
+        public LANGUAGE m_lang;
+        public String m_cfgfilePath;
+
+        public ConfigurMngr()
+        {
+            m_cfgfilePath = Environment.CurrentDirectory + @"\Config.bin";
+        }
+
+        public ConfigurMngr(LANGUAGE lang)
+        {
+            m_cfgfilePath = Environment.CurrentDirectory + @"\Config.bin";
+            m_lang = lang;
+        }
+
+        public LANGUAGE GetLangure()
+        {
+            return m_lang;
+        }
+
+        public void LoadCfg()
+        {
+            if (File.Exists(m_cfgfilePath))
+            {
+                FileStream fs = new FileStream(m_cfgfilePath, FileMode.Open);
+                BinaryReader br = new BinaryReader(fs, Encoding.ASCII);
+
+                byte[] bt = new byte[1];
+                while (br.Read(bt, 0, 1) > 0)
+                {
+                    m_lang = (LANGUAGE)(bt[0]);
+                }
+
+                fs.Close();
+                br.Close();
+            }
+            else
+            {
+                m_lang = LANGUAGE.ENGLISH;   //不存cfg文件，就创建一个,默认为英文
+                SaveCfg(LANGUAGE.ENGLISH);
+            }
+        }
+        public void SaveCfg(LANGUAGE lang)
+        {
+            m_lang = lang;
+            FileStream fs = new FileStream(m_cfgfilePath, FileMode.Create);
+            BinaryWriter bw = new BinaryWriter(fs, Encoding.ASCII);
+
+            //Int32 bt = (Int32)(m_lang);
+            //MessageBox.Show(bt.ToString());
+            bw.Write(Convert.ToByte((Int32)m_lang));
+
+            bw.Close();
+            fs.Close();
+        }
+        
     }
     public class FileMngr
     {
@@ -4326,64 +4543,73 @@ namespace BreathingMachine
             switch (nCode)
             {
                 case 0:
-                    str = lang.system_failure();
+                    str = lang.system_failure_E1();
                     break;
                 case 1:
-                    str = lang.system_failure();
+                    str = lang.system_failure_E2();
                     break;
                 case 2:
-                    str = lang.system_failure();
+                    str = lang.system_failure_E3();
                     break;
                 case 3:
-                    str = lang.system_failure();
+                    str = lang.system_failure_E4();
                     break;
                 case 4:
-                    str = lang.system_failure();
+                    str = lang.system_failure_E5();
                     break;
                 case 5:
-                    str = lang.system_failure();
+                    str = lang.system_failure_E6();
                     break;
                 case 6:
-                    str = lang.system_failure();
+                    str = lang.system_failure_E7();
                     break;
-                case 7:
-                    str = lang.system_failure();
-                    break;
-                case 8:
-                    str = lang.system_failure();
-                    break;
+                //case 7:
+                //    str = lang.system_failure();
+                //    break;
+                //case 8:
+                //    str = lang.system_failure();
+                        //break;
                 case 20:  //超温
                     str = lang.overheat();
                     break;
                 case 21://运行中电源断开
                     str = lang.power_off();
                     break;
-                case 22://湿化罐(雾化罐)未安装
+                case 22:  //检查水罐
                     str = lang.check_chamber();
                     break;
                 case 23://缺水
                     str = lang.change_water_bag();
                     break;
-                case 24://温度数据线未安装好
+                case 24://温度探头未安装
                     str = lang.check_temp_probe();
                     break;
-                case 25://加热回路未安装好
+                case 25://管路未安装
                     str = lang.check_tube();
                     break;
-                case 26://堵塞
+                case 26:////管路不匹配
+                    str = lang.tube_not_match();
+                    break;
+                case 27://堵塞
                     str = lang.check_blockages();
                     break;
-                case 27://高氧浓度
+                case 28://高氧浓度
                     str = lang.high_O2();
                     break;
-                case 28://低氧浓度
+                case 29://低氧浓度
                     str = lang.low_O2();
                     break;
-                case 29://达不到设定流量
+                case 30://流量超范围
                     str = lang.flow_overrange();
                     break;
-                case 30://达不到设定温度
+                case 31://温度超范围
                     str = lang.temp_overrange();
+                    break;
+                case 32://温度探头脱落
+                    str = lang.prob_out();
+                    break;
+                case 33://SD卡未安装
+                    str = lang.sdCard_not_install();
                     break;
                 default:
                     //str = "未识别的错误";

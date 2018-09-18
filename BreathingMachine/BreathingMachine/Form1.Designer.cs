@@ -33,12 +33,15 @@
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -109,6 +112,7 @@
             this.chart_workData = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.tabPage_detailChart = new System.Windows.Forms.TabPage();
             this.panel_detailCharts = new System.Windows.Forms.Panel();
+            this.chart_dewpoint_tmp = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chart_oxy_concentration = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chart_flow = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chart_air_outlet_tmp = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -158,6 +162,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.chart_workData)).BeginInit();
             this.tabPage_detailChart.SuspendLayout();
             this.panel_detailCharts.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart_dewpoint_tmp)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart_oxy_concentration)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart_flow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart_air_outlet_tmp)).BeginInit();
@@ -202,7 +207,7 @@
             this.中文ToolStripMenuItem,
             this.英文ToolStripMenuItem});
             this.语言设置ToolStripMenuItem.Name = "语言设置ToolStripMenuItem";
-            this.语言设置ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.语言设置ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.语言设置ToolStripMenuItem.Text = "语言设置";
             this.语言设置ToolStripMenuItem.Click += new System.EventHandler(this.语言ToolStripMenuItem_Click);
             // 
@@ -223,14 +228,14 @@
             // 导入数据ToolStripMenuItem
             // 
             this.导入数据ToolStripMenuItem.Name = "导入数据ToolStripMenuItem";
-            this.导入数据ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.导入数据ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.导入数据ToolStripMenuItem.Text = "导入数据";
             this.导入数据ToolStripMenuItem.Click += new System.EventHandler(this.导入数据ToolStripMenuItem_Click);
             // 
             // 导出数据ToolStripMenuItem
             // 
             this.导出数据ToolStripMenuItem.Name = "导出数据ToolStripMenuItem";
-            this.导出数据ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.导出数据ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.导出数据ToolStripMenuItem.Text = "导出数据";
             this.导出数据ToolStripMenuItem.Click += new System.EventHandler(this.导出数据ToolStripMenuItem_Click);
             // 
@@ -306,7 +311,6 @@
             this.dateTimePicker_End.Size = new System.Drawing.Size(164, 21);
             this.dateTimePicker_End.TabIndex = 3;
             this.dateTimePicker_End.CloseUp += new System.EventHandler(this.dateTimePicker_End_CloseUp);
-          
             // 
             // label_endTime
             // 
@@ -872,6 +876,7 @@
             // panel_detailCharts
             // 
             this.panel_detailCharts.AutoScroll = true;
+            this.panel_detailCharts.Controls.Add(this.chart_dewpoint_tmp);
             this.panel_detailCharts.Controls.Add(this.chart_oxy_concentration);
             this.panel_detailCharts.Controls.Add(this.chart_flow);
             this.panel_detailCharts.Controls.Add(this.chart_air_outlet_tmp);
@@ -882,63 +887,79 @@
             this.panel_detailCharts.Size = new System.Drawing.Size(675, 383);
             this.panel_detailCharts.TabIndex = 2;
             // 
+            // chart_dewpoint_tmp
+            // 
+            chartArea2.Name = "chartArea_dewpointTmp";
+            this.chart_dewpoint_tmp.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chart_dewpoint_tmp.Legends.Add(legend2);
+            this.chart_dewpoint_tmp.Location = new System.Drawing.Point(79, 242);
+            this.chart_dewpoint_tmp.Name = "chart_dewpoint_tmp";
+            series2.ChartArea = "chartArea_dewpointTmp";
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            this.chart_dewpoint_tmp.Series.Add(series2);
+            this.chart_dewpoint_tmp.Size = new System.Drawing.Size(289, 107);
+            this.chart_dewpoint_tmp.TabIndex = 4;
+            this.chart_dewpoint_tmp.Text = "chart1";
+            // 
             // chart_oxy_concentration
             // 
             this.chart_oxy_concentration.BorderlineColor = System.Drawing.Color.Black;
-            chartArea2.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            chartArea2.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            chartArea2.Name = "chartArea_oxyConcentration";
-            this.chart_oxy_concentration.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chart_oxy_concentration.Legends.Add(legend2);
-            this.chart_oxy_concentration.Location = new System.Drawing.Point(3, 305);
+            chartArea3.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea3.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            chartArea3.Name = "chartArea_oxyConcentration";
+            this.chart_oxy_concentration.ChartAreas.Add(chartArea3);
+            legend3.Name = "Legend1";
+            this.chart_oxy_concentration.Legends.Add(legend3);
+            this.chart_oxy_concentration.Location = new System.Drawing.Point(0, 183);
             this.chart_oxy_concentration.Name = "chart_oxy_concentration";
-            this.chart_oxy_concentration.Size = new System.Drawing.Size(439, 107);
+            this.chart_oxy_concentration.Size = new System.Drawing.Size(415, 84);
             this.chart_oxy_concentration.TabIndex = 3;
             this.chart_oxy_concentration.Text = "chart3";
             // 
             // chart_flow
             // 
             this.chart_flow.BorderlineColor = System.Drawing.Color.Black;
-            chartArea3.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            chartArea3.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            chartArea3.Name = "chartArea_flow";
-            this.chart_flow.ChartAreas.Add(chartArea3);
-            legend3.Name = "Legend1";
-            this.chart_flow.Legends.Add(legend3);
-            this.chart_flow.Location = new System.Drawing.Point(3, 192);
+            chartArea4.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea4.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            chartArea4.Name = "chartArea_flow";
+            this.chart_flow.ChartAreas.Add(chartArea4);
+            legend4.Name = "Legend1";
+            this.chart_flow.Legends.Add(legend4);
+            this.chart_flow.Location = new System.Drawing.Point(6, 130);
             this.chart_flow.Name = "chart_flow";
-            this.chart_flow.Size = new System.Drawing.Size(439, 107);
+            this.chart_flow.Size = new System.Drawing.Size(415, 85);
             this.chart_flow.TabIndex = 2;
             this.chart_flow.Text = "chart2";
             // 
             // chart_air_outlet_tmp
             // 
             this.chart_air_outlet_tmp.BorderlineColor = System.Drawing.Color.Black;
-            chartArea4.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            chartArea4.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            chartArea4.Name = "chartArea_airOutLetTmp";
-            this.chart_air_outlet_tmp.ChartAreas.Add(chartArea4);
-            legend4.Name = "Legend1";
-            this.chart_air_outlet_tmp.Legends.Add(legend4);
-            this.chart_air_outlet_tmp.Location = new System.Drawing.Point(3, 115);
+            chartArea5.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea5.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            chartArea5.Name = "chartArea_airOutLetTmp";
+            this.chart_air_outlet_tmp.ChartAreas.Add(chartArea5);
+            legend5.Name = "Legend1";
+            this.chart_air_outlet_tmp.Legends.Add(legend5);
+            this.chart_air_outlet_tmp.Location = new System.Drawing.Point(32, 67);
             this.chart_air_outlet_tmp.Name = "chart_air_outlet_tmp";
-            this.chart_air_outlet_tmp.Size = new System.Drawing.Size(439, 107);
+            this.chart_air_outlet_tmp.Size = new System.Drawing.Size(386, 89);
             this.chart_air_outlet_tmp.TabIndex = 1;
             this.chart_air_outlet_tmp.Text = "chart1";
             // 
             // chart_patientTmp
             // 
             this.chart_patientTmp.BorderlineColor = System.Drawing.Color.Black;
-            chartArea5.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            chartArea5.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            chartArea5.Name = "chartArea_patientTmp";
-            this.chart_patientTmp.ChartAreas.Add(chartArea5);
-            legend5.Name = "Legend1";
-            this.chart_patientTmp.Legends.Add(legend5);
+            chartArea6.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea6.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            chartArea6.Name = "chartArea_patientTmp";
+            this.chart_patientTmp.ChartAreas.Add(chartArea6);
+            legend6.Name = "Legend1";
+            this.chart_patientTmp.Legends.Add(legend6);
             this.chart_patientTmp.Location = new System.Drawing.Point(2, 2);
             this.chart_patientTmp.Name = "chart_patientTmp";
-            this.chart_patientTmp.Size = new System.Drawing.Size(439, 107);
+            this.chart_patientTmp.Size = new System.Drawing.Size(440, 107);
             this.chart_patientTmp.TabIndex = 0;
             this.chart_patientTmp.Text = "chart1";
             // 
@@ -1255,6 +1276,7 @@
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "永胜宏碁数据分析软件";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing_1);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Shown += new System.EventHandler(this.Form1_Shown);
             this.menuStrip.ResumeLayout(false);
@@ -1276,6 +1298,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.chart_workData)).EndInit();
             this.tabPage_detailChart.ResumeLayout(false);
             this.panel_detailCharts.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.chart_dewpoint_tmp)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart_oxy_concentration)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart_flow)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart_air_outlet_tmp)).EndInit();
@@ -1404,6 +1427,7 @@
         private System.Windows.Forms.DataVisualization.Charting.Chart chart_oxy_concentration;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart_flow;
         private System.Windows.Forms.ToolStripMenuItem 显示所有数据ToolStripMenuItem;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart_dewpoint_tmp;
 
 
     }
