@@ -207,7 +207,7 @@
             this.中文ToolStripMenuItem,
             this.英文ToolStripMenuItem});
             this.语言设置ToolStripMenuItem.Name = "语言设置ToolStripMenuItem";
-            this.语言设置ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.语言设置ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.语言设置ToolStripMenuItem.Text = "语言设置";
             this.语言设置ToolStripMenuItem.Click += new System.EventHandler(this.语言ToolStripMenuItem_Click);
             // 
@@ -228,14 +228,14 @@
             // 导入数据ToolStripMenuItem
             // 
             this.导入数据ToolStripMenuItem.Name = "导入数据ToolStripMenuItem";
-            this.导入数据ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.导入数据ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.导入数据ToolStripMenuItem.Text = "导入数据";
             this.导入数据ToolStripMenuItem.Click += new System.EventHandler(this.导入数据ToolStripMenuItem_Click);
             // 
             // 导出数据ToolStripMenuItem
             // 
             this.导出数据ToolStripMenuItem.Name = "导出数据ToolStripMenuItem";
-            this.导出数据ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.导出数据ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.导出数据ToolStripMenuItem.Text = "导出数据";
             this.导出数据ToolStripMenuItem.Click += new System.EventHandler(this.导出数据ToolStripMenuItem_Click);
             // 
