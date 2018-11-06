@@ -25,6 +25,22 @@ D:\Users\Administrator\Documents\GitHub\BreathMachineManagerSystem-\BreathingMac
 D:\Users\Administrator\Documents\GitHub\BreathMachineManagerSystem-\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.csproj.GenerateResource.Cache
 D:\Users\Administrator\Documents\GitHub\BreathMachineManagerSystem-\BreathingMachine\BreathingMachine\obj\Release\Data_analyser.exe
 D:\Users\Administrator\Documents\GitHub\BreathMachineManagerSystem-\BreathingMachine\BreathingMachine\obj\Release\Data_analyser.pdb
+C:\Users\LENOVO\Desktop\BreathingMachine\BreathingMachine\bin\Release\Data_analyser.exe.config
+C:\Users\LENOVO\Desktop\BreathingMachine\BreathingMachine\bin\Release\Data_analyser.exe
+C:\Users\LENOVO\Desktop\BreathingMachine\BreathingMachine\bin\Release\Data_analyser.pdb
+C:\Users\LENOVO\Desktop\BreathingMachine\BreathingMachine\bin\Release\itextsharp.dll
+C:\Users\LENOVO\Desktop\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.csprojAssemblyReference.cache
+C:\Users\LENOVO\Desktop\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.Form1.resources
+C:\Users\LENOVO\Desktop\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.Form_About.resources
+C:\Users\LENOVO\Desktop\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.Form_AboutUs_English.resources
+C:\Users\LENOVO\Desktop\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.Form_engineer.resources
+C:\Users\LENOVO\Desktop\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.Form_PatientInfo.resources
+C:\Users\LENOVO\Desktop\BreathingMachine\BreathingMachine\obj\Release\Data_analyser.Properties.Resources.resources
+C:\Users\LENOVO\Desktop\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.csproj.GenerateResource.cache
+C:\Users\LENOVO\Desktop\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.csproj.CoreCompileInputs.cache
+C:\Users\LENOVO\Desktop\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.csproj.CopyComplete
+C:\Users\LENOVO\Desktop\BreathingMachine\BreathingMachine\obj\Release\Data_analyser.exe
+C:\Users\LENOVO\Desktop\BreathingMachine\BreathingMachine\obj\Release\Data_analyser.pdb
 D:\Users\LENOVO\Documents\GitHub\BreathMachineManagerSystem\BreathingMachine\BreathingMachine\bin\Release\Data_analyser.exe.config
 D:\Users\LENOVO\Documents\GitHub\BreathMachineManagerSystem\BreathingMachine\BreathingMachine\bin\Release\Data_analyser.exe
 D:\Users\LENOVO\Documents\GitHub\BreathMachineManagerSystem\BreathingMachine\BreathingMachine\bin\Release\Data_analyser.pdb
@@ -40,7 +56,3 @@ D:\Users\LENOVO\Documents\GitHub\BreathMachineManagerSystem\BreathingMachine\Bre
 D:\Users\LENOVO\Documents\GitHub\BreathMachineManagerSystem\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.csproj.CopyComplete
 D:\Users\LENOVO\Documents\GitHub\BreathMachineManagerSystem\BreathingMachine\BreathingMachine\obj\Release\Data_analyser.exe
 D:\Users\LENOVO\Documents\GitHub\BreathMachineManagerSystem\BreathingMachine\BreathingMachine\obj\Release\Data_analyser.pdb
-<<<<<<< HEAD
-=======
-D:\Users\LENOVO\Documents\GitHub\BreathMachineManagerSystem\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.csprojAssemblyReference.cache
->>>>>>> cc0ba2cfc2b19129cfd5ab9b8ced9887eda6fc7d

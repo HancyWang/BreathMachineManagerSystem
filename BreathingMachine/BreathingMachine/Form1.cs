@@ -615,8 +615,6 @@ namespace BreathingMachine
                 }
                 catch (IOException ex)
                 {
-                    if (fs != null)
-                        fs.Close();
                     MessageBox.Show(ex.Message);
                     return;
                 }
@@ -1262,6 +1260,10 @@ namespace BreathingMachine
                 {
                     FileMngr.m_workHead_Msg_Map.Clear();
                 }
+                //if (FileMngr.m_alarmFileName != null)
+                //{
+                //    FileMngr.m_alarmFileName = "";
+                //}
                 if (DataMngr.m_usageTable_beginTime_list != null)
                 {
                     DataMngr.m_usageTable_beginTime_list.Clear();
@@ -4140,8 +4142,6 @@ namespace BreathingMachine
                 }
                 catch (IOException ex)
                 {
-                    if (fs != null)
-                        fs.Close();
                     MessageBox.Show(ex.Message);
                     return;
                 }
@@ -4220,7 +4220,8 @@ namespace BreathingMachine
             }
             else
             {
-                alarmFilePath = null;
+                //alarmFilePath = null;
+                m_alarmFileName = null;
             }
             
             var workDataFilePathes = Directory.GetFiles(m_dirPath, "DATA*.vmf");
@@ -4254,19 +4255,7 @@ namespace BreathingMachine
 
         public static bool GetAlarmMsg()
         {
-            FileStream fs = null;
-            try
-            {
-                fs = new FileStream(m_dirPath + @"\" + m_alarmFileName, FileMode.Open);
-            }
-            catch (IOException ex)
-            {
-                if (fs != null)
-                    fs.Close();
-                MessageBox.Show(ex.Message);
-                return false;
-            }
-            
+            FileStream fs = new FileStream(m_dirPath + @"\" + m_alarmFileName, FileMode.Open);
             BinaryReader br = new BinaryReader(fs, Encoding.ASCII);
 
             ALARM_INFO_HEAD alarmHead = new ALARM_INFO_HEAD();

@@ -5,12 +5,6 @@ VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BreathingMachine", "BreathingMachine\BreathingMachine.csproj", "{E93D6AD6-4536-4B40-B471-6AA952DDE33E}"
 EndProject
-<<<<<<< HEAD
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup_O2FLOW_engineer", "Setup_O2FLOW_engineer\Setup_O2FLOW_engineer.vdproj", "{9A0FF318-7AF1-428C-8817-B9A15A1F0C23}"
-=======
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "O2FLOW_Engineer_setup", "..\..\..\..\..\..\VS_Projects\O2FLOW_Engineer_setup\O2FLOW_Engineer_setup\O2FLOW_Engineer_setup.vdproj", "{92E32B82-52EE-4CDD-9176-BE7424A56163}"
->>>>>>> cc0ba2cfc2b19129cfd5ab9b8ced9887eda6fc7d
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,13 +15,6 @@ Global
 		{E93D6AD6-4536-4B40-B471-6AA952DDE33E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E93D6AD6-4536-4B40-B471-6AA952DDE33E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E93D6AD6-4536-4B40-B471-6AA952DDE33E}.Release|Any CPU.Build.0 = Release|Any CPU
-<<<<<<< HEAD
-		{9A0FF318-7AF1-428C-8817-B9A15A1F0C23}.Debug|Any CPU.ActiveCfg = Debug
-		{9A0FF318-7AF1-428C-8817-B9A15A1F0C23}.Release|Any CPU.ActiveCfg = Release
-=======
-		{92E32B82-52EE-4CDD-9176-BE7424A56163}.Debug|Any CPU.ActiveCfg = Debug
-		{92E32B82-52EE-4CDD-9176-BE7424A56163}.Release|Any CPU.ActiveCfg = Release
->>>>>>> cc0ba2cfc2b19129cfd5ab9b8ced9887eda6fc7d
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
