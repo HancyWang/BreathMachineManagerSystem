@@ -40,3 +40,7 @@ D:\Users\LENOVO\Documents\GitHub\BreathMachineManagerSystem\BreathingMachine\Bre
 D:\Users\LENOVO\Documents\GitHub\BreathMachineManagerSystem\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.csproj.CopyComplete
 D:\Users\LENOVO\Documents\GitHub\BreathMachineManagerSystem\BreathingMachine\BreathingMachine\obj\Release\Data_analyser.exe
 D:\Users\LENOVO\Documents\GitHub\BreathMachineManagerSystem\BreathingMachine\BreathingMachine\obj\Release\Data_analyser.pdb
+<<<<<<< HEAD
+=======
+D:\Users\LENOVO\Documents\GitHub\BreathMachineManagerSystem\BreathingMachine\BreathingMachine\obj\Release\BreathingMachine.csprojAssemblyReference.cache
+>>>>>>> cc0ba2cfc2b19129cfd5ab9b8ced9887eda6fc7d
