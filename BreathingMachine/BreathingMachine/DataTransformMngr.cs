@@ -58,7 +58,9 @@ namespace BreathingMachine
             {
                 #region
                 var list = kv.Value;
-                //int len = list.Count;
+                ////int len = list.Count;
+                //if (list.Count == 0)
+                //    continue;
                 WORK_INFO_MESSAGE msg = list[0];//取链表的第一个消息，从而获得时间
 
                 DateTime xAxis = new DateTime(100 * Convert.ToInt32(list[0].YEAR1) + Convert.ToInt32(list[0].YEAR2), Convert.ToInt32(list[0].MONTH), Convert.ToInt32(list[0].DAY), 0, 0, 0);

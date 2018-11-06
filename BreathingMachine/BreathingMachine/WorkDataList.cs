@@ -17,6 +17,9 @@ namespace BreathingMachine
         public static List<WorkData> m_WorkData_List;
         public static List<WorkData_Basic> m_WorkData_Basic_List;
 
+        public static int debug_cnt = 0;
+        public static WORK_INFO_MESSAGE debug_message;
+
         public static void InitWorkDataList(DateTime tmLow,DateTime tmHigh)
         {
             DateTime tmBegin = new DateTime(tmLow.Year, tmLow.Month, tmLow.Day, 0, 0, 0);
@@ -35,6 +38,8 @@ namespace BreathingMachine
                     //}
                     //先判断,减少不必要的foreach (var workDataMsg in list)
                     var list = kv.Value;
+                    //if (list.Count == 0)
+                    //    continue;
                     WORK_INFO_MESSAGE msg = list[0];
                     DateTime msgTm = new DateTime(100 * Convert.ToInt32(msg.YEAR1) + Convert.ToInt32(msg.YEAR2),
                                                     Convert.ToInt32(msg.MONTH), Convert.ToInt32(msg.DAY), 23, 59, 59);
@@ -44,9 +49,10 @@ namespace BreathingMachine
                     }
 
                     #region
-
                     foreach (var workDataMsg in list)
                     {
+                        debug_cnt++;
+                        debug_message = workDataMsg;
                         DateTime tmFromMsg = new DateTime(100 * Convert.ToInt32(workDataMsg.YEAR1) + Convert.ToInt32(workDataMsg.YEAR2),
                                                             Convert.ToInt32(workDataMsg.MONTH),
                                                             Convert.ToInt32(workDataMsg.DAY),
@@ -113,7 +119,7 @@ namespace BreathingMachine
                             wd.set_atomiz_level = Convert.ToString(workDataMsg.SET_ATOMIZATION_LEVEL);
                             wd.set_atomiz_time = Convert.ToString(workDataMsg.SET_ATOMIZATION_TIME);
 
-                            wd.data_heating_plate_tmp = Convert.ToString(workDataMsg.DATA_HEATING_PLATE_ADC_H);
+                            wd.data_heating_plate_tmp = Convert.ToString(workDataMsg.DATA_HEATING_PLATE_TMP);
                             wd.data_env_tmp = Convert.ToString(workDataMsg.DATA_ENVIRONMENT_TMP);
                             wd.data_driveboard_tmp = Convert.ToString(workDataMsg.DATA_DRIVERBOARD_TMP);
                             wd.data_air_pressure = Convert.ToString(workDataMsg.DATA_AIR_PRESSURE);
@@ -250,10 +256,10 @@ namespace BreathingMachine
                 {
                     //先判断,减少不必要的foreach (var workDataMsg in list)
                     var list = kv.Value;
-                    if (list.Count == 0)
-                    {
-                        return;
-                    }
+                    //if (list.Count == 0)
+                    //{
+                    //    continue;
+                    //}
                     WORK_INFO_MESSAGE msg = list[0];
                     DateTime msgTm = new DateTime(100 * Convert.ToInt32(msg.YEAR1) + Convert.ToInt32(msg.YEAR2),
                                                     Convert.ToInt32(msg.MONTH), Convert.ToInt32(msg.DAY), 23, 59, 59);

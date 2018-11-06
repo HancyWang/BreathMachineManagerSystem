@@ -199,7 +199,8 @@ namespace BreathingMachine
             {
                 //先判断,减少不必要的foreach (var workDataMsg in list)
                 var list = kv.Value;
-
+                //if (list.Count == 0)
+                //    continue;
                 WORK_INFO_MESSAGE msg=list[0];
                 DateTime msgTm = new DateTime(100 * Convert.ToInt32(msg.YEAR1) + Convert.ToInt32(msg.YEAR2), 
                                                 Convert.ToInt32(msg.MONTH), Convert.ToInt32(msg.DAY),23,59,59);
@@ -606,7 +607,24 @@ namespace BreathingMachine
             else
             {
                 //如果工作信息文件没有，则使用报警文件的
-                FileStream fs = new FileStream(FileMngr.m_dirPath + @"\" + FileMngr.m_alarmFileName, FileMode.Open);
+
+                FileStream fs = null;
+                try
+                {
+                    fs = new FileStream(FileMngr.m_dirPath + @"\" + FileMngr.m_alarmFileName, FileMode.Open);
+                }
+                catch (IOException ex)
+                {
+                    if (fs != null)
+                        fs.Close();
+                    MessageBox.Show(ex.Message);
+                    return;
+                }
+                finally
+                {
+
+                }
+                
                 BinaryReader br = new BinaryReader(fs, Encoding.ASCII);
 
                 //读信息头
@@ -1926,6 +1944,8 @@ namespace BreathingMachine
             foreach (KeyValuePair<WORK_INFO_HEAD, List<WORK_INFO_MESSAGE>> kv in FileMngr.m_workHead_Msg_Map)
             {
                 var list = kv.Value;
+                //if (list.Count == 0)
+                //    continue;
                 foreach (var workDataMsg in list)
                 {
                     int[] faultStates = new int[12];
@@ -4113,7 +4133,24 @@ namespace BreathingMachine
             {
                 //工作信息文件缺失时，使用报警文件的
                 #region
-                FileStream fs = new FileStream(m_dirPath + @"\" + m_alarmFileName, FileMode.Open);
+                FileStream fs = null;
+                try
+                {
+                    fs = new FileStream(m_dirPath + @"\" + m_alarmFileName, FileMode.Open);
+                }
+                catch (IOException ex)
+                {
+                    if (fs != null)
+                        fs.Close();
+                    MessageBox.Show(ex.Message);
+                    return;
+                }
+                finally
+                {
+                    
+                }
+                
+                
                 BinaryReader br = new BinaryReader(fs, Encoding.ASCII);
 
                 //读信息头
@@ -4190,6 +4227,15 @@ namespace BreathingMachine
             
             foreach (var file in workDataFilePathes)
             {
+                //if (file.Length != 16)
+                //    continue;
+                var name = file;
+                name = name.Substring(name.LastIndexOf(@"\") + 1);
+                if (name.Length != 16)
+                    continue;
+                System.IO.FileInfo fileInfo = new FileInfo(file);
+                if (fileInfo.Length <= 1088)
+                    continue;
                 m_workFileNameList.Add(file.Substring(file.LastIndexOf(@"\") + 1)); //将工作文件名添加到链表中
             }
         }
@@ -4208,7 +4254,19 @@ namespace BreathingMachine
 
         public static bool GetAlarmMsg()
         {
-            FileStream fs = new FileStream(m_dirPath + @"\" + m_alarmFileName, FileMode.Open);
+            FileStream fs = null;
+            try
+            {
+                fs = new FileStream(m_dirPath + @"\" + m_alarmFileName, FileMode.Open);
+            }
+            catch (IOException ex)
+            {
+                if (fs != null)
+                    fs.Close();
+                MessageBox.Show(ex.Message);
+                return false;
+            }
+            
             BinaryReader br = new BinaryReader(fs, Encoding.ASCII);
 
             ALARM_INFO_HEAD alarmHead = new ALARM_INFO_HEAD();
@@ -4337,7 +4395,6 @@ namespace BreathingMachine
                 //if (VerifyField(buffer))   //暂时屏蔽
                 if (true)
                 {
-                    
                     m_workFileName_CanBeOpened_List.Add(workFile);
                     br.Read(buffer, 0, len_head);
                     alarmHead = GetObject<WORK_INFO_HEAD>(buffer, len_head);
@@ -4356,15 +4413,17 @@ namespace BreathingMachine
                     byte[] buffer_msg = new byte[len_msg];
 
 
-                    if (br.Read(buffer_msg, 0, len_msg) == 0)
+                    int read_len = 0;
+                    for (;;)
                     {
-                        //do nothing
-                        fs.Close();
-                        br.Close();
-                    }
-                    else
-                    {
-                        while (br.Read(buffer_msg, 0, len_msg) > 0)
+                        read_len = br.Read(buffer_msg, 0, len_msg);
+                        if (read_len == 0)
+                        {
+                            fs.Close();
+                            br.Close();
+                            break;
+                        }
+                        else
                         {
                             //校验每一个字段 
                             //if (VerifyWorkDataMsg(buffer_msg))           //这里为了能读取字段，将校验屏蔽掉
@@ -4375,17 +4434,81 @@ namespace BreathingMachine
                                 {
                                     continue;
                                 }
-                                workDataMsg = GetObject<WORK_INFO_MESSAGE>(buffer_msg, len_msg);
-                                list.Add(workDataMsg);
-                                m_lastWorkMsg = workDataMsg;//保留最后一个工作信息，作为最新的信息，刷新到app基本信息中
+                                //debugCnt++;
+                                // if (debugCnt == 158)
+                                {
+                                    workDataMsg = GetObject<WORK_INFO_MESSAGE>(buffer_msg, len_msg);
+                                    //2018.11.06发现文件数据中年月日不对，先给下位机做过滤
+                                    if (workDataMsg.YEAR1 > 99 || workDataMsg.YEAR2 > 99 || workDataMsg.MONTH > 12 || workDataMsg.DAY > 31 ||
+                                        workDataMsg.HOUR > 23 || workDataMsg.MINUTE > 59 || workDataMsg.SECOND > 59)
+                                    {
+                                        continue;
+                                    }
+                                    list.Add(workDataMsg);
+                                    m_lastWorkMsg = workDataMsg;
+                                }
+
+                                //workDataMsg = GetObject<WORK_INFO_MESSAGE>(buffer_msg, len_msg);
+                                //list.Add(workDataMsg);
+                                //m_lastWorkMsg = workDataMsg;//保留最后一个工作信息，作为最新的信息，刷新到app基本信息中
                             }
                         }
-                        m_workHead_Msg_Map[alarmHead] = list;
-                        //m_workHead_Msg_Map.Add(alarmHead,list);
-                        fs.Close();
-                        br.Close();
                     }
-                    
+                    //如果经过过滤之后，List的count不为0，才添加到链表中
+                    if (list.Count != 0)
+                    {
+                        m_workHead_Msg_Map[alarmHead] = list;
+                    }
+                    //m_workHead_Msg_Map.Add(alarmHead,list);
+                    fs.Close();
+                    br.Close();
+
+                    #region
+                    //if (br.Read(buffer_msg, 0, len_msg) == 0)
+                    //{
+                    //    //do nothing
+                    //    fs.Close();
+                    //    br.Close();
+                    //}
+                    //else
+                    //{
+                    //    //int debugCnt = 0;
+                    //    while (br.Read(buffer_msg, 0, len_msg) > 0)
+                    //    {
+                    //        //校验每一个字段 
+                    //        //if (VerifyWorkDataMsg(buffer_msg))           //这里为了能读取字段，将校验屏蔽掉
+                    //        {
+                    //            //CheckEachByte(buffer_msg);
+                    //            //下位机会出现0，0，0，0，下位机尚未修复这个问题，在这里先过滤掉
+                    //            if (IsByte0x00(buffer_msg))
+                    //            {
+                    //                continue;
+                    //            }
+                    //            //debugCnt++;
+                    //            // if (debugCnt == 158)
+                    //            {
+                    //                workDataMsg = GetObject<WORK_INFO_MESSAGE>(buffer_msg, len_msg);
+                    //                //2018.11.06发现文件数据中年月日不对，先给下位机做过滤
+                    //                if (workDataMsg.YEAR1 > 99 || workDataMsg.YEAR2 > 99 || workDataMsg.MONTH > 12 || workDataMsg.DAY > 32 ||
+                    //                    workDataMsg.HOUR > 24 || workDataMsg.MINUTE > 60 || workDataMsg.SECOND > 60)
+                    //                {
+                    //                    continue;
+                    //                }
+                    //                list.Add(workDataMsg);
+                    //                m_lastWorkMsg = workDataMsg;
+                    //            }
+
+                    //            //workDataMsg = GetObject<WORK_INFO_MESSAGE>(buffer_msg, len_msg);
+                    //            //list.Add(workDataMsg);
+                    //            //m_lastWorkMsg = workDataMsg;//保留最后一个工作信息，作为最新的信息，刷新到app基本信息中
+                    //        }
+                    //    }
+                    //    m_workHead_Msg_Map[alarmHead] = list;
+                    //    //m_workHead_Msg_Map.Add(alarmHead,list);
+                    //    fs.Close();
+                    //    br.Close();
+                    //}
+                    #endregion
                 }
                 else
                 {
@@ -4563,9 +4686,9 @@ namespace BreathingMachine
                 case 6:
                     str = lang.system_failure_E7();
                     break;
-                //case 7:
-                //    str = lang.system_failure();
-                //    break;
+                case 7:
+                    str = lang.system_failure_E8();
+                    break;
                 //case 8:
                 //    str = lang.system_failure();
                         //break;
