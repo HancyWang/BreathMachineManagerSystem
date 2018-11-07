@@ -584,7 +584,7 @@ namespace BreathingMachine
         {
             //var workDataHead = FileMngr.m_lastWorkHead;
             //var workDataMsg = FileMngr.m_lastWorkMsg;
-            
+
             //workDataHead.MACHINETYPE;
             this.label_runningMode_value.Text = DataMngr.GetRunningMode(FileMngr.m_lastWorkMsg.SET_MODE);
             this.label_setTmp_Value.Text = DataMngr.GetSetting2Str(FileMngr.m_lastWorkMsg.SET_TEMP);
@@ -607,7 +607,11 @@ namespace BreathingMachine
             else
             {
                 //如果工作信息文件没有，则使用报警文件的
-
+                if (FileMngr.m_alarmFileName == null)
+                {
+                    //MessageBox.Show("123");
+                    return;
+                }
                 FileStream fs = null;
                 try
                 {
@@ -4135,6 +4139,10 @@ namespace BreathingMachine
             {
                 //工作信息文件缺失时，使用报警文件的
                 #region
+                if (m_alarmFileName == null)
+                {
+                    return;
+                }
                 FileStream fs = null;
                 try
                 {
