@@ -25,6 +25,8 @@ namespace BreathingMachine
         public static string g_password;
         public bool g_bEngineerMode;
         private List<ListViewItem> myCache;
+        //private bool b_lack_of_alarm_info = false;
+        //private bool b_lack_of_work_info = false;
         //private List<ListViewItem> myCache1;
         public Form1()
         {
@@ -584,6 +586,25 @@ namespace BreathingMachine
         {
             //var workDataHead = FileMngr.m_lastWorkHead;
             //var workDataMsg = FileMngr.m_lastWorkMsg;
+            //当报警文件和工作信息文件(经过过滤之后)都没有的话，需要将app面板的所有信息清空
+            if (FileMngr.m_alarmFileName == null && FileMngr.m_workFileNameList.Count == 0)
+            {
+                this.label_equipType_Value.Text = "";
+                this.label_SN_Value.Text = "";
+                this.label_softwarVer_Value.Text = "";
+                this.label_value_patient_name.Text = "";
+                this.label_value_patient_age.Text = "";
+                this.label_value_patient_gender.Text = "";
+                this.label_value_patient_phoneNum.Text = "";
+                this.label_value_patient_adress.Text = "";
+                this.label_value_patient_height.Text = "";
+                this.label_value_patient_weight.Text = "";
+                this.label_value_added_patientName.Text = "";
+                this.label_value_added_patientAge.Text = "";
+                this.label_value_added_patientGender.Text = "";
+                this.label_value_added_phoneNum.Text = "";
+                return;
+            }
 
             //workDataHead.MACHINETYPE;
             this.label_runningMode_value.Text = DataMngr.GetRunningMode(FileMngr.m_lastWorkMsg.SET_MODE);
@@ -1312,6 +1333,7 @@ namespace BreathingMachine
                 }
                 else
                 {
+                    //b_lack_of_alarm_info = true;
                     MessageBox.Show(LanguageMngr.lack_of_alarm_file());
                 }
 
@@ -1324,6 +1346,7 @@ namespace BreathingMachine
                 }
                 else
                 {
+                    //b_lack_of_work_info = true;
                     //FileMngr.m_dirPath = null; //丢弃得到的m_dirPath
                     MessageBox.Show(LanguageMngr.lack_of_work_file());
                     //return;
