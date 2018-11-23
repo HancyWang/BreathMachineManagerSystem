@@ -41,7 +41,7 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Engineer.ico</ApplicationIcon>
+    <ApplicationIcon>E.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="itextsharp">
@@ -141,6 +141,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="E.ico" />
     <Content Include="Engineer.ico" />
     <Content Include="vincent medical.ico" />
   </ItemGroup>

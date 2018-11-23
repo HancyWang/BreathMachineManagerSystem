@@ -298,9 +298,9 @@
             this.groupBox_TimeSet.Controls.Add(this.dateTimePicker_Begin);
             this.groupBox_TimeSet.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox_TimeSet.Location = new System.Drawing.Point(4, 4);
-            this.groupBox_TimeSet.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox_TimeSet.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox_TimeSet.Name = "groupBox_TimeSet";
-            this.groupBox_TimeSet.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox_TimeSet.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox_TimeSet.Size = new System.Drawing.Size(289, 264);
             this.groupBox_TimeSet.TabIndex = 1;
             this.groupBox_TimeSet.TabStop = false;
@@ -311,7 +311,7 @@
             this.dateTimePicker_End.CustomFormat = "yyyy-MM-dd";
             this.dateTimePicker_End.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dateTimePicker_End.Location = new System.Drawing.Point(13, 189);
-            this.dateTimePicker_End.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dateTimePicker_End.Margin = new System.Windows.Forms.Padding(4);
             this.dateTimePicker_End.Name = "dateTimePicker_End";
             this.dateTimePicker_End.Size = new System.Drawing.Size(217, 25);
             this.dateTimePicker_End.TabIndex = 3;
@@ -342,7 +342,7 @@
             this.dateTimePicker_Begin.CustomFormat = "yyyy-MM-dd";
             this.dateTimePicker_Begin.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dateTimePicker_Begin.Location = new System.Drawing.Point(13, 82);
-            this.dateTimePicker_Begin.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dateTimePicker_Begin.Margin = new System.Windows.Forms.Padding(4);
             this.dateTimePicker_Begin.MinDate = new System.DateTime(1950, 1, 1, 0, 0, 0, 0);
             this.dateTimePicker_Begin.Name = "dateTimePicker_Begin";
             this.dateTimePicker_Begin.Size = new System.Drawing.Size(219, 25);
@@ -358,7 +358,7 @@
             this.tabControl1.Controls.Add(this.tabPage_workdatalist);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(1091, 520);
@@ -373,9 +373,9 @@
             this.tabPage_BasicInfo.Controls.Add(this.groupBox_time);
             this.tabPage_BasicInfo.Controls.Add(this.groupBox_equipInfo);
             this.tabPage_BasicInfo.Location = new System.Drawing.Point(4, 25);
-            this.tabPage_BasicInfo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage_BasicInfo.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage_BasicInfo.Name = "tabPage_BasicInfo";
-            this.tabPage_BasicInfo.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage_BasicInfo.Padding = new System.Windows.Forms.Padding(4);
             this.tabPage_BasicInfo.Size = new System.Drawing.Size(1083, 491);
             this.tabPage_BasicInfo.TabIndex = 0;
             this.tabPage_BasicInfo.Text = "基本信息";
@@ -386,7 +386,7 @@
             this.button_generateReport.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.button_generateReport.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.button_generateReport.Location = new System.Drawing.Point(431, 437);
-            this.button_generateReport.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button_generateReport.Margin = new System.Windows.Forms.Padding(4);
             this.button_generateReport.Name = "button_generateReport";
             this.button_generateReport.Size = new System.Drawing.Size(204, 34);
             this.button_generateReport.TabIndex = 18;
@@ -413,9 +413,9 @@
             this.groupBox_Patientinfo.Controls.Add(this.label_value_patient_name);
             this.groupBox_Patientinfo.Controls.Add(this.label1_patient_name);
             this.groupBox_Patientinfo.Location = new System.Drawing.Point(4, 204);
-            this.groupBox_Patientinfo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox_Patientinfo.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox_Patientinfo.Name = "groupBox_Patientinfo";
-            this.groupBox_Patientinfo.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox_Patientinfo.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox_Patientinfo.Size = new System.Drawing.Size(1068, 200);
             this.groupBox_Patientinfo.TabIndex = 17;
             this.groupBox_Patientinfo.TabStop = false;
@@ -581,9 +581,9 @@
             this.groupBox_workingParam.Controls.Add(this.label_runningMode_value);
             this.groupBox_workingParam.Controls.Add(this.label_runningMode);
             this.groupBox_workingParam.Location = new System.Drawing.Point(8, 466);
-            this.groupBox_workingParam.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox_workingParam.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox_workingParam.Name = "groupBox_workingParam";
-            this.groupBox_workingParam.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox_workingParam.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox_workingParam.Size = new System.Drawing.Size(155, 30);
             this.groupBox_workingParam.TabIndex = 3;
             this.groupBox_workingParam.TabStop = false;
@@ -757,9 +757,9 @@
             this.groupBox_time.Controls.Add(this.label_dateTo_Value);
             this.groupBox_time.Controls.Add(this.label_dateFrom_Value);
             this.groupBox_time.Location = new System.Drawing.Point(5, 125);
-            this.groupBox_time.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox_time.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox_time.Name = "groupBox_time";
-            this.groupBox_time.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox_time.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox_time.Size = new System.Drawing.Size(1071, 71);
             this.groupBox_time.TabIndex = 2;
             this.groupBox_time.TabStop = false;
@@ -806,9 +806,9 @@
             this.groupBox_equipInfo.Controls.Add(this.label_softwarVer);
             this.groupBox_equipInfo.Controls.Add(this.label_equipType);
             this.groupBox_equipInfo.Location = new System.Drawing.Point(4, 4);
-            this.groupBox_equipInfo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox_equipInfo.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox_equipInfo.Name = "groupBox_equipInfo";
-            this.groupBox_equipInfo.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox_equipInfo.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox_equipInfo.Size = new System.Drawing.Size(1072, 114);
             this.groupBox_equipInfo.TabIndex = 0;
             this.groupBox_equipInfo.TabStop = false;
@@ -878,10 +878,10 @@
             // 
             this.tabPage_workDataChart.Controls.Add(this.panel_for_charts);
             this.tabPage_workDataChart.Location = new System.Drawing.Point(4, 25);
-            this.tabPage_workDataChart.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage_workDataChart.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage_workDataChart.Name = "tabPage_workDataChart";
-            this.tabPage_workDataChart.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.tabPage_workDataChart.Size = new System.Drawing.Size(1083, 490);
+            this.tabPage_workDataChart.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPage_workDataChart.Size = new System.Drawing.Size(1083, 491);
             this.tabPage_workDataChart.TabIndex = 1;
             this.tabPage_workDataChart.Text = "使用时间";
             this.tabPage_workDataChart.UseVisualStyleBackColor = true;
@@ -892,9 +892,9 @@
             this.panel_for_charts.Controls.Add(this.chart_workData);
             this.panel_for_charts.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_for_charts.Location = new System.Drawing.Point(4, 4);
-            this.panel_for_charts.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panel_for_charts.Margin = new System.Windows.Forms.Padding(4);
             this.panel_for_charts.Name = "panel_for_charts";
-            this.panel_for_charts.Size = new System.Drawing.Size(1075, 482);
+            this.panel_for_charts.Size = new System.Drawing.Size(1075, 483);
             this.panel_for_charts.TabIndex = 1;
             // 
             // chart_workData
@@ -907,7 +907,7 @@
             legend1.Name = "Legend1";
             this.chart_workData.Legends.Add(legend1);
             this.chart_workData.Location = new System.Drawing.Point(0, 0);
-            this.chart_workData.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chart_workData.Margin = new System.Windows.Forms.Padding(4);
             this.chart_workData.Name = "chart_workData";
             series1.ChartArea = "ChartArea1";
             series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.RangeColumn;
@@ -927,10 +927,10 @@
             this.tabPage_detailChart.Controls.Add(this.panel_detailCharts);
             this.tabPage_detailChart.Controls.Add(this.panel4);
             this.tabPage_detailChart.Location = new System.Drawing.Point(4, 25);
-            this.tabPage_detailChart.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage_detailChart.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage_detailChart.Name = "tabPage_detailChart";
-            this.tabPage_detailChart.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.tabPage_detailChart.Size = new System.Drawing.Size(1083, 490);
+            this.tabPage_detailChart.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPage_detailChart.Size = new System.Drawing.Size(1083, 491);
             this.tabPage_detailChart.TabIndex = 4;
             this.tabPage_detailChart.Text = "详细图表";
             this.tabPage_detailChart.UseVisualStyleBackColor = true;
@@ -945,9 +945,9 @@
             this.panel_detailCharts.Controls.Add(this.chart_patientTmp);
             this.panel_detailCharts.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_detailCharts.Location = new System.Drawing.Point(176, 4);
-            this.panel_detailCharts.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panel_detailCharts.Margin = new System.Windows.Forms.Padding(4);
             this.panel_detailCharts.Name = "panel_detailCharts";
-            this.panel_detailCharts.Size = new System.Drawing.Size(903, 482);
+            this.panel_detailCharts.Size = new System.Drawing.Size(903, 483);
             this.panel_detailCharts.TabIndex = 2;
             // 
             // chart_dewpoint_tmp
@@ -957,7 +957,7 @@
             legend2.Name = "Legend1";
             this.chart_dewpoint_tmp.Legends.Add(legend2);
             this.chart_dewpoint_tmp.Location = new System.Drawing.Point(105, 302);
-            this.chart_dewpoint_tmp.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chart_dewpoint_tmp.Margin = new System.Windows.Forms.Padding(4);
             this.chart_dewpoint_tmp.Name = "chart_dewpoint_tmp";
             series2.ChartArea = "chartArea_dewpointTmp";
             series2.Legend = "Legend1";
@@ -977,7 +977,7 @@
             legend3.Name = "Legend1";
             this.chart_oxy_concentration.Legends.Add(legend3);
             this.chart_oxy_concentration.Location = new System.Drawing.Point(0, 229);
-            this.chart_oxy_concentration.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chart_oxy_concentration.Margin = new System.Windows.Forms.Padding(4);
             this.chart_oxy_concentration.Name = "chart_oxy_concentration";
             this.chart_oxy_concentration.Size = new System.Drawing.Size(553, 105);
             this.chart_oxy_concentration.TabIndex = 3;
@@ -993,7 +993,7 @@
             legend4.Name = "Legend1";
             this.chart_flow.Legends.Add(legend4);
             this.chart_flow.Location = new System.Drawing.Point(8, 162);
-            this.chart_flow.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chart_flow.Margin = new System.Windows.Forms.Padding(4);
             this.chart_flow.Name = "chart_flow";
             this.chart_flow.Size = new System.Drawing.Size(553, 106);
             this.chart_flow.TabIndex = 2;
@@ -1009,7 +1009,7 @@
             legend5.Name = "Legend1";
             this.chart_air_outlet_tmp.Legends.Add(legend5);
             this.chart_air_outlet_tmp.Location = new System.Drawing.Point(43, 84);
-            this.chart_air_outlet_tmp.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chart_air_outlet_tmp.Margin = new System.Windows.Forms.Padding(4);
             this.chart_air_outlet_tmp.Name = "chart_air_outlet_tmp";
             this.chart_air_outlet_tmp.Size = new System.Drawing.Size(515, 111);
             this.chart_air_outlet_tmp.TabIndex = 1;
@@ -1025,7 +1025,7 @@
             legend6.Name = "Legend1";
             this.chart_patientTmp.Legends.Add(legend6);
             this.chart_patientTmp.Location = new System.Drawing.Point(3, 2);
-            this.chart_patientTmp.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chart_patientTmp.Margin = new System.Windows.Forms.Padding(4);
             this.chart_patientTmp.Name = "chart_patientTmp";
             this.chart_patientTmp.Size = new System.Drawing.Size(587, 134);
             this.chart_patientTmp.TabIndex = 0;
@@ -1037,18 +1037,18 @@
             this.panel4.Controls.Add(this.treeView_detailChart);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel4.Location = new System.Drawing.Point(4, 4);
-            this.panel4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panel4.Margin = new System.Windows.Forms.Padding(4);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(172, 482);
+            this.panel4.Size = new System.Drawing.Size(172, 483);
             this.panel4.TabIndex = 1;
             // 
             // treeView_detailChart
             // 
             this.treeView_detailChart.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView_detailChart.Location = new System.Drawing.Point(0, 0);
-            this.treeView_detailChart.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.treeView_detailChart.Margin = new System.Windows.Forms.Padding(4);
             this.treeView_detailChart.Name = "treeView_detailChart";
-            this.treeView_detailChart.Size = new System.Drawing.Size(172, 482);
+            this.treeView_detailChart.Size = new System.Drawing.Size(172, 483);
             this.treeView_detailChart.TabIndex = 0;
             this.treeView_detailChart.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView_detailChart_NodeMouseDoubleClick);
             // 
@@ -1056,10 +1056,10 @@
             // 
             this.tabPage_alarmList.Controls.Add(this.listView_alarmInfo);
             this.tabPage_alarmList.Location = new System.Drawing.Point(4, 25);
-            this.tabPage_alarmList.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage_alarmList.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage_alarmList.Name = "tabPage_alarmList";
-            this.tabPage_alarmList.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.tabPage_alarmList.Size = new System.Drawing.Size(1083, 490);
+            this.tabPage_alarmList.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPage_alarmList.Size = new System.Drawing.Size(1083, 491);
             this.tabPage_alarmList.TabIndex = 2;
             this.tabPage_alarmList.Text = "报警信息";
             this.tabPage_alarmList.UseVisualStyleBackColor = true;
@@ -1068,9 +1068,9 @@
             // 
             this.listView_alarmInfo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView_alarmInfo.Location = new System.Drawing.Point(4, 4);
-            this.listView_alarmInfo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.listView_alarmInfo.Margin = new System.Windows.Forms.Padding(4);
             this.listView_alarmInfo.Name = "listView_alarmInfo";
-            this.listView_alarmInfo.Size = new System.Drawing.Size(1075, 482);
+            this.listView_alarmInfo.Size = new System.Drawing.Size(1075, 483);
             this.listView_alarmInfo.TabIndex = 0;
             this.listView_alarmInfo.UseCompatibleStateImageBehavior = false;
             this.listView_alarmInfo.VirtualMode = true;
@@ -1079,9 +1079,9 @@
             // 
             this.tabPage_workdatalist.Controls.Add(this.panel_workInfo);
             this.tabPage_workdatalist.Location = new System.Drawing.Point(4, 25);
-            this.tabPage_workdatalist.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage_workdatalist.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage_workdatalist.Name = "tabPage_workdatalist";
-            this.tabPage_workdatalist.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage_workdatalist.Padding = new System.Windows.Forms.Padding(4);
             this.tabPage_workdatalist.Size = new System.Drawing.Size(1083, 491);
             this.tabPage_workdatalist.TabIndex = 3;
             this.tabPage_workdatalist.Text = "工作信息";
@@ -1093,7 +1093,7 @@
             this.panel_workInfo.Controls.Add(this.groupBox1);
             this.panel_workInfo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_workInfo.Location = new System.Drawing.Point(4, 4);
-            this.panel_workInfo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panel_workInfo.Margin = new System.Windows.Forms.Padding(4);
             this.panel_workInfo.Name = "panel_workInfo";
             this.panel_workInfo.Size = new System.Drawing.Size(1075, 483);
             this.panel_workInfo.TabIndex = 7;
@@ -1102,7 +1102,7 @@
             // 
             this.listView_workData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView_workData.Location = new System.Drawing.Point(0, 50);
-            this.listView_workData.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.listView_workData.Margin = new System.Windows.Forms.Padding(4);
             this.listView_workData.Name = "listView_workData";
             this.listView_workData.Size = new System.Drawing.Size(1075, 433);
             this.listView_workData.TabIndex = 0;
@@ -1119,9 +1119,9 @@
             this.groupBox1.Controls.Add(this.button_listview_toppage);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox1.Size = new System.Drawing.Size(1075, 50);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
@@ -1129,7 +1129,7 @@
             // textBox_jumpto
             // 
             this.textBox_jumpto.Location = new System.Drawing.Point(616, 18);
-            this.textBox_jumpto.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBox_jumpto.Margin = new System.Windows.Forms.Padding(4);
             this.textBox_jumpto.Name = "textBox_jumpto";
             this.textBox_jumpto.Size = new System.Drawing.Size(72, 25);
             this.textBox_jumpto.TabIndex = 7;
@@ -1148,7 +1148,7 @@
             // textBox_listview_currentpage
             // 
             this.textBox_listview_currentpage.Location = new System.Drawing.Point(409, 18);
-            this.textBox_listview_currentpage.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBox_listview_currentpage.Margin = new System.Windows.Forms.Padding(4);
             this.textBox_listview_currentpage.Name = "textBox_listview_currentpage";
             this.textBox_listview_currentpage.Size = new System.Drawing.Size(100, 25);
             this.textBox_listview_currentpage.TabIndex = 5;
@@ -1156,7 +1156,7 @@
             // button_listview_endpage
             // 
             this.button_listview_endpage.Location = new System.Drawing.Point(720, 15);
-            this.button_listview_endpage.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button_listview_endpage.Margin = new System.Windows.Forms.Padding(4);
             this.button_listview_endpage.Name = "button_listview_endpage";
             this.button_listview_endpage.Size = new System.Drawing.Size(100, 29);
             this.button_listview_endpage.TabIndex = 4;
@@ -1167,7 +1167,7 @@
             // button_listview_next
             // 
             this.button_listview_next.Location = new System.Drawing.Point(285, 15);
-            this.button_listview_next.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button_listview_next.Margin = new System.Windows.Forms.Padding(4);
             this.button_listview_next.Name = "button_listview_next";
             this.button_listview_next.Size = new System.Drawing.Size(100, 29);
             this.button_listview_next.TabIndex = 3;
@@ -1178,7 +1178,7 @@
             // button_listview_prev
             // 
             this.button_listview_prev.Location = new System.Drawing.Point(151, 15);
-            this.button_listview_prev.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button_listview_prev.Margin = new System.Windows.Forms.Padding(4);
             this.button_listview_prev.Name = "button_listview_prev";
             this.button_listview_prev.Size = new System.Drawing.Size(100, 29);
             this.button_listview_prev.TabIndex = 2;
@@ -1190,7 +1190,7 @@
             // 
             this.button_listview_toppage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button_listview_toppage.Location = new System.Drawing.Point(8, 15);
-            this.button_listview_toppage.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button_listview_toppage.Margin = new System.Windows.Forms.Padding(4);
             this.button_listview_toppage.Name = "button_listview_toppage";
             this.button_listview_toppage.Size = new System.Drawing.Size(100, 29);
             this.button_listview_toppage.TabIndex = 1;
@@ -1208,7 +1208,7 @@
             this.tableLayoutPanel1.Controls.Add(this.panel3, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(4, 22);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -1222,7 +1222,7 @@
             this.panel1.Controls.Add(this.tabControl1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(301, 4);
-            this.panel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4);
             this.panel1.Name = "panel1";
             this.tableLayoutPanel1.SetRowSpan(this.panel1, 2);
             this.panel1.Size = new System.Drawing.Size(1091, 520);
@@ -1233,7 +1233,7 @@
             this.panel3.Controls.Add(this.groupBox_add_patient_info);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(4, 276);
-            this.panel3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panel3.Margin = new System.Windows.Forms.Padding(4);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(289, 248);
             this.panel3.TabIndex = 3;
@@ -1251,9 +1251,9 @@
             this.groupBox_add_patient_info.Controls.Add(this.label_added_patientName);
             this.groupBox_add_patient_info.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox_add_patient_info.Location = new System.Drawing.Point(0, 0);
-            this.groupBox_add_patient_info.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox_add_patient_info.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox_add_patient_info.Name = "groupBox_add_patient_info";
-            this.groupBox_add_patient_info.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox_add_patient_info.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox_add_patient_info.Size = new System.Drawing.Size(289, 248);
             this.groupBox_add_patient_info.TabIndex = 3;
             this.groupBox_add_patient_info.TabStop = false;
@@ -1262,7 +1262,7 @@
             // button_add_patientInfo
             // 
             this.button_add_patientInfo.Location = new System.Drawing.Point(177, 0);
-            this.button_add_patientInfo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button_add_patientInfo.Margin = new System.Windows.Forms.Padding(4);
             this.button_add_patientInfo.Name = "button_add_patientInfo";
             this.button_add_patientInfo.Size = new System.Drawing.Size(112, 29);
             this.button_add_patientInfo.TabIndex = 8;
@@ -1356,9 +1356,9 @@
             this.groupBox5.Controls.Add(this.tableLayoutPanel1);
             this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox5.Location = new System.Drawing.Point(0, 28);
-            this.groupBox5.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox5.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox5.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox5.Size = new System.Drawing.Size(1404, 554);
             this.groupBox5.TabIndex = 4;
             this.groupBox5.TabStop = false;
@@ -1373,7 +1373,7 @@
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.menuStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "永胜宏碁数据分析软件";
