@@ -27,6 +27,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_7BAD4BEB02724BA0938AEDA65798C9B3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_89E57AD8D3B24AB79F4F1B44C5530457"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -58,13 +64,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_8B102A7BEA652EAB7C15D19F25B3D436"
+        "OwnerKey" = "8:_E7A58307A21548E39AD3F498FF6FDFEE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_E7A58307A21548E39AD3F498FF6FDFEE"
+        "OwnerKey" = "8:_8B102A7BEA652EAB7C15D19F25B3D436"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -85,6 +91,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
         "Release"
         {
@@ -101,6 +115,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
     }
     "Deployable"
@@ -154,6 +176,26 @@
             {
             "SourcePath" = "8:..\\BreathingMachine\\bin\\Release\\simsunb.ttf"
             "TargetName" = "8:simsunb.ttf"
+            "Tag" = "8:"
+            "Folder" = "8:_135A3D38D8B34014A04BAAF154EA4C56"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7BAD4BEB02724BA0938AEDA65798C9B3"
+            {
+            "SourcePath" = "8:..\\BreathingMachine\\bin\\Release\\Config.bin"
+            "TargetName" = "8:Config.bin"
             "Tag" = "8:"
             "Folder" = "8:_135A3D38D8B34014A04BAAF154EA4C56"
             "Condition" = "8:"
