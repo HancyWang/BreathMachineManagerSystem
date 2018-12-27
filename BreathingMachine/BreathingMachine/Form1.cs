@@ -4381,12 +4381,12 @@ namespace BreathingMachine
                 fs.Close();
                 return true;
             }
-            else
-            {
-                br.Close();
-                fs.Close();
-                return false;
-            }
+            //else
+            //{
+            //    br.Close();
+            //    fs.Close();
+            //    return false;
+            //}
         }
 
         public static T GetObject<T>(byte[] data, int size)
@@ -4576,12 +4576,12 @@ namespace BreathingMachine
                     //}
                     #endregion
                 }
-                else
-                {
-                    fs.Close();
-                    br.Close();
+                //else
+                //{
+                //    fs.Close();
+                //    br.Close();
 
-                }
+                //}
             }
             #endregion
 

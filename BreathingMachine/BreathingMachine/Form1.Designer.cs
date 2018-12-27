@@ -200,7 +200,7 @@
             this.导入数据ToolStripMenuItem,
             this.导出数据ToolStripMenuItem});
             this.设置ToolStripMenuItem.Name = "设置ToolStripMenuItem";
-            this.设置ToolStripMenuItem.Size = new System.Drawing.Size(51, 24);
+            this.设置ToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
             this.设置ToolStripMenuItem.Text = "设置";
             // 
             // 语言设置ToolStripMenuItem
@@ -209,35 +209,35 @@
             this.中文ToolStripMenuItem,
             this.英文ToolStripMenuItem});
             this.语言设置ToolStripMenuItem.Name = "语言设置ToolStripMenuItem";
-            this.语言设置ToolStripMenuItem.Size = new System.Drawing.Size(144, 26);
+            this.语言设置ToolStripMenuItem.Size = new System.Drawing.Size(148, 26);
             this.语言设置ToolStripMenuItem.Text = "语言设置";
             this.语言设置ToolStripMenuItem.Click += new System.EventHandler(this.语言ToolStripMenuItem_Click);
             // 
             // 中文ToolStripMenuItem
             // 
             this.中文ToolStripMenuItem.Name = "中文ToolStripMenuItem";
-            this.中文ToolStripMenuItem.Size = new System.Drawing.Size(114, 26);
+            this.中文ToolStripMenuItem.Size = new System.Drawing.Size(116, 26);
             this.中文ToolStripMenuItem.Text = "中文";
             this.中文ToolStripMenuItem.Click += new System.EventHandler(this.中文ToolStripMenuItem_Click);
             // 
             // 英文ToolStripMenuItem
             // 
             this.英文ToolStripMenuItem.Name = "英文ToolStripMenuItem";
-            this.英文ToolStripMenuItem.Size = new System.Drawing.Size(114, 26);
+            this.英文ToolStripMenuItem.Size = new System.Drawing.Size(116, 26);
             this.英文ToolStripMenuItem.Text = "英文";
             this.英文ToolStripMenuItem.Click += new System.EventHandler(this.英文ToolStripMenuItem_Click);
             // 
             // 导入数据ToolStripMenuItem
             // 
             this.导入数据ToolStripMenuItem.Name = "导入数据ToolStripMenuItem";
-            this.导入数据ToolStripMenuItem.Size = new System.Drawing.Size(144, 26);
+            this.导入数据ToolStripMenuItem.Size = new System.Drawing.Size(148, 26);
             this.导入数据ToolStripMenuItem.Text = "导入数据";
             this.导入数据ToolStripMenuItem.Click += new System.EventHandler(this.导入数据ToolStripMenuItem_Click);
             // 
             // 导出数据ToolStripMenuItem
             // 
             this.导出数据ToolStripMenuItem.Name = "导出数据ToolStripMenuItem";
-            this.导出数据ToolStripMenuItem.Size = new System.Drawing.Size(144, 26);
+            this.导出数据ToolStripMenuItem.Size = new System.Drawing.Size(148, 26);
             this.导出数据ToolStripMenuItem.Text = "导出数据";
             this.导出数据ToolStripMenuItem.Click += new System.EventHandler(this.导出数据ToolStripMenuItem_Click);
             // 
@@ -246,14 +246,14 @@
             this.帮助ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.软件版本ToolStripMenuItem});
             this.帮助ToolStripMenuItem.Name = "帮助ToolStripMenuItem";
-            this.帮助ToolStripMenuItem.Size = new System.Drawing.Size(51, 24);
+            this.帮助ToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
             this.帮助ToolStripMenuItem.Text = "帮助";
             this.帮助ToolStripMenuItem.Click += new System.EventHandler(this.帮助ToolStripMenuItem_Click);
             // 
             // 软件版本ToolStripMenuItem
             // 
             this.软件版本ToolStripMenuItem.Name = "软件版本ToolStripMenuItem";
-            this.软件版本ToolStripMenuItem.Size = new System.Drawing.Size(144, 26);
+            this.软件版本ToolStripMenuItem.Size = new System.Drawing.Size(148, 26);
             this.软件版本ToolStripMenuItem.Text = "软件版本";
             this.软件版本ToolStripMenuItem.Click += new System.EventHandler(this.软件版本ToolStripMenuItem_Click);
             // 
@@ -264,21 +264,21 @@
             this.工程师模式ToolStripMenuItem,
             this.显示所有数据ToolStripMenuItem});
             this.高级模式ToolStripMenuItem.Name = "高级模式ToolStripMenuItem";
-            this.高级模式ToolStripMenuItem.Size = new System.Drawing.Size(81, 24);
+            this.高级模式ToolStripMenuItem.Size = new System.Drawing.Size(85, 24);
             this.高级模式ToolStripMenuItem.Text = "高级模式";
             this.高级模式ToolStripMenuItem.Click += new System.EventHandler(this.高级模式ToolStripMenuItem_Click);
             // 
             // 用户模式ToolStripMenuItem
             // 
             this.用户模式ToolStripMenuItem.Name = "用户模式ToolStripMenuItem";
-            this.用户模式ToolStripMenuItem.Size = new System.Drawing.Size(249, 26);
+            this.用户模式ToolStripMenuItem.Size = new System.Drawing.Size(260, 26);
             this.用户模式ToolStripMenuItem.Text = "用户模式（这个不用了）";
             this.用户模式ToolStripMenuItem.Click += new System.EventHandler(this.用户模式ToolStripMenuItem_Click);
             // 
             // 工程师模式ToolStripMenuItem
             // 
             this.工程师模式ToolStripMenuItem.Name = "工程师模式ToolStripMenuItem";
-            this.工程师模式ToolStripMenuItem.Size = new System.Drawing.Size(249, 26);
+            this.工程师模式ToolStripMenuItem.Size = new System.Drawing.Size(260, 26);
             this.工程师模式ToolStripMenuItem.Text = "工程师模式(这个不用了)";
             this.工程师模式ToolStripMenuItem.Click += new System.EventHandler(this.工程师模式ToolStripMenuItem_Click);
             // 
@@ -286,7 +286,7 @@
             // 
             this.显示所有数据ToolStripMenuItem.CheckOnClick = true;
             this.显示所有数据ToolStripMenuItem.Name = "显示所有数据ToolStripMenuItem";
-            this.显示所有数据ToolStripMenuItem.Size = new System.Drawing.Size(249, 26);
+            this.显示所有数据ToolStripMenuItem.Size = new System.Drawing.Size(260, 26);
             this.显示所有数据ToolStripMenuItem.Text = "显示所有工作数据";
             this.显示所有数据ToolStripMenuItem.Click += new System.EventHandler(this.显示所有数据ToolStripMenuItem_Click);
             // 
@@ -1376,7 +1376,7 @@
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "永胜宏碁数据分析软件";
+            this.Text = "O2FLO数据读取软件(工程师版)";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing_1);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Shown += new System.EventHandler(this.Form1_Shown);
