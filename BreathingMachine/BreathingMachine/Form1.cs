@@ -2841,7 +2841,14 @@ namespace BreathingMachine
 
             if (page == WorkDataList.m_nPageCount)
             {
-                end = start + WorkDataList.m_nCount % WorkDataList.m_nPageSize;
+                if (WorkDataList.m_nCount % WorkDataList.m_nPageSize == 0)
+                {
+                    end = start + WorkDataList.m_nPageSize;
+                }
+                else
+                {
+                    end = start + WorkDataList.m_nCount % WorkDataList.m_nPageSize;
+                }
             }
             else
             {
@@ -4496,11 +4503,11 @@ namespace BreathingMachine
                             {
                                 //CheckEachByte(buffer_msg);
                                 //下位机会出现0，0，0，0，下位机尚未修复这个问题，在这里先过滤掉
-                                if (IsByte0x00(buffer_msg))
-                                {
-                                    continue;
-                                }
-                                //debugCnt++;
+                                //if (IsByte0x00(buffer_msg))
+                                //{
+                                //    continue;
+                                //}
+                                ////debugCnt++;
                                 // if (debugCnt == 158)
                                 {
                                     workDataMsg = GetObject<WORK_INFO_MESSAGE>(buffer_msg, len_msg);
