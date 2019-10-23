@@ -653,7 +653,8 @@ namespace BreathingMachine
 
                 //读信息头
                 ALARM_INFO_HEAD alarmHead = new ALARM_INFO_HEAD();
-                int len_head = Marshal.SizeOf(alarmHead);
+                //int len_head = Marshal.SizeOf(alarmHead);
+                int len_head = 16*16;  //16个数据，每个16字节
                 byte[] head = new byte[len_head];
                 br.Read(head, 0, len_head);
 
@@ -4240,7 +4241,8 @@ namespace BreathingMachine
 
                 //读信息头
                  ALARM_INFO_HEAD alarmHead = new ALARM_INFO_HEAD();
-                int len_head = Marshal.SizeOf(alarmHead);
+                //int len_head = Marshal.SizeOf(alarmHead);
+                int len_head = 16*16; //16个数据，每个16字节
                 byte[] buffer = new byte[len_head];
                 br.Read(buffer, 0, len_head);
 
@@ -4344,7 +4346,8 @@ namespace BreathingMachine
             BinaryReader br = new BinaryReader(fs, Encoding.ASCII);
 
             ALARM_INFO_HEAD alarmHead = new ALARM_INFO_HEAD();
-            int len_head = Marshal.SizeOf(alarmHead)*16;
+            //int len_head = Marshal.SizeOf(alarmHead); //不能使用这个alarmHead为类,每个成员4字节(例如ALARM_FLAG是4个字节),一共16个成员，共64字节
+            int len_head = 16*16;   //16个数据，每个数据16字节
             byte[] buffer = new byte[len_head];
 
             if (fs == null)
@@ -4670,7 +4673,8 @@ namespace BreathingMachine
                 BinaryReader br = new BinaryReader(fs, Encoding.ASCII);
                 
                 WORK_INFO_HEAD alarmHead = new WORK_INFO_HEAD();
-                int len_head = Marshal.SizeOf(alarmHead)*16;
+                //int len_head = Marshal.SizeOf(alarmHead);
+                int len_head = 64*16;  //每个数据64字节，一共16个数据
                 byte[] buffer = new byte[len_head];
                 #region
                 if (fs == null)
