@@ -637,7 +637,7 @@ namespace BreathingMachine
                 FileStream fs = null;
                 try
                 {
-                    fs = new FileStream(FileMngr.m_dirPath + @"\" + FileMngr.m_alarmFileName, FileMode.Open);
+                    fs = new FileStream(FileMngr.m_dirPath + @"\" + FileMngr.m_alarmFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
                 }
                 catch (IOException ex)
                 {
@@ -3892,7 +3892,7 @@ namespace BreathingMachine
         {
             if (File.Exists(m_cfgfilePath))
             {
-                FileStream fs = new FileStream(m_cfgfilePath, FileMode.Open);
+                FileStream fs = new FileStream(m_cfgfilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 BinaryReader br = new BinaryReader(fs, Encoding.ASCII);
 
                 byte[] bt = new byte[1];
@@ -4224,7 +4224,7 @@ namespace BreathingMachine
                 FileStream fs = null;
                 try
                 {
-                    fs = new FileStream(m_dirPath + @"\" + m_alarmFileName, FileMode.Open);
+                    fs = new FileStream(m_dirPath + @"\" + m_alarmFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
                 }
                 catch (IOException ex)
                 {
@@ -4342,7 +4342,7 @@ namespace BreathingMachine
 
         public static bool GetAlarmMsg()
         {
-            FileStream fs = new FileStream(m_dirPath + @"\" + m_alarmFileName, FileMode.Open);
+            FileStream fs = new FileStream(m_dirPath + @"\" + m_alarmFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
             BinaryReader br = new BinaryReader(fs, Encoding.ASCII);
 
             ALARM_INFO_HEAD alarmHead = new ALARM_INFO_HEAD();
@@ -4673,7 +4673,7 @@ namespace BreathingMachine
             foreach (var workFile in m_workFileNameList)
             {
                 List<WORK_INFO_MESSAGE> list = new List<WORK_INFO_MESSAGE>();
-                FileStream fs = new FileStream(m_dirPath + @"\" + workFile, FileMode.Open);
+                FileStream fs = new FileStream(m_dirPath + @"\" + workFile, FileMode.Open, FileAccess.Read, FileShare.Read);
                 BinaryReader br = new BinaryReader(fs, Encoding.ASCII);
                 
                 WORK_INFO_HEAD alarmHead = new WORK_INFO_HEAD();
